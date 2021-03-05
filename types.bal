@@ -14,8 +14,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-public type GoogleContactsError distinct error;
-
+# Define a OtherContactList.
+#
+# + otherContacts - Other contacts of type Person
 public type OtherContactList record {
     Person[] otherContacts;
 };
@@ -25,36 +26,36 @@ public type OtherContactList record {
 # + resourceName - String of the resource name
 # + etag - ETag of the resource
 # + metadata - Metadata about person
-# + addresses - Person's street addresses.
-# + ageRanges - Person's age ranges.
+# + addresses - Person's street addresses
+# + ageRanges - Person's age ranges
 # + biographies - Person's biographies
-# + birthdays - Person's birthdays.
-# + braggingRights - Person's bragging rights.
-# + calendarUrls - Person's calendar URLs.
-# + clientData - Person's client data.
-# + coverPhotos - Person's cover photos.
-# + emailAddresses - Person's email addresses.
-# + events - Person's events.
-# + externalIds - Person's external IDs.
-# + fileAses - Person's file-ases.
-# + genders - Person's genders. 
-# + imClients - Person's instant messaging clients.
-# + interests - Person's interests.
-# + locales - Person's locale preferences.
-# + locations - Person's locations.
-# + memberships - Person's group memberships.
-# + miscKeywords - Person's miscellaneous keywords.
-# + names - Person's names.
-# + nicknames - Person's nicknames.
-# + occupations - Person's occupations.
-# + organizations - Person's organizations.
-# + phoneNumbers - Person's phoneNumbers.
-# + photos - Person's photos.
-# + relations - Person's relations.
-# + sipAddresses - Person's sipAddresses.
-# + skills - Person's skills.
-# + urls - Person's URLs.
-# + userDefined - user defined data
+# + birthdays - Person's birthdays
+# + braggingRights - Person's bragging rights
+# + calendarUrls - Person's calendar URLs
+# + clientData - Person's client data
+# + coverPhotos - Person's cover photos
+# + emailAddresses - Person's email addresses
+# + events - Person's events
+# + externalIds - Person's external IDs
+# + fileAses - Person's file-ases
+# + genders - Person's genders
+# + imClients - Person's instant messaging clients
+# + interests - Person's interests
+# + locales - Person's locale preferences
+# + locations - Person's locations
+# + memberships - Person's group memberships
+# + miscKeywords - Person's miscellaneous keywords
+# + names - Person's names
+# + nicknames - Person's nicknames
+# + occupations - Person's occupations
+# + organizations - Person's organizations
+# + phoneNumbers - Person's phoneNumbers
+# + photos - Person's photos
+# + relations - Person's relations
+# + sipAddresses - Person's sipAddresses
+# + skills - Person's skills
+# + urls - Person's URLs
+# + userDefined - User defined data
 public type Person record {
     string resourceName;
     string etag;
@@ -93,8 +94,8 @@ public type Person record {
 
 # Define a Person's meta data.
 #
-# + sources - sources of data for the person
-# + objectType - type of the person object.
+# + sources - Sources of data for the person
+# + objectType - Type of the person object
 public type PersonMetadata record {
     json[] 'sources?;
     string objectType?;
@@ -102,32 +103,32 @@ public type PersonMetadata record {
 
 # Define a Create Person Payload.
 #
-# + addresses - Person's street addresses.
+# + addresses - Person's street addresses
 # + biographies - Person's biographies
-# + birthdays - Person's birthdays.
-# + braggingRights - Person's bragging rights.
-# + calendarUrls - Person's calendar URLs.
-# + clientData - Person's client data.
-# + emailAddresses - Person's email addresses.
-# + events - Person's events.
-# + externalIds - Person's external IDs.
-# + fileAses - Person's file-ases.
-# + genders - Person's genders. 
-# + imClients - Person's instant messaging clients.
-# + interests - Person's interests.
-# + locales - Person's locale preferences.
-# + locations - Person's locations.
-# + memberships - Person's group memberships.
-# + miscKeywords - Person's miscellaneous keywords.
-# + names - Person's names.
-# + nicknames - Person's nicknames.
-# + occupations - Person's occupations.
-# + organizations - Person's organizations.
-# + phoneNumbers - Person's phoneNumbers.
-# + relations - Person's relations.
-# + sipAddresses - Person's sipAddresses.
-# + skills - Person's skills.
-# + urls - Person's URLs.
+# + birthdays - Person's birthdays
+# + braggingRights - Person's bragging rights
+# + calendarUrls - Person's calendar URLs
+# + clientData - Person's client data
+# + emailAddresses - Person's email addresses
+# + events - Person's events
+# + externalIds - Person's external IDs
+# + fileAses - Person's file-ases
+# + genders - Person's genders
+# + imClients - Person's instant messaging clients
+# + interests - Person's interests
+# + locales - Person's locale preferences
+# + locations - Person's locations
+# + memberships - Person's group memberships
+# + miscKeywords - Person's miscellaneous keywords
+# + names - Person's names
+# + nicknames - Person's nicknames
+# + occupations - Person's occupations
+# + organizations - Person's organizations
+# + phoneNumbers - Person's phoneNumbers
+# + relations - Person's relations
+# + sipAddresses - Person's sipAddresses
+# + skills - Person's skills
+# + urls - Person's URLs
 # + userDefined - user defined data
 public type CreatePerson record {
     Address[] addresses?;
@@ -162,17 +163,17 @@ public type CreatePerson record {
 # Define a Address.
 #
 # + metadata - Metadata about Address
-# + formattedValue - The unstructured value of the address.
-# + type - The type of the address. 
-# + formattedType - The type of the address formatted
+# + formattedValue - Unstructured value of the address
+# + type - Type of the address
+# + formattedType - Type of the address formatted
 # + poBox - Post box Number of the address
-# + streetAddress - The street address.
-# + extendedAddress - The extended address of the address
-# + city - The city of the address
-# + region - The region of the address
-# + postalCode - The postal code of the address.
-# + country - The country of the address.
-# + countryCode - country code of the address.
+# + streetAddress - Street address
+# + extendedAddress - Extended address of the address
+# + city - City of the address
+# + region - Region of the address
+# + postalCode - Postal code of the address
+# + country - Country of the address
+# + countryCode - Country code of the address
 public type Address record {
     FieldMetaData metadata?;
     string formattedValue?;
@@ -191,10 +192,10 @@ public type Address record {
 # Define a PhoneNumber.
 #
 # + metadata - Metadata about PhoneNumber
-# + value - 
-# + canonicalForm - 
-# + type - 
-# + formattedType - 
+# + value - Phone number
+# + canonicalForm - Canonicalized ITU-T E.164 form of the phone number
+# + type - Type of the phone number
+# + formattedType - Phone number formatted
 public type PhoneNumber record {
     FieldMetaData metadata?;
     string value?;
@@ -206,20 +207,20 @@ public type PhoneNumber record {
 # Define a Name.
 #
 # + metadata - Metadata about Name
-# + displayName - 
-# + displayNameLastFirst - 
-# + unstructuredName - 
-# + familyName - 
-# + givenName - 
-# + middleName - 
-# + honorificPrefix - 
-# + honorificSuffix - 
-# + phoneticFullName - 
-# + phoneticFamilyName - 
-# + phoneticGivenName - 
-# + phoneticMiddleName - 
-# + phoneticHonorificPrefix - 
-# + phoneticHonorificSuffix - 
+# + displayName - Display name formatted
+# + displayNameLastFirst - Display name with the last name
+# + unstructuredName - Free form name value
+# + familyName - Family name
+# + givenName - Given name
+# + middleName - Middle name
+# + honorificPrefix - Honorific prefixes, such as Mrs. or Dr
+# + honorificSuffix - Honorific suffixes, such as Jr.
+# + phoneticFullName - Full name spelled as it sounds
+# + phoneticFamilyName - Family name spelled as it sounds
+# + phoneticGivenName - Given name spelled as it sounds
+# + phoneticMiddleName - Middle name spelled as it sounds
+# + phoneticHonorificPrefix - Honorific prefixes spelled as they sound
+# + phoneticHonorificSuffix - Honorific suffixes spelled as they sound
 public type Name record {
     FieldMetaData metadata?;
     string displayName?;
@@ -241,10 +242,10 @@ public type Name record {
 # Define an Email Address.
 #
 # + metadata - Metadata about Email Address
-# + value - The email address.
-# + type - The type of the email address. (home/work)
-# + formattedType - type of the email address formatted 
-# + displayName - display name of the email.
+# + value - Value of email address
+# + type - Type of the email address(home/work)
+# + formattedType - Type of the email address formatted 
+# + displayName - Display name of the email
 public type EmailAddress record {
     FieldMetaData metadata?;
     string value?;
@@ -256,8 +257,8 @@ public type EmailAddress record {
 # Define a Photo.
 #
 # + metadata - Metadata about Photo
-# + url - 
-# + default - 
+# + url - URL to Photo
+# + default - Whether default or not
 public type Photo record {
     FieldMetaData metadata?;
     string url?;
@@ -267,7 +268,7 @@ public type Photo record {
 # Define an Age Range.
 #
 # + metadata - Metadata about Age Range
-# + ageRange - The age range.
+# + ageRange - Age range
 public type AgeRangeType record {
     FieldMetaData metadata?;
     AgeRange ageRange?;
@@ -276,8 +277,8 @@ public type AgeRangeType record {
 # Define an Biography.
 #
 # + metadata - Metadata about Biography
-# + value - The age range.
-# + contentType - The age range.
+# + value - Age range value
+# + contentType - Age range
 public type Biography record {
     FieldMetaData metadata?;
     string value?;
@@ -287,8 +288,8 @@ public type Biography record {
 # Define an Birthday.
 #
 # + metadata - Metadata about Birthday
-# + text -  string representing the user's birthday.
-# + date - date of BirthDay.
+# + text - String representing the user's birthday
+# + date - Date of BirthDay
 public type Birthday record {
     FieldMetaData metadata?;
     string text?;
@@ -298,7 +299,7 @@ public type Birthday record {
 # Define an BraggingRights.
 #
 # + metadata - Metadata about BraggingRights
-# + value - The age range.
+# + value - Age range
 public type BraggingRights record {
     FieldMetaData metadata?;
     string value?;
@@ -307,9 +308,9 @@ public type BraggingRights record {
 # Define a Calendar Url.
 #
 # + metadata - Metadata about Calendar Url
-# + url - The calendar URL.
-# + type - type of the calendar URL.
-# + formattedType - type of the calendar URL formatted
+# + url - Calendar URL
+# + type - Type of the calendar URL
+# + formattedType - Type of the calendar URL formatted
 public type CalendarUrl record {
     FieldMetaData metadata?;
     string url?;
@@ -320,8 +321,8 @@ public type CalendarUrl record {
 # Define an Arbitrary client data that is populated by clients.
 #
 # + metadata - Metadata about client data
-# + key - client specified key of the client data.
-# + value - client specified value of the client data
+# + key - Client specified key of the client data
+# + value - Client specified value of the client data
 public type ClientData record {
     FieldMetaData metadata?;
     string key?;
@@ -331,7 +332,7 @@ public type ClientData record {
 # Define an Cover photo.
 #
 # + metadata - Metadata about cover photo
-# + url - URL of the cover photo.
+# + url - URL of the cover photo
 # + default - True if the cover photo is the default
 public type CoverPhoto record {
     FieldMetaData metadata?;
@@ -342,9 +343,9 @@ public type CoverPhoto record {
 # Define an Event.
 #
 # + metadata - Metadata about Event
-# + date - The date of the event.
-# + type - type of the event. 
-# + formattedType -  type of the event formatted
+# + date - Date of the event
+# + type - Type of the event
+# + formattedType - Type of the event formatted
 public type Event record {
     FieldMetaData metadata?;
     Date date?;
@@ -355,9 +356,9 @@ public type Event record {
 # Define an External entity.
 #
 # + metadata - Metadata about External entity
-# + value - value of the external ID.
-# + type - type of the external ID. 
-# + formattedType -  type of the External entity formatted
+# + value - Value of the external ID
+# + type - Type of the external ID 
+# + formattedType - Type of the External entity formatted
 public type ExternalId record {
     FieldMetaData metadata?;
     string value?;
@@ -365,10 +366,10 @@ public type ExternalId record {
     string formattedType?;
 };
 
-# Define a name that should be used to sort the person in a list
+# Define a name that should be used to sort the person in a list.
 #
 # + metadata - Metadata about file-as
-# + value - value of the file-as.
+# + value - Value of the file-as
 public type FileAs record {
     FieldMetaData metadata?;
     string value?;
@@ -377,9 +378,9 @@ public type FileAs record {
 # Define an Gender.
 #
 # + metadata - Metadata about Gender
-# + value - gender for the person
-# + formattedValue - type of the Gender formatted
-# + addressMeAs -   type that should be used to address the person
+# + value - Gender for the person
+# + formattedValue - Type of the Gender formatted
+# + addressMeAs - Type that should be used to address the person
 public type Gender record {
     FieldMetaData metadata?;
     string value?;
@@ -389,12 +390,12 @@ public type Gender record {
 
 # Define an  IM client.
 #
-# + metadata - Metadata about IM client.
-# + username - user name used in the IM client.
-# + type - The type of the IM client
-# + formattedType - type that should be used to address the person
-# + protocol - The protocol of the IM client.
-# + formattedProtocol - The protocol of the IM client formatted
+# + metadata - Metadata about IM client
+# + username - User name used in the IM client
+# + type - Type of the IM client
+# + formattedType - Type that should be used to address the person
+# + protocol - Protocol of the IM client
+# + formattedProtocol - Protocol of the IM client formatted
 public type ImClient record {
     FieldMetaData metadata?;
     string username?;
@@ -406,8 +407,8 @@ public type ImClient record {
 
 # Define an  Interest.
 #
-# + metadata - Metadata about Interest.
-# + value - name of the Interest.
+# + metadata - Metadata about Interest
+# + value - Name of the Interest
 public type Interest record {
     FieldMetaData metadata?;
     string value?;
@@ -415,8 +416,8 @@ public type Interest record {
 
 # Define an  Locale.
 #
-# + metadata - Metadata about Locale.
-# + value - IETF BCP 47 language tag representing the locale.
+# + metadata - Metadata about locale
+# + value - IETF BCP 47 language tag representing the locale
 public type Locale record {
     FieldMetaData metadata?;
     string value?;
@@ -424,14 +425,14 @@ public type Locale record {
 
 # Define an  Location.
 #
-# + metadata - Metadata about Location.
-# + value - value of the location..
-# + type - The type of the location.
-# + current - Whether the location is the current location.
-# + buildingId - building identifier.
-# + floor - floor name identifier.
-# + floorSection - floor section in a floor
-# + deskCode - desk location.
+# + metadata - Metadata about Location
+# + value - Value of the location
+# + type - The type of the location
+# + current - Whether the location is the current location
+# + buildingId - Building identifier
+# + floor - Floor name identifier
+# + floorSection - Floor section in a floor
+# + deskCode - Desk location.
 public type Location record {
     FieldMetaData metadata?;
     string value?;
@@ -446,9 +447,9 @@ public type Location record {
 # Define a miscellaneous keyword.
 #
 # + metadata - Metadata about miscellaneous keyword
-# + value - value of the miscellaneous keyword.
-# + type - type of the miscellaneous keyword. 
-# + formattedType -  type of the miscellaneous keyword formatted
+# + value - Value of the miscellaneous keyword
+# + type - Type of the miscellaneous keyword
+# + formattedType - Type of the miscellaneous keyword formatted
 public type MiscKeyword record {
     FieldMetaData metadata?;
     string value?;
@@ -456,32 +457,32 @@ public type MiscKeyword record {
     string formattedType?;
 };
 
-# Define a Membership
+# Define a Membership.
 #
 # + metadata - Metadata about Membership
-# + contactGroupMembership - group membership
-# + domainMembership - domain membership
+# + contactGroupMembership - Group membership
+# + domainMembership - Domain membership
 public type Membership record {
     FieldMetaData metadata?;
     string contactGroupMembership?;
     string domainMembership?;
 };
 
-# Define an Nickname
+# Define an Nickname.
 #
 # + metadata - Metadata about Nickname
-# + value - value of the nick name
-# + type - type of the nick name
+# + value - Value of the nick name
+# + type - Type of the nick name
 public type Nickname record {
     FieldMetaData metadata?;
     string value?;
     string 'type?;
 };
 
-# Define an Occupation
+# Define an Occupation.
 #
 # + metadata - Metadata about Occupation
-# + value - value of the occupation
+# + value - Value of the occupation
 public type Occupation record {
     FieldMetaData metadata?;
     string value?;
@@ -490,19 +491,19 @@ public type Occupation record {
 # Define an Organization.
 #
 # + metadata - Metadata about the organization
-# + type - type of the organization.
-# + formattedType - type organization formatted
-# + startDate - start date in the organization
-# + endDate - end date in the organization
-# + current - whether it is the current organization
-# + name - name of the organization
-# + phoneticName - phonetic name of the organization
-# + department - department at the organization
-# + title - job title at the organization
-# + jobDescription - job description in the organization
-# + symbol - symbol of the occupation.
-# + domain - domain name of the organization
-# + location - location of the organization
+# + type - Type of the organization.
+# + formattedType - Type organization formatted
+# + startDate - Start date in the organization
+# + endDate - End date in the organization
+# + current - Whether it is the current organization
+# + name - Name of the organization
+# + phoneticName - Phonetic name of the organization
+# + department - Department at the organization
+# + title - Job title at the organization
+# + jobDescription - Job description in the organization
+# + symbol - Symbol of the occupation.
+# + domain - Domain name of the organization
+# + location - Location of the organization
 public type Organization record {
     FieldMetaData metadata?;
     string 'type?;
@@ -523,9 +524,9 @@ public type Organization record {
 # Define a Relation.
 #
 # + metadata - Metadata about relation
-# + person - name of the relation
-# + type - type of the relation
-# + formattedType -  type of the relation formatted
+# + person - Name of the relation
+# + type - Type of the relation
+# + formattedType - Type of the relation formatted
 public type Relation record {
     FieldMetaData metadata?;
     string person?;
@@ -533,12 +534,12 @@ public type Relation record {
     string formattedType?;
 };
 
-# Define a SIP address
+# Define a SIP address.
 #
 # + metadata - Metadata about SIP address
-# + value - name of the SIP address
-# + type - type of the SIP address
-# + formattedType -  type of the SIP address formatted
+# + value - Name of the SIP address
+# + type - Type of the SIP address
+# + formattedType - Type of the SIP address formatted
 public type SipAddress record {
     FieldMetaData metadata?;
     string value?;
@@ -546,20 +547,20 @@ public type SipAddress record {
     string formattedType?;
 };
 
-# Define a Skill
+# Define a Skill.
 #
 # + metadata - Metadata about Skill
-# + value - name of the skill
+# + value - Name of the skill
 public type Skill record {
     FieldMetaData metadata?;
     string value?;
 };
 
-# Define an Url
+# Define an Url.
 #
 # + metadata - Metadata about Url
-# + value - name of the url
-# + type - type of the url
+# + value - Name of the url
+# + type - Type of the url
 # + formattedType -  type of the url formatted
 public type Url record {
     FieldMetaData metadata?;
@@ -570,9 +571,9 @@ public type Url record {
 
 # Define a Arbitrary user data.
 #
-# + metadata - Metadata about user defined data.
-# + key - user specified key of the user defined data.
-# + value - user specified value of the user defined data. 
+# + metadata - Metadata about user defined data
+# + key - User specified key of the user defined data
+# + value - User specified value of the user defined data 
 public type UserDefined record {
     FieldMetaData metadata?;
     string key?;
@@ -583,44 +584,44 @@ public type UserDefined record {
 #
 # + primary - True if the field is the primary field
 # + verified - True if the field is verified
-# + sources - source of the field.
+# + sources - Source of the field
 public type FieldMetaData record {
     boolean primary?;
     boolean verified?;
     MetaDataSource 'sources?;
 };
 
-# Define an MetaDataSource
+# Define an MetaDataSource.
 #
-# + type - source type.
-# + id - identifier within the source
+# + type - Source type
+# + id - Identifier within the source
 public type MetaDataSource record {
     string 'type?;
     string id?;
 };
 
-# Define an ContactGroupResponse
+# Define an ContactGroupResponse.
 #
-# + requestedResourceName - resource requested.
-# + status - status of resource
-# + contactGroup - detail of contactGroup
+# + requestedResourceName - Resource requested
+# + status - Status of resource
+# + contactGroup - Detail of contactGroup
 public type ContactGroupResponse record {
     string requestedResourceName;
     json status;
     json contactGroup;
 };
 
-# Define an ContactGroup
+# Define an ContactGroup.
 #
-# + resourceName - resource name.
-# + etag - entity tag of the resource.
-# + metadata - metadata about the contact group.
-# + groupTypecontact - contact group type
-# + name - contact group name set by the group owner or a system
-# + formattedName - name in formatted
-# + memberResourceNames - list of contact person names that are members of the contact group
-# + memberCount - total number of contacts
-# + clientData - contact group's client data.
+# + resourceName - Resource name
+# + etag - Entity tag of the resource
+# + metadata - Metadata about the contact group
+# + groupTypecontact - Contact group type
+# + name - Contact group name set by the group owner or a system
+# + formattedName - Name in formatted
+# + memberResourceNames - List of contact person names that are members of the contact group
+# + memberCount - Total number of contacts
+# + clientData - Contact group's client data
 public type ContactGroup record {
     string resourceName;
     string etag?;
@@ -633,7 +634,7 @@ public type ContactGroup record {
     GroupClientData[] clientData?;
 };
 
-# Define an ContactGroupMetadata
+# Define an ContactGroupMetadata.
 #
 # + updateTime - Time of update
 # + deleted - Whether deleted is true
@@ -642,6 +643,12 @@ public type ContactGroupMetadata record {
     boolean deleted?;
 };
 
+# Define an age range.
+#
+# + AGE_RANGE_UNSPECIFIED - Unspecified
+# + LESS_THAN_EIGHTEEN - Younger than eighteen
+# + EIGHTEEN_TO_TWENTY - Between eighteen and twenty
+# + TWENTY_ONE_OR_OLDER - Twenty-one and older
 public enum AgeRange {
     AGE_RANGE_UNSPECIFIED,
     LESS_THAN_EIGHTEEN,
@@ -649,19 +656,29 @@ public enum AgeRange {
     TWENTY_ONE_OR_OLDER
 }
 
+# Define an contact group type.
+#
+# + GROUP_TYPE_UNSPECIFIED - Unspecified
+# + USER_CONTACT_GROUP - User defined contact group
+# + SYSTEM_CONTACT_GROUP - System defined contact group
 public enum GroupType {
     GROUP_TYPE_UNSPECIFIED,
     USER_CONTACT_GROUP,
     SYSTEM_CONTACT_GROUP
 }
 
+# Define biography type of content.
+#
+# + CONTENT_TYPE_UNSPECIFIED - Unspecified
+# + TEXT_PLAIN - Plain text
+# + TEXT_HTML - HTML text
 public enum ContentType {
     CONTENT_TYPE_UNSPECIFIED,
     TEXT_PLAIN,
     TEXT_HTML
 }
 
-# Define a Date entity
+# Define a Date entity.
 #
 # + year - Year of the date
 # + month - Month of the date
@@ -672,54 +689,54 @@ public type Date record {
     int day?;
 };
 
-# Define a Contact Group Client Data
+# Define a Contact Group Client Data.
 #
-# + key - client specified key of the client data.
-# + value - client specified value of the client data
+# + key - Client specified key of the client data.
+# + value - Client specified value of the client data
 public type GroupClientData record {
     string key?;
     string value?;
 };
 
-# Define a Contact Group List
+# Define a Contact Group List.
 #
 # + contactGroups - Array of Contact Group
-# + totalItems - total contacts
-# + nextSyncToken - next sync token
+# + totalItems - Total contacts
+# + nextSyncToken - Next sync token
 public type ContactGroupList record {
     ContactGroup[] contactGroups;
     int totalItems;
     string nextSyncToken;
 };
 
-# Define a Contact Group Batch Result
+# Define a contact group batch result.
 #
-# + responses - Array of Contact Group Responses
+# + responses - Array of contact group responses
 public type ContactGroupBatch record {
     ContactGroupResponse[] responses;
 };
 
-# Define a SearchResponse
+# Define a SearchResponse.
 #
 # + results - Array of results
 public type SearchResponse record {
     json[] results;
 };
 
-# Define a SearchResult
+# Define a SearchResult.
 #
 # + person - Type of Person
 public type SearchResult record {
     Person person;
 };
 
-# Define a People Connection response
+# Define a People Connection response.
 #
 # + connections - Array of Person of authenticated user
-# + nextPageToken - next page token
-# + nextSyncToken - next sync token
-# + totalPeople - total contacts
-# + totalItems - total pages
+# + nextPageToken - Next page token
+# + nextSyncToken - Next sync token
+# + totalPeople - Total contacts
+# + totalItems - Total pages
 public type ConnectionsResponse record {
     Person[] connections;
     string nextPageToken?;
@@ -728,29 +745,29 @@ public type ConnectionsResponse record {
     int totalItems?;
 };
 
-# Define a OtherContact List Response
+# Define a OtherContact List Response.
 #
 # + otherContacts - Array of Person of in Other contacts
-# + nextPageToken - next page token
-# + nextSyncToken - next sync token
+# + nextPageToken - Next page token
+# + nextSyncToken - Next sync token
 public type OtherContactListResponse record {
     Person[] otherContacts;
     string nextPageToken?;
     string nextSyncToken?;
 };
 
-# Define a BatchGetResponse
+# Define a BatchGetResponse.
 #
 # + responses - Array of PersonResponse
 public type BatchGetResponse record {
     PersonResponse[] responses?;
 };
 
-# Define a PersonResponse
+# Define a PersonResponse.
 #
 # + httpStatusCode - Http Status Code
-# + person - response of type Person
-# + requestedResourceName - resource name requested
+# + person - Response of type Person
+# + requestedResourceName - Resource name requested
 # + status - Status of the response
 public type PersonResponse record {
     int httpStatusCode?;
@@ -759,12 +776,12 @@ public type PersonResponse record {
     json status?;
 };
 
-# Define a Stream response of a connection/Person
+# Define a Stream response of a Connection/Person.
 #
-# + nextSyncToken - next sync token
-# + totalPeople - total contacts
-# + totalItems - total pages
-# + connections - stream of type Person
+# + nextSyncToken - Next sync token
+# + totalPeople - Total contacts
+# + totalItems - Total pages
+# + connections - Stream of type Person
 public type ConnectionsStreamResponse record {
     string nextSyncToken?;
     int totalPeople?;
@@ -772,11 +789,11 @@ public type ConnectionsStreamResponse record {
     stream<Person> connections?;
 };
 
-# Define a Stream response of a connection/Person
+# Define a Stream response of a Connection/Person.
 #
-# + pageToken - page token
-# + requestSyncToken - whether request is needed
-# + syncToken - sync token
+# + pageToken - Page token
+# + requestSyncToken - Whether request is needed
+# + syncToken - Sync token
 public type ContactListOptions record {
     string? pageToken = ();
     boolean? requestSyncToken = ();

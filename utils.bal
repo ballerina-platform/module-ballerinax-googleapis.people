@@ -13,46 +13,34 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import ballerina/io;
-import ballerina/http;
+
 import ballerina/encoding;
+import ballerina/http;
+import ballerina/io;
 import ballerina/log;
 
-# Create Error.
-# 
-# + message - message to be attached to error
-# + err - error to be set
-# + return - returns a GoogleContactsError
-isolated function createError(string message, error? err = ()) returns error {
-    error googleContactsError;
-    if (err is error) {
-        googleContactsError = error GoogleContactsError(message, err);
-    } else {
-        googleContactsError = error GoogleContactsError(message);
-    }
-    return googleContactsError;
-}
-
-# Prepare URL with PersonFields.
+# Prepare URL with person fields.
 # 
 # + url - Url to be appended
-# + personFields - An string array of fields to be fetched
+# + personFields - String array of fields to be fetched
 # + return - The prepared URL string
-isolated function prepareUrlWithPersonFields(string url, string[] personFields) returns string {
-    string path = url;
+isolated function prepareUrlWithPersonFields(string url, string[]? personFields = ()) returns string {
+    string path = url + PERSON_FIELDS_PATH;
     int count = 0;
-    while (count < (personFields.length() - 1)) {
-        path = path + personFields[count] + ",";
-        count = count + 1;
+    if(personFields is string[]){
+        while (count < (personFields.length() - 1)) {
+            path = path + personFields[count] + ",";
+            count = count + 1;
+        }
+        path = path + personFields[count];
     }
-    path = path + personFields[count];
     return path;
 }
 
-# Prepare URL with ReadMasks.
+# Prepare URL with read masks.
 # 
 # + url - Url to be appended
-# + readMasks - An string array of fields to be fetched
+# + readMasks - String array of fields to be fetched
 # + return - The prepared URL string
 isolated function prepareUrlWithReadMasks(string url, string[] readMasks) returns string {
     string path = url;
@@ -65,7 +53,7 @@ isolated function prepareUrlWithReadMasks(string url, string[] readMasks) return
     return path;
 }
 
-# Prepare URL with Optional Sources.
+# Prepare URL with optional sources.
 # 
 # + url - Url to be appended
 # + sources - An string array of sources to be restricted
@@ -84,7 +72,7 @@ isolated function prepareUrlWithOptionalSources(string url, string[]? sources) r
     return path;
 }
 
-# Prepare URL with CopyMask.
+# Prepare URL with copy masks.
 # 
 # + copyMasks - An string array of fields to be copied
 # + return - The prepared URL string
@@ -99,9 +87,9 @@ isolated function prepareCopyMaskString(string[] copyMasks) returns string {
     return path;
 }
 
-# Prepare URL with ReadMaskFields.
+# Prepare URL with read masks.
 # 
-# + readMasks - An string array of fields to be fetched
+# + readMasks - String array of fields to be fetched
 # + return - The prepared URL string
 isolated function prepareReadMaskString(string[] readMasks) returns string {
     string path = "";
@@ -114,9 +102,9 @@ isolated function prepareReadMaskString(string[] readMasks) returns string {
     return path;
 }
 
-# Prepare URL with ReadGroupFields.
+# Prepare URL with read group fields.
 # 
-# + readGroupFields - An string array of fields to be fetched
+# + readGroupFields - String array of fields to be fetched
 # + return - The prepared URL string
 isolated function prepareReadGroupFieldsString(string[] readGroupFields) returns string {
     string path = "";
@@ -129,9 +117,9 @@ isolated function prepareReadGroupFieldsString(string[] readGroupFields) returns
     return path;
 }
 
-# Prepare URL with For Batch Operations.
+# Prepare URL with for batch operations.
 # 
-# + resourceNames - An string array of resourceNames
+# + resourceNames - String array of resource names
 # + return - The prepared URL string
 isolated function prepareResourceString(string pathReceived, string[] resourceNames) returns string {
     string path= pathReceived;
@@ -214,7 +202,7 @@ function getOtherContactsStream(http:Client googleContactClient, @tainted Person
     }
 }
 
-# Prepare URL with Contact Optional.
+# Prepare URL with contact list options.
 # 
 # + pathProvided - An string of path
 # + return - The prepared URL string
@@ -288,21 +276,19 @@ isolated function prepareQueryUrl(string[] paths, string[] queryParamNames, stri
     return url;
 }
 
-# Check HTTP response and return JSON payload on success else an error.
+# Check http response and return JSON payload on success else an error.
 # 
-# + httpResponse - HTTP respone or HTTP payload or error
+# + httpResponse - HTTP respone or http payload or error
 # + return - JSON result on success else an error
 isolated function checkAndSetErrors(http:Response|http:PayloadType|error httpResponse) returns @tainted json|error {
     if (httpResponse is http:Response) {
-        if (httpResponse.statusCode == http:STATUS_OK || httpResponse.statusCode == http:STATUS_CREATED) {
+        if (httpResponse.statusCode == http:STATUS_OK) {
             json|error jsonResponse = httpResponse.getJsonPayload();
             if (jsonResponse is json) {
                 return jsonResponse;
             } else {
                 return error(JSON_PAYLOAD_ERROR, jsonResponse);
             }
-        } else if (httpResponse.statusCode == http:STATUS_NO_CONTENT) {
-            return {};
         } else {
             json|error jsonResponse = httpResponse.getJsonPayload();
             if (jsonResponse is json) {
@@ -314,5 +300,47 @@ isolated function checkAndSetErrors(http:Response|http:PayloadType|error httpRes
         }
     } else {
         return error(HTTP_RESPONSE_ERROR + (<error>httpResponse).message());
+    }
+}
+
+# Handle http response.
+# 
+# + httpResponse - Received http response
+# + return - JSON on success else an error
+isolated function handleResponse(http:Response httpResponse) returns @tainted json|error {
+    json response = check httpResponse.getJsonPayload();
+    if (httpResponse.statusCode is http:STATUS_OK) {
+        return response;
+    } else {
+        json err = check response.'error.message;
+        return error(err.toString());
+    }
+}
+
+# Handle http response for delete response.
+# 
+# + httpResponse - Received http response
+# + return - () on success else an error
+isolated function handleDeleteResponse(http:Response httpResponse) returns @tainted error? {
+    if (httpResponse.statusCode is http:STATUS_OK) {
+        return ();
+    } else {
+        json deleteResponse = check httpResponse.getJsonPayload();
+        json err = check deleteResponse.'error.message;
+        return error(err.toString());
+    }
+}
+
+# Handle http response for upload photo response.
+# 
+# + httpResponse - Received http response
+# + return - () on success else an error
+isolated function handleUploadPhotoResponse(http:Response httpResponse) returns @tainted error? {
+    if (httpResponse.statusCode is http:STATUS_OK) {
+        return ();
+    } else {
+        json uploadPhotoResponse = check httpResponse.getJsonPayload();
+        json err = check uploadPhotoResponse.'error.message;
+        return error(err.toString());
     }
 }

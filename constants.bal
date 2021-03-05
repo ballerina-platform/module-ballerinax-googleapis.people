@@ -16,30 +16,30 @@
 
 const string BASE_URL = "https://people.googleapis.com/v1";
 public const string REFRESH_URL = "https://www.googleapis.com/oauth2/v4/token";
-# Constant `EMPTY_STRING`.
 const string EMPTY_STRING = "";
-# Constant `SPACE`.
 const string SPACE = " ";
-# Constant `SLASH`.
 const string SLASH = "/";
+const string COLON = ":";
+const string QUESTION_MARK = "?";
+const string AMBERSAND = "&";
 # Constant for paths.
 const string CONTACT_GROUP_PATH = "contactGroups";
-const string LIST_PEOPLE_PATH = "people/me/connections?personFields=";
+const string BATCH_CONTACT_GROUP_PATH = ":batchGet?";
+const string LIST_PEOPLE_PATH = "people/me/connections?";
 const string PERSON_FIELDS = "?personFields=";
 const string CREATE_CONTACT_PATH = "/people:createContact";
 const string QUERY_PATH = "&query=";
 const string CONTACTGROUP_PATH = "resourceNames=";
-const string UPDATE_PHOTO_PATH = ":updateContactPhoto";
-const string DELETE_PHOTO_PATH = ":deleteContactPhoto";
+const string UPDATE_PHOTO_PATH = "updateContactPhoto";
+const string DELETE_PHOTO_PATH = "deleteContactPhoto";
 const string UPDATE_CONTACT_PATH = ":updateContact";
-const string DELETE_CONTACT_PATH = ":deleteContact";
-const string BATCH_CONTACTGROUP_PATH = ":batchGet?";
+const string DELETE_CONTACT_PATH = "deleteContact";
 const string LIST_DIRECTORY_PEOPLE_PATH = "/people:listDirectoryPeople";
 const string READ_MASK_PATH = "?readMask=names,emailAddresses,phoneNumbers";
 const string SOURCE_PATH = "&sources=DIRECTORY_SOURCE_TYPE_DOMAIN_CONTACT";
 const string BATCH_CONTACT_PATH = "people:batchGet?";
 const string BATCH_RESOURCE_PATH = "resourceNames=people/me";
-const string PERSON_FIELDS_PATH = "&personFields=names,emailAddresses,phoneNumbers";
+const string PERSON_FIELDS_PATH = "personFields=";
 const string SEARCH_CONTACT_PATH = "people:searchContacts";
 const string SEARCH_OTHERCONTACT_PATH = "/otherContacts:search";
 const string COPY_CONTACT_PATH = ":copyOtherContactToMyContactsGroup";

@@ -67,3 +67,278 @@ refreshToken = "<refresh_token>"
 refreshUrl = "<refresh_URL>"
 
 ```
+# **Samples**
+
+### Create a Contact
+```ballerina
+import ballerinax/googleapis_people as contacts;
+import ballerina/log;
+
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+
+contacts:GoogleContactsConfiguration googleContactConfig = {
+    oauthClientConfig: {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshUrl: contacts:REFRESH_URL,
+        refreshToken: refreshToken
+    }
+};
+
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+
+public function main() {
+    // Create Person/Contact with given name
+    CreatePerson createContact = {
+        "emailAddresses": [],
+        "names": [{
+            "displayName": "Test1 Test2",
+            "familyName": "Test",
+            "givenName": "Test",
+            "displayNameLastFirst": "Test2, Test1",
+            "unstructuredName": "Test Test"
+        }]
+    };
+    string[] personFields = ["names", "phoneNumbers"];
+    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
+    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (response is contacts:Person) {
+        log:print("Person/Contacts Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+}
+```
+### Fetch a Contact
+```ballerina
+import ballerinax/googleapis_people as contacts;
+import ballerina/log;
+
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+
+contacts:GoogleContactsConfiguration googleContactConfig = {
+    oauthClientConfig: {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshUrl: contacts:REFRESH_URL,
+        refreshToken: refreshToken
+    }
+};
+
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+
+public function main() {
+
+    string contactResourceName = "";
+
+    CreatePerson createContact = {
+        "emailAddresses": [],
+        "names": [{
+            "displayName": "Test1 Test2",
+            "familyName": "Test",
+            "givenName": "Test",
+            "displayNameLastFirst": "Test2, Test1",
+            "unstructuredName": "Test Test"
+        }]
+    };
+    string[] personFields = ["names", "phoneNumbers"];
+    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
+    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (response is contacts:Person) {
+        contactResourceName = <@untainted>createdContact.resourceName;
+        log:print("Person/Contacts Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+
+    // Fetch information about Person/Contact
+    string[] personFields = ["names", "phoneNumbers"];
+    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
+    Person|error getPeople = googleContactClient->getPeople(contactResourceName, personFields, sources);
+    if (response is contacts:Person) {
+        log:print("Person/Contacts Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+}
+```
+### Search a Contact using a string value
+```ballerina
+import ballerinax/googleapis_people as contacts;
+import ballerina/log;
+
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+
+contacts:GoogleContactsConfiguration googleContactConfig = {
+    oauthClientConfig: {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshUrl: contacts:REFRESH_URL,
+        refreshToken: refreshToken
+    }
+};
+
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+
+public function main() {
+    // Search a Person/Contact with a string
+    SearchResponse|error searchPeople = googleContactClient->searchPeople("Test");
+    if (response is contacts:Person) {
+        log:print("Person/Contacts Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+}
+```
+
+### Delete a Contact
+```ballerina
+import ballerinax/googleapis_people as contacts;
+import ballerina/log;
+
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+
+contacts:GoogleContactsConfiguration googleContactConfig = {
+    oauthClientConfig: {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshUrl: contacts:REFRESH_URL,
+        refreshToken: refreshToken
+    }
+};
+
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+
+public function main() {
+
+    string contactResourceName = "";
+
+    CreatePerson createContact = {
+        "emailAddresses": [],
+        "names": [{
+            "displayName": "Test1 Test2",
+            "familyName": "Test",
+            "givenName": "Test",
+            "displayNameLastFirst": "Test2, Test1",
+            "unstructuredName": "Test Test"
+        }]
+    };
+    string[] personFields = ["names", "phoneNumbers"];
+    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
+    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (response is contacts:Person) {
+        contactResourceName = <@untainted>createdContact.resourceName;
+        log:print("Person/Contacts Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+
+    var response = googleContactClient->deleteContact(contactResourceName);
+    if (response is boolean) {
+        log:print("Deleted");
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+}
+```
+
+### Create a Contact Group
+```ballerina
+import ballerinax/googleapis_people as contacts;
+import ballerina/log;
+
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+
+contacts:GoogleContactsConfiguration googleContactConfig = {
+    oauthClientConfig: {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshUrl: contacts:REFRESH_URL,
+        refreshToken: refreshToken
+    }
+};
+
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+
+public function main() {
+    // Create Contact Group with given name
+    string[] readGroupFields = ["name", "clientData", "groupType", "metadata"];
+    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup", readGroupFields);
+    if (response is contacts:ContactGroup) {
+        log:print("Contact Group Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+}
+```
+### Fetch a Contact Group
+```ballerina
+import ballerinax/googleapis_people as contacts;
+import ballerina/log;
+
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+
+contacts:GoogleContactsConfiguration googleContactConfig = {
+    oauthClientConfig: {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshUrl: contacts:REFRESH_URL,
+        refreshToken: refreshToken
+    }
+};
+
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+
+public function main() {
+
+    string contactResourceName = "";
+
+    CreatePerson createContact = {
+        "emailAddresses": [],
+        "names": [{
+            "displayName": "Test1 Test2",
+            "familyName": "Test",
+            "givenName": "Test",
+            "displayNameLastFirst": "Test2, Test1",
+            "unstructuredName": "Test Test"
+        }]
+    };
+    string[] personFields = ["names", "phoneNumbers"];
+    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
+    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (response is contacts:Person) {
+        contactResourceName = <@untainted>createdContact.resourceName;
+        log:print("Person/Contacts Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+
+    // Fetch information about Contact Group  
+    contacts:ContactGroup|error getPeople = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
+    if (response is contacts:ContactGroup) {
+        log:print("Contact Group Details: " + response.toString());
+        log:print(response.resourceName.toString());
+    } else {
+        log:printError("Error: " + response.toString());
+    }
+}
+```

@@ -13,10 +13,11 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import ballerina/test;
-import ballerina/os;
-import ballerina/log;
+
 import ballerina/lang.runtime;
+import ballerina/log;
+import ballerina/os;
+import ballerina/test;
 
 //Create an endpoint to use Google People API Connector
 GoogleContactsConfiguration googleContactConfig = {oauthClientConfig: {
@@ -85,8 +86,7 @@ function testCreateContact() {
         }]
     };
     string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    Person|error createdContact = googleContactClient->createContact(createContact, personFields);
     if (createdContact is Person) {
         contactResourceName = <@untainted>createdContact.resourceName;
         log:print(createdContact.toString());
@@ -97,12 +97,11 @@ function testCreateContact() {
 }
 
 @test:Config {dependsOn: [testCreateContact]}
-function testGetPeople() {
-    log:print("Running Get People Test");
+function testGetContact() {
+    log:print("Running Get Contact Test");
     runtime:sleep(10);
     string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    Person|error getPeople = googleContactClient->getPeople(contactResourceName, personFields, sources);
+    Person|error getPeople = googleContactClient->getContact(contactResourceName, personFields);
     if (getPeople is Person) {
         log:print(getPeople.toString());
         test:assertTrue(true, msg = "Get Contact Failed");
@@ -111,18 +110,18 @@ function testGetPeople() {
     }
 }
 
-@test:Config {}
-function testBatchGetPeople() {
+@test:Config {dependsOn: [testCreateContact]}
+function testBatchGetContacts() {
     log:print("Running Batch Contact Test");
     runtime:sleep(10);
     string[] personFields = ["names", "phoneNumbers"];
     string[] contactResourceNames = [contactResourceName];
-    var batchGetPeople = googleContactClient->batchGetPeople(contactResourceNames, personFields);
-    if (batchGetPeople is BatchGetResponse) {
-        log:print(batchGetPeople.toString());
+    var batchGetContacts = googleContactClient->batchGetContacts(contactResourceNames, personFields);
+    if (batchGetContacts is BatchGetResponse) {
+        log:print(batchGetContacts.toString());
         test:assertTrue(true, msg = "Batch Get People Failed");
     } else {
-        test:assertFail(msg = batchGetPeople.message());
+        test:assertFail(msg = batchGetContacts.message());
     }
 }
 
@@ -143,8 +142,7 @@ function testSearchPeople() {
 function testUpdateContactPhoto() {
     log:print("Running Update Contact Photo Test");
     var updateContactPhoto = googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
-    if (updateContactPhoto is boolean) {
-        log:print(updateContactPhoto.toString());
+    if (updateContactPhoto is ()) {
         test:assertTrue(true, msg = "Update Contact Photo Failed");
     } else {
         test:assertFail(msg = updateContactPhoto.message());
@@ -155,21 +153,19 @@ function testUpdateContactPhoto() {
 function testDeleteContactPhoto() {
     log:print("Running Delete Contact Photo Test");
     var deleteContactPhoto = googleContactClient->deleteContactPhoto(contactResourceName);
-    if (deleteContactPhoto is boolean) {
-        log:print(deleteContactPhoto.toString());
+    if (deleteContactPhoto is ()) {
         test:assertTrue(true, msg = "Delete Contact Photo Failed");
     } else {
         test:assertFail(msg = deleteContactPhoto.message());
     }
 }
 
-@test:Config {dependsOn: [testCreateContact, testGetPeople, testDeleteContactPhoto]}
+@test:Config {dependsOn: [testCreateContact, testGetContact, testDeleteContactPhoto]}
 function testDeleteContact() {
     log:print("Running Delete Contact Test");
     runtime:sleep(10);
     var deleteContact = googleContactClient->deleteContact(contactResourceName);
-    if (deleteContact is boolean) {
-        log:print(deleteContact.toString());
+    if (deleteContact is ()) {
         test:assertTrue(true, msg = "Delete Contact Failed");
     } else {
         test:assertFail(msg = deleteContact.message());
@@ -243,7 +239,7 @@ function testUpdateContactGroup() {
         contactGroupResourceName = getContactGroup.resourceName;
         getContactGroup.name = "TestContactGroupUpdated";
         json|error payload = getContactGroup.cloneWithType(json);
-        if (payload is json) {
+        if(payload is json){
             var updateContactGroup = googleContactClient->updateContactGroup(contactGroupResourceName, payload);
             if (updateContactGroup is ContactGroup) {
                 log:print(updateContactGroup.toString());
@@ -258,14 +254,13 @@ function testUpdateContactGroup() {
     }
 }
 
-@test:Config {dependsOn: [testCreateContactGroup, testGetContactGroup, testUpdateContactGroup, testbatchGetContactGroup, 
-    testListContactGroup]}
+@test:Config {dependsOn: [testCreateContactGroup, testGetContactGroup, testbatchGetContactGroup, testUpdateContactGroup,
+                testListContactGroup]}
 function testDeleteContactGroup() {
     log:print("Running Delete Contact Group Test");
     runtime:sleep(10);
     var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
-    if (deleteContactGroup is boolean) {
-        log:print(deleteContactGroup.toString());
+    if (deleteContactGroup is ()) {
         test:assertTrue(true, msg = "Delete Contact Group Failed");
     } else {
         test:assertFail(msg = deleteContactGroup.message());
