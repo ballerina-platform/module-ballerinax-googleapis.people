@@ -95,9 +95,15 @@ public type Person record {
 # Define a Person's meta data.
 #
 # + sources - Sources of data for the person
+# + previousResourceNames - Previous resource name if changed
+# + linkedPeopleResourceNames - Resource names of linked contacts
+# + deleted - Show status whether deleted
 # + objectType - Type of the person object
 public type PersonMetadata record {
     json[] 'sources?;
+    string[] previousResourceNames?;
+    string[] linkedPeopleResourceNames?;
+    boolean deleted?;
     string objectType?;
 };
 
@@ -616,7 +622,7 @@ public type ContactGroupResponse record {
 # + resourceName - Resource name
 # + etag - Entity tag of the resource
 # + metadata - Metadata about the contact group
-# + groupTypecontact - Contact group type
+# + groupType - Contact group type
 # + name - Contact group name set by the group owner or a system
 # + formattedName - Name in formatted
 # + memberResourceNames - List of contact person names that are members of the contact group
@@ -626,7 +632,7 @@ public type ContactGroup record {
     string resourceName;
     string etag?;
     ContactGroupMetadata metadata?;
-    GroupType groupTypecontact?;
+    GroupType groupType?;
     string name?;
     string formattedName?;
     string[] memberResourceNames?;
@@ -730,7 +736,7 @@ public type SearchResult record {
     Person person;
 };
 
-# Define a People Connection response.
+# Define a people connection response.
 #
 # + connections - Array of Person of authenticated user
 # + nextPageToken - Next page token
@@ -745,6 +751,34 @@ public type ConnectionsResponse record {
     int totalItems?;
 };
 
+# Define a sync people connection response.
+#
+# + connections - Array of person of authenticated user
+# + nextPageToken - Next page token
+# + nextSyncToken - Next sync token
+# + totalPeople - Total contacts
+# + totalItems - Total pages
+public type SyncConnectionsResponse record {
+    Person[] connections?;
+    string nextPageToken?;
+    string nextSyncToken;
+    int totalPeople?;
+    int totalItems?;
+};
+
+# Define a people connection trigger response.
+#
+# + nextPageToken - Next page token
+# + nextSyncToken - Next sync token
+# + totalPeople - Total contacts
+# + totalItems - Total pages
+public type ContactsTriggerResponse record {
+    string nextPageToken?;
+    string nextSyncToken;
+    int totalPeople?;
+    int totalItems?;
+};
+
 # Define a OtherContact List Response.
 #
 # + otherContacts - Array of Person of in Other contacts
@@ -752,6 +786,19 @@ public type ConnectionsResponse record {
 # + nextSyncToken - Next sync token
 public type OtherContactListResponse record {
     Person[] otherContacts;
+    string nextPageToken?;
+    string nextSyncToken?;
+};
+
+# Define a OtherContact List Response.
+#
+# + contactGroups - Array of contact groups
+# + totalItems - Total contact groups
+# + nextPageToken - Next page token
+# + nextSyncToken - Next sync token
+public type ContactGroupListResponse record {
+    ContactGroup[] contactGroups;
+    string totalItems?;
     string nextPageToken?;
     string nextSyncToken?;
 };

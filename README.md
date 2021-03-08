@@ -87,7 +87,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
     // Create Person/Contact with given name
@@ -130,7 +130,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
 
@@ -187,7 +187,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
     // Search a Person/Contact with a string
@@ -219,7 +219,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
 
@@ -273,7 +273,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
     // Create Contact Group with given name
@@ -305,7 +305,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = checkpanic new (googleContactConfig);
+contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
 

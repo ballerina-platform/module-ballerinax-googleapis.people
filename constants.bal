@@ -15,6 +15,7 @@
 // under the License.
 
 const string BASE_URL = "https://people.googleapis.com/v1";
+# Holds the value for URL of refresh token end point
 public const string REFRESH_URL = "https://www.googleapis.com/oauth2/v4/token";
 const string EMPTY_STRING = "";
 const string SPACE = " ";
@@ -22,10 +23,13 @@ const string SLASH = "/";
 const string COLON = ":";
 const string QUESTION_MARK = "?";
 const string AMBERSAND = "&";
+const string EQUAL = "=";
+const string COMMA = ",";
 # Constant for paths.
 const string CONTACT_GROUP_PATH = "contactGroups";
 const string BATCH_CONTACT_GROUP_PATH = ":batchGet?";
-const string LIST_PEOPLE_PATH = "people/me/connections?";
+const string LIST_PEOPLE_PATH = "people/me/connections?requestSyncToken=true&";
+const string TOKEN_PATH = "/people/me/connections?personFields=names,emailAddresses&pageSize=1&requestSyncToken=true";
 const string PERSON_FIELDS = "?personFields=";
 const string CREATE_CONTACT_PATH = "/people:createContact";
 const string QUERY_PATH = "&query=";
@@ -40,6 +44,7 @@ const string SOURCE_PATH = "&sources=DIRECTORY_SOURCE_TYPE_DOMAIN_CONTACT";
 const string BATCH_CONTACT_PATH = "people:batchGet?";
 const string BATCH_RESOURCE_PATH = "resourceNames=people/me";
 const string PERSON_FIELDS_PATH = "personFields=";
+const string UPDATE_PERSON_FIELDS_PATH = "updatePersonFields=";
 const string SEARCH_CONTACT_PATH = "people:searchContacts";
 const string SEARCH_OTHERCONTACT_PATH = "/otherContacts:search";
 const string COPY_CONTACT_PATH = ":copyOtherContactToMyContactsGroup";
