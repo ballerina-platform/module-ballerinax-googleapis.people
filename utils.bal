@@ -468,8 +468,8 @@ returns @tainted ConnectionsStreamResponse|error {
     ConnectionsResponse|error res = resp.cloneWithType(ConnectionsResponse);
     if (res is ConnectionsResponse) {
         int i = persons.length();
-        foreach Person item in res.connections {
-            persons[i] = item;
+        foreach Person person in res.connections {
+            persons[i] = person;
             i = i + 1;
         }
         stream<Person> eventStream = (<@untainted>persons).toStream();

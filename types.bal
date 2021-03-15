@@ -58,7 +58,7 @@ public type OtherContactList record {
 # + userDefined - User defined data
 public type Person record {
     string resourceName;
-    string etag;
+    string etag?;
     PersonMetadata metadata?;
     Address[] addresses?;
     AgeRangeType[] ageRanges?;
@@ -719,7 +719,7 @@ public type ContactGroupList record {
 #
 # + responses - Array of contact group responses
 public type ContactGroupBatch record {
-    ContactGroupResponse[] responses;
+    json[] responses;
 };
 
 # Define a SearchResponse.
@@ -807,7 +807,7 @@ public type ContactGroupListResponse record {
 #
 # + responses - Array of PersonResponse
 public type BatchGetResponse record {
-    PersonResponse[] responses?;
+    json[] responses;
 };
 
 # Define a PersonResponse.

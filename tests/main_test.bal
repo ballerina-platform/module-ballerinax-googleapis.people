@@ -63,8 +63,8 @@ function testCopyOtherContactToMyContact() {
 @test:Config {}
 function testSearchOtherContacts() {
     log:print("Running Search Other Contacts Test");
-    SearchResponse|error searchOtherContacts = googleContactClient->searchOtherContacts("T");
-    if (searchOtherContacts is SearchResponse) {
+    Person[]|error searchOtherContacts = googleContactClient->searchOtherContacts("R");
+    if (searchOtherContacts is Person[]) {
         log:print(searchOtherContacts.toString());
         test:assertTrue(true, msg = "Get Contact Failed");
     } else {
@@ -119,7 +119,7 @@ function testBatchGetContacts() {
     string[] personFields = ["names", "phoneNumbers"];
     string[] contactResourceNames = [contactResourceName];
     var batchGetContacts = googleContactClient->batchGetContacts(contactResourceNames, personFields);
-    if (batchGetContacts is BatchGetResponse) {
+    if (batchGetContacts is Person[]) {
         log:print(batchGetContacts.toString());
         test:assertTrue(true, msg = "Batch Get People Failed");
     } else {
@@ -131,8 +131,8 @@ function testBatchGetContacts() {
 function testSearchPeople() {
     log:print("Running Search People Test");
     runtime:sleep(10);
-    SearchResponse|error searchPeople = googleContactClient->searchPeople("K");
-    if (searchPeople is SearchResponse) {
+    Person[]|error searchPeople = googleContactClient->searchPeople("K");
+    if (searchPeople is Person[]) {
         log:print(searchPeople.toString());
         test:assertTrue(true, msg = "Get Contact Failed");
     } else {
@@ -238,7 +238,7 @@ function testbatchGetContactGroup() {
     runtime:sleep(10);
     string[] resourceNames = [contactGroupResourceName];
     var batchGetContactGroup = googleContactClient->batchGetContactGroup(resourceNames);
-    if (batchGetContactGroup is ContactGroupBatch) {
+    if (batchGetContactGroup is ContactGroup[]) {
         log:print(batchGetContactGroup.toString());
         test:assertTrue(true, msg = "Batch Get Contact Group Failed");
     } else {
@@ -286,7 +286,7 @@ function testDeleteContactGroup() {
 function testListPeopleConnection() {
     log:print("Running List People Connection Test");
     string[] personFields = ["names", "emailAddresses", "phoneNumbers", "photos"];
-    var listPeopleConnection = googleContactClient->listPeopleConnection(personFields);
+    var listPeopleConnection = googleContactClient->listPeoples(personFields);
     if (listPeopleConnection is stream<Person>) {
         error? e = listPeopleConnection.forEach(isolated function(Person person) {
             log:print(person.toString());
@@ -296,3 +296,4 @@ function testListPeopleConnection() {
         test:assertFail(msg = listPeopleConnection.message());
     }
 }
+
