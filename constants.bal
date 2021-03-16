@@ -40,7 +40,6 @@ const string DELETE_PHOTO_PATH = "deleteContactPhoto";
 const string UPDATE_CONTACT_PATH = ":updateContact";
 const string DELETE_CONTACT_PATH = "deleteContact";
 const string LIST_DIRECTORY_PEOPLE_PATH = "/people:listDirectoryPeople";
-const string READ_MASK_PATH = "?readMask=names,emailAddresses,phoneNumbers";
 const string SOURCE_PATH = "&sources=DIRECTORY_SOURCE_TYPE_DOMAIN_CONTACT";
 const string BATCH_CONTACT_PATH = "people:batchGet?";
 const string BATCH_RESOURCE_PATH = "resourceNames=people/me";
@@ -49,10 +48,48 @@ const string UPDATE_PERSON_FIELDS_PATH = "updatePersonFields=";
 const string SEARCH_CONTACT_PATH = "people:searchContacts";
 const string SEARCH_OTHERCONTACT_PATH = "/otherContacts:search";
 const string COPY_CONTACT_PATH = ":copyOtherContactToMyContactsGroup";
-const string LIST_OTHERCONTACT_PATH = "/otherContacts?readMask=";
+const string LIST_OTHERCONTACT_PATH = "/otherContacts?";
 const string OTHERCONTACT_RESPONSE_ERROR = "Error in fetching OtherContacts";
 const string CONNECTION_RESPONSE_ERROR = "Error in fetching ConnectionsResponse";
 const string JSON_PAYLOAD_ERROR = "Error occurred while accessing the JSON payload of the response.";
 const string HTTP_RESPONSE_ERROR = "Error occurred while getting the HTTP response : ";
 const string PAYLOAD_ERROR = "Error occured while extracting errors from payload.";
 const string SEARCH_ERROR = "Search query not matched";
+
+public enum OtherContactMasks {
+    OTHER_CONTACT_EMAIL_ADDRESS = "emailAddresses",
+    OTHER_CONTACT_NAME = "names",
+    OTHER_CONTACT_PHONE_NUMBER = "phoneNumbers"
+}
+
+public enum ContactMasks {
+    ADDRESS = "addresses",
+    AGE_RANGE = "ageRanges",
+    BIOGRAPHY = "biographies",
+    BIRTHDAY = "birthdays",
+    CALENDER_URL = "calendarUrls",
+    CLIENT_DATA = "clientData",
+    COVER_PHOTO = "coverPhotos"
+    EMAIL_ADDRESS = "emailAddresses",
+    EVENT = "events",
+    EXTERNAL_ID = "externalIds",
+    GENDER = "genders",
+    IM_CLIENT = "imClients",
+    INTEREST = "interests",
+    LOCALE = "locales",
+    LOCATION = "locations",
+    MEMBERSHIP = "memberships",
+    META_DATE = "metadata",
+    MISC_KEYWORD = "miscKeywords",
+    NAME = "names",
+    NICK_NAMES = "nicknames",
+    OCCUPATION = "occupations",
+    ORGANIZATION = "organizations",
+    PHONE_NUMBER = "phoneNumbers",
+    PHOTO = "photos",
+    RELATION = "relations",
+    SIP_ADDRESS = "sipAddresses",
+    SKILL = "skills",
+    URL = "urls",
+    USER_DEFINED = "userDefined"
+}

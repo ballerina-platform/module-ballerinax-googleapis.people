@@ -73,14 +73,16 @@ isolated function prepareUrlWithUpdatePersonFields(string url, string[]? updateP
 # + url - Url to be appended
 # + readMasks - String array of fields to be fetched
 # + return - The prepared URL string
-isolated function prepareUrlWithReadMasks(string url, string[] readMasks) returns string {
-    string path = url;
+isolated function prepareUrlWithReadMasks(string url, string[]? readMasks = ()) returns string {
+    string path = url + "readMask=";
     int count = 0;
-    while (count < (readMasks.length() - 1)) {
-        path = path + readMasks[count] + COMMA;
-        count = count + 1;
+    if(readMasks is string[]){
+        while (count < (readMasks.length() - 1)) {
+            path = path + readMasks[count] + COMMA;
+            count = count + 1;
+        }
+        path = path + readMasks[count];
     }
-    path = path + readMasks[count];
     return path;
 }
 
@@ -122,14 +124,16 @@ isolated function prepareCopyMaskString(string[] copyMasks) returns string {
 # 
 # + readMasks - String array of fields to be fetched
 # + return - The prepared URL string
-isolated function prepareReadMaskString(string[] readMasks) returns string {
+isolated function prepareReadMaskString(string[]? readMasks) returns string {
     string path = EMPTY_STRING;
     int count = 0;
-    while (count < (readMasks.length() - 1)) {
-        path = path + readMasks[count] + COMMA;
-        count = count + 1;
+    if(readMasks is string[]){
+        while (count < (readMasks.length() - 1)) {
+            path = path + readMasks[count] + COMMA;
+            count = count + 1;
+        }
+        path = path + readMasks[count];
     }
-    path = path + readMasks[count];
     return path;
 }
 

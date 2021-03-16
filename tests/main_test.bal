@@ -16,7 +16,7 @@
 
 import ballerina/lang.runtime;
 import ballerina/log;
-import ballerina/os;
+// import ballerina/os;
 import ballerina/test;
 
 //Create an endpoint to use Google People API Connector
@@ -34,7 +34,7 @@ string otherContactResourceName = "";
 @test:Config {}
 function testListOtherContacts() {
     log:print("Running List Other Contact Test");
-    string[] readMasks = ["names", "phoneNumbers", "emailAddresses"];
+    OtherContactMasks[] readMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
     var listContacts = googleContactClient->listOtherContacts(readMasks);
     if (listContacts is stream<Person>) {
         error? e = listContacts.forEach(isolated function (Person person) {
@@ -49,9 +49,9 @@ function testListOtherContacts() {
 @test:Config  {dependsOn: [testListOtherContacts]}
 function testCopyOtherContactToMyContact() {
     log:print("Running copy OtherContact To MyContact Test");
-    string[] copyMask = ["names", "emailAddresses", "phoneNumbers"];
-    string[] readMask = ["names", "emailAddresses", "phoneNumbers"];
-    var copyContacts = googleContactClient->copyOtherContactToMyContact(copyMask, readMask, "otherContacts/c8846080985039646639");
+    OtherContactMasks[] copyMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
+    ContactMasks[] readMasks = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    var copyContacts = googleContactClient->copyOtherContactToMyContact("otherContacts/c8846080985039646639", copyMasks, readMasks);
     if (copyContacts is Person) {
         log:print(copyContacts.toString());
         test:assertTrue(true, msg = "List Other Contacts Failed");
@@ -63,7 +63,8 @@ function testCopyOtherContactToMyContact() {
 @test:Config {}
 function testSearchOtherContacts() {
     log:print("Running Search Other Contacts Test");
-    Person[]|error searchOtherContacts = googleContactClient->searchOtherContacts("R");
+    OtherContactMasks[] readMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
+    Person[]|error searchOtherContacts = googleContactClient->searchOtherContacts("R", readMasks);
     if (searchOtherContacts is Person[]) {
         log:print(searchOtherContacts.toString());
         test:assertTrue(true, msg = "Get Contact Failed");
@@ -87,7 +88,7 @@ function testCreateContact() {
             "unstructuredName": "Kapilraaj Perinpanayagam"
         }]
     };
-    string[] personFields = ["names", "phoneNumbers"];
+    ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
     Person|error createdContact = googleContactClient->createContact(createContact, personFields);
     if (createdContact is Person) {
         contactResourceName = <@untainted>createdContact.resourceName;
@@ -102,7 +103,7 @@ function testCreateContact() {
 function testGetContact() {
     log:print("Running Get Contact Test");
     runtime:sleep(10);
-    string[] personFields = ["names", "phoneNumbers"];
+    ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
     Person|error getPeople = googleContactClient->getContact(contactResourceName, personFields);
     if (getPeople is Person) {
         log:print(getPeople.toString());
@@ -127,11 +128,12 @@ function testBatchGetContacts() {
     }
 }
 
-@test:Config {}
+@test:Config {dependsOn: [testGetContact]}
 function testSearchPeople() {
     log:print("Running Search People Test");
     runtime:sleep(10);
-    Person[]|error searchPeople = googleContactClient->searchPeople("K");
+    ContactMasks[] readMasks = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    Person[]|error searchPeople = googleContactClient->searchPeople("K", readMasks);
     if (searchPeople is Person[]) {
         log:print(searchPeople.toString());
         test:assertTrue(true, msg = "Get Contact Failed");
@@ -283,6 +285,17 @@ function testDeleteContactGroup() {
 }
 
 @test:Config {}
+function testModifyContactGroup() {
+    log:print("Running Modify contacts in Contact Group Test");
+    var response = googleContactClient->modifyContactGroup("contactGroups/32efb68589c850da", ["people/c1471841616970342660"], ["people/c5177160596799145947"]);
+    if (response is json) {
+        test:assertTrue(true, msg = "Modify contacts in Contact Group Failed");
+    } else {
+        test:assertFail(msg = response.message());
+    }
+}
+
+@test:Config {}
 function testListPeopleConnection() {
     log:print("Running List People Connection Test");
     string[] personFields = ["names", "emailAddresses", "phoneNumbers", "photos"];
@@ -296,4 +309,3 @@ function testListPeopleConnection() {
         test:assertFail(msg = listPeopleConnection.message());
     }
 }
-

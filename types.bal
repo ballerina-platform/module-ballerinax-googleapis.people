@@ -470,7 +470,7 @@ public type MiscKeyword record {
 # + domainMembership - Domain membership
 public type Membership record {
     FieldMetaData metadata?;
-    string contactGroupMembership?;
+    json contactGroupMembership?;
     string domainMembership?;
 };
 

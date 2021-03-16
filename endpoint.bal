@@ -28,9 +28,7 @@ public type GoogleContactsConfiguration record {
 # Google Contacts Client.
 #
 # + googleContactClient - The HTTP Client
-@display {
-   label: "Google People API Client"
-}
+@display {label: "Google People API Client"}
 public client class Client {
     public http:Client googleContactClient;
 
@@ -46,12 +44,10 @@ public client class Client {
     # 
     # + readMasks - Restrict which fields on the person are returned
     # + return - Stream of `Person` on success else an `error`
-    @display {
-        label: "List OtherContacts"
-    }
-    remote function listOtherContacts(@display{label: "Read Masks"} string[] readMasks, 
-                                      @display{label: "Optional query parameters"} ContactListOptions? options = ()) 
-                                      returns @tainted @display{label: "Stream of Persons"} stream<Person>|error {
+    @display {label: "List OtherContacts"}
+    remote function listOtherContacts(@display {label: "Read Masks"} OtherContactMasks[] readMasks, 
+                                      @display {label: "Optional query parameters"} ContactListOptions? options = ()) 
+                                      returns @tainted @display {label: "Stream of Persons"} stream<Person>|error {
         string path = LIST_OTHERCONTACT_PATH;
         http:Request request = new;
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
@@ -59,20 +55,18 @@ public client class Client {
         return getOtherContactsStream(self.googleContactClient, persons, pathWithReadMasks, options);
     }
 
-    # copies an "Other contact" to a new contact in the user's "myContacts".
+    # Copies "Other contact" to a new contact in the user's "myContacts".
     # 
     # + copyMasks - Restrict which fields on the person are to be copied
     # + readMasks - Restrict which fields on the person are returned
     # + resourceName - OtherContacts resource name
     # + return - `Person` on success else an `error`
-    @display {
-        label: "Copy a OtherContact to MyContact"
-    }
-    remote function copyOtherContactToMyContact(@display{label: "Copy Masks"} string[] copyMasks, 
-                                                @display{label: "Read Masks"} string[] readMasks, 
-                                                @display{label: "OtherContact Resource Name"} string resourceName) 
-                                                returns @tainted @display{label: "Person"} Person|error {
-        string path = SLASH + otherContacts + COPY_CONTACT_PATH;
+    @display {label: "Copy a OtherContact to MyContact"}
+    remote function copyOtherContactToMyContact(@display {label: "OtherContact Resource Name"} string resourceName,
+                                                @display {label: "Copy Masks"} OtherContactMasks[] copyMasks, 
+                                                @display {label: "Read Masks"} ContactMasks[]? readMasks = ()) 
+                                                returns @tainted @display {label: "Person"} Person|error {
+        string path = SLASH + resourceName + COPY_CONTACT_PATH;
         http:Request request = new;
         string copyMask = prepareCopyMaskString(copyMasks);
         string readMask = prepareReadMaskString(readMasks);
@@ -90,13 +84,14 @@ public client class Client {
     # 
     # + query - String to be searched
     # + return - `Person[]` on success else an `error`
-    @display {
-        label: "Search in OtherContacts"
-    }
-    remote function searchOtherContacts(@display{label: "Searchable substring"} string query) returns 
-                                        @tainted @display{label: "Array of Person"} Person[]|error {
-        string path = SEARCH_OTHERCONTACT_PATH + READ_MASK_PATH + QUERY_PATH + query;
-        http:Response httpResponse = <http:Response>check self.googleContactClient->get(path);
+    @display {label: "Search in OtherContacts"}
+    remote function searchOtherContacts(@display {label: "Searchable substring"} string query,
+                                        @display {label: "Read Masks"} OtherContactMasks[] readMasks) returns 
+                                        @tainted @display {label: "Array of Person"} Person[]|error {
+        string path = SEARCH_OTHERCONTACT_PATH + QUESTION_MARK;
+        string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
+        string pathWithQuery = pathWithReadMasks + QUERY_PATH + query;
+        http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithQuery);
         var response = check handleResponse(httpResponse);
         var searchResponse = check response.cloneWithType(SearchResponse);
         Person[] persons = [];
@@ -116,12 +111,10 @@ public client class Client {
     # + createContact - Record of type of `CreatePerson`
     # + personFields - Restrict which fields on the person are returned
     # + return - `Person` on success else an `error`
-    @display {
-        label: "Create Contact"
-    }
-    remote function createContact(@display{label: "Contact details"} CreatePerson createContact, 
-                                  @display{label: "Person Fields"} string[]? personFields = ()) returns 
-                                  @tainted @display{label: "Person"} Person|error {
+    @display {label: "Create Contact"}
+    remote function createContact(@display {label: "Contact details"} CreatePerson createContact, 
+                                  @display {label: "Person Fields"} ContactMasks[]? personFields = ()) returns 
+                                  @tainted @display {label: "Person"} Person|error {
         string path = CREATE_CONTACT_PATH + QUESTION_MARK;
         json payload = check createContact.cloneWithType(json);
         http:Request request = new;
@@ -137,16 +130,13 @@ public client class Client {
     # + resourceName - Contact resource name
     # + personFields - Restrict which fields on the person are returned
     # + return - `Person` on success else an `error`
-    @display {
-        label: "Get a Contact"
-    }
-    remote function getContact(@display{label: "Contact Resource Name"} string resourceName, 
-                               @display{label: "Person Fields"} string[]? personFields = ()) returns 
-                               @tainted @display{label: "Person"} Person|error {
+    @display {label: "Get a Contact"}
+    remote function getContact(@display {label: "Contact Resource Name"} string resourceName, 
+                               @display {label: "Person Fields"} ContactMasks[] personFields) returns 
+                               @tainted @display {label: "Person"} Person|error {
         string path = SLASH + resourceName + QUESTION_MARK;
-        http:Request request = new;
         string pathWithPersonFields = prepareUrlWithPersonFields(path, personFields);
-        http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithPersonFields, request);
+        http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithPersonFields);
         var response = check handleResponse(httpResponse);
         return check response.cloneWithType(Person);
     }
@@ -155,13 +145,14 @@ public client class Client {
     # 
     # + query - String to be searched
     # + return - `Person[]` on success else an `error`
-    @display {
-        label: "Search a Contact"
-    }
-    remote function searchPeople(@display{label: "Searchable substring"} string query) returns 
-                                 @tainted @display{label: "Array of Person"} Person[]|error {
-        string path = SLASH + SEARCH_CONTACT_PATH + READ_MASK_PATH + QUERY_PATH + query;
-        http:Response httpResponse = <http:Response>check self.googleContactClient->get(path);
+    @display {label: "Search a Contact"}
+    remote function searchPeople(@display {label: "Searchable substring"} string query,
+                                 @display {label: "Read Masks"} ContactMasks[] readMasks) returns 
+                                 @tainted @display {label: "Array of Person"} Person[]|error {
+        string path = SLASH + SEARCH_CONTACT_PATH + QUESTION_MARK;
+        string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
+        string pathWithQuery = pathWithReadMasks + QUERY_PATH + query;
+        http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithQuery);
         var response = check handleResponse(httpResponse);
         var searchResponse = check response.cloneWithType(SearchResponse);
         Person[] persons = [];
@@ -181,12 +172,10 @@ public client class Client {
     # + resourceName - Contact resource name
     # + imagePath - Path to image from root directory
     # + return - () on success, else an 'error'
-    @display {
-        label: "Update a Contact Photo"
-    }
-    remote function updateContactPhoto(@display{label: "Contact Resource Name"} string resourceName,
-                                       @display{label: "Image Path"} string imagePath) returns 
-                                       @tainted @display{label: "Result"} error? {
+    @display {label: "Update a Contact Photo"}
+    remote function updateContactPhoto(@display {label: "Contact Resource Name"} string resourceName,
+                                       @display {label: "Image Path"} string imagePath) returns 
+                                       @tainted @display {label: "Result"} error? {
         string path = SLASH + resourceName + COLON + UPDATE_PHOTO_PATH;
         http:Request request = new;
         string encodedString = check convertImageToBase64String(imagePath);
@@ -200,11 +189,9 @@ public client class Client {
     # 
     # + resourceName - Contact resource name
     # + return - () on success, else an 'error'
-    @display {
-        label: "Delete a Contact Photo"
-    }
-    remote function deleteContactPhoto(@display{label: "Contact Resource Name"} string resourceName) returns 
-                                       @tainted @display{label: "Result"} error? {
+    @display {label: "Delete a Contact Photo"}
+    remote function deleteContactPhoto(@display {label: "Contact Resource Name"} string resourceName) returns 
+                                       @tainted @display {label: "Result"} error? {
         string path = SLASH + resourceName + COLON + DELETE_PHOTO_PATH;
         http:Response deleteResponse = <http:Response>check self.googleContactClient->delete(path);
         return handleDeleteResponse(deleteResponse);
@@ -215,17 +202,14 @@ public client class Client {
     # + resourceNames - String array of contact resource names
     # + personFields - Restrict which fields on the person are returned
     # + return - `Person[]` on success, else an `error`
-    @display {
-        label: "Batch Get Contacts"
-    }   
-    remote function batchGetContacts(@display{label: "Contact Resource Names"} string[] resourceNames, 
-                                     @display{label: "Person Fields"} string[] personFields) returns 
-                                     @tainted @display{label: "Array of Person"} Person[]|error {
+    @display {label: "Batch Get Contacts"}   
+    remote function batchGetContacts(@display {label: "Contact Resource Names"} string[] resourceNames, 
+                                     @display {label: "Person Fields"} string[] personFields) returns 
+                                     @tainted @display {label: "Array of Person"} Person[]|error {
         string path = SLASH + BATCH_CONTACT_PATH;
         string pathWithResources = prepareResourceString(path, resourceNames);
         string pathWithPersonFields = prepareUrlWithPersonFields(pathWithResources + AMBERSAND, personFields);
-        http:Request request = new;
-        http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithPersonFields, request);
+        http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithPersonFields);
         var response = check handleResponse(httpResponse);
         var batchResponse = check response.cloneWithType(BatchGetResponse);
         Person[] persons = [];
@@ -246,14 +230,12 @@ public client class Client {
     # + updatePersonFields - Restrict which fields on the person are returned
     # + personFields - Restrict which fields on the person are returned
     # + return - `Person` on success else an `error`
-    @display {
-        label: "Update a Contact"
-    }  
-    remote function updateContact(@display{label: "Contact Resource Name"} string resourceName, 
-                                  @display{label: "Contact details"} CreatePerson createContact, 
-                                  @display{label: "Person Fields to be Updated"} string[] updatePersonFields,
-                                  @display{label: "Person Fields"} string[]? personFields = ()) returns 
-                                  @tainted @display{label: "Person"} Person|error {
+    @display {label: "Update a Contact"}  
+    remote function updateContact(@display {label: "Contact Resource Name"} string resourceName, 
+                                  @display {label: "Contact details"} CreatePerson createContact, 
+                                  @display {label: "Person Fields to be Updated"} string[] updatePersonFields,
+                                  @display {label: "Person Fields"} string[]? personFields = ()) returns 
+                                  @tainted @display {label: "Person"} Person|error {
         string getPath = SLASH + resourceName + QUESTION_MARK;
         string getPathWithPersonFields = prepareUrlWithPersonFields(getPath, personFields);
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(getPathWithPersonFields);
@@ -287,11 +269,9 @@ public client class Client {
     # 
     # + resourceName - Contact resource name
     # + return - () on success, else an `error`
-    @display {
-        label: "Delete a Contact"
-    }
-    remote function deleteContact(@display{label: "Person Resource Name"} string resourceName) returns 
-                                  @tainted @display{label: "Result"} error? {
+    @display {label: "Delete a Contact"}
+    remote function deleteContact(@display {label: "Person Resource Name"} string resourceName) returns 
+                                  @tainted @display {label: "Result"} error? {
         string path = SLASH + resourceName + COLON + DELETE_CONTACT_PATH;
         http:Response deleteResponse = <http:Response>check self.googleContactClient->delete(path);
         return handleDeleteResponse(deleteResponse);
@@ -303,12 +283,10 @@ public client class Client {
     # + personFields - Restrict which fields on the person are returned
     # + options - Record that contains options
     # + return - `stream<Person>` on success or else an `error`
-    @display {
-        label: "List Contacts"
-    }
-    remote function listPeoples(@display{label: "Person Fields"} string[] personFields, 
-                                @display{label: "Optional query parameters"} ContactListOptions? options = ()) returns
-                                @tainted @display{label: "Stream of Persons"} stream<Person>|error {
+    @display {label: "List Contacts"}
+    remote function listPeoples(@display {label: "Person Fields"} string[] personFields, 
+                                @display {label: "Optional query parameters"} ContactListOptions? options = ()) returns
+                                @tainted @display {label: "Stream of Persons"} stream<Person>|error {
         string path = SLASH + LIST_PEOPLE_PATH;
         string pathWithPersonFields = prepareUrlWithPersonFields(path, personFields);
         Person[] persons = [];
@@ -335,12 +313,10 @@ public client class Client {
     # + contactGroupName - Name of the `ContactGroup` to be created
     # + readGroupFields - Restrict which fields are returned(clientData, groupType, metadata, name)
     # + return - `ContactGroup` on success else an `error`
-    @display {
-        label: "Create a Contact Group"
-    }
-    remote function createContactGroup(@display{label: "Contact Group Resource Name"} string contactGroupName, 
-                                       @display{label: "Read Group Fields"} string[] readGroupFields) returns 
-                                       @tainted @display{label: "Contact Group"} ContactGroup|error {
+    @display {label: "Create a Contact Group"}
+    remote function createContactGroup(@display {label: "Contact Group Resource Name"} string contactGroupName, 
+                                       @display {label: "Read Group Fields"} string[] readGroupFields) returns 
+                                       @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + CONTACT_GROUP_PATH;
         http:Request request = new;
         string readGroupField = prepareReadGroupFieldsString(readGroupFields);
@@ -358,11 +334,9 @@ public client class Client {
     # 
     # + resourceNames - Name of the `ContactGroup` to be fetched
     # + return - `ContactGroup[]` on success else an `error`
-    @display {
-        label: "Batch Get Contact Groups"
-    }   
-    remote function batchGetContactGroup(@display{label: "Resource Names"} string[] resourceNames) returns 
-                                         @tainted @display{label: "Contact Group Array"} ContactGroup[]|error {
+    @display {label: "Batch Get Contact Groups"}   
+    remote function batchGetContactGroup(@display {label: "Resource Names"} string[] resourceNames) returns 
+                                         @tainted @display {label: "Contact Group Array"} ContactGroup[]|error {
         string path = SLASH + CONTACT_GROUP_PATH + BATCH_CONTACT_GROUP_PATH;
         string pathWithResources = prepareResourceString(path, resourceNames);
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithResources);
@@ -383,10 +357,8 @@ public client class Client {
     # Fetch `ContactGroups` of authenticated user.
     # 
     # + return - `ContactGroup[]` on success else an `error`
-    @display {
-        label: "List Contact Groups"
-    }
-    remote function listContactGroup() returns @tainted @display{label: "Contact Group Array"} ContactGroup[]|error {
+    @display {label: "List Contact Groups"}
+    remote function listContactGroup() returns @tainted @display {label: "Contact Group Array"} ContactGroup[]|error {
         string path = SLASH + CONTACT_GROUP_PATH;
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(path);
         var response = check handleResponse(httpResponse);
@@ -400,12 +372,10 @@ public client class Client {
     # + resourceName - Name of the `ContactGroup` to be created
     # + maxMembers - maximum number of members returned in contact group
     # + return - `ContactGroup` on success else an `error`
-    @display {
-        label: "Get a Contact Group"
-    }
-    remote function getContactGroup(@display{label: "Contact Group Resource Name"} string resourceName,
-                                    @display{label: "Maximum members"} int maxMembers) returns 
-                                    @tainted @display{label: "Contact Group"} ContactGroup|error {
+    @display {label: "Get a Contact Group"}
+    remote function getContactGroup(@display {label: "Contact Group Resource Name"} string resourceName,
+                                    @display {label: "Maximum members"} int maxMembers) returns 
+                                    @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + resourceName;
         string pathWithParameter = prepareUrlWithStringParameter(path, maxMembers.toString());
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(path);
@@ -418,12 +388,10 @@ public client class Client {
     # + resourceName - Name of the `ContactGroup` to be created
     # + updateName - Name to be updated
     # + return - `ContactGroup` on success else an `error`
-    @display {
-        label: "Update a Contact Group"
-    }
-    remote function updateContactGroup(@display{label: "Contact Group Resource Name"} string resourceName,
-                                       @display{label: "Name to be Updated"} string updateName) returns                          
-                                       @tainted @display{label: "Contact Group"} ContactGroup|error {
+    @display {label: "Update a Contact Group"}
+    remote function updateContactGroup(@display {label: "Contact Group Resource Name"} string resourceName,
+                                       @display {label: "Name to be Updated"} string updateName) returns                          
+                                       @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + resourceName;
         http:Request request = new;
         string getpath = SLASH + resourceName;
@@ -447,13 +415,31 @@ public client class Client {
     # 
     # + resourceName - Contact Group resource name
     # + return - () on success, else an `error`
-    @display {
-        label: "Delete a Contact Group"
-    }
-    remote function deleteContactGroup(@display{label: "Contact Group Resource Name"} string resourceName) returns 
-                                       @tainted @display{label: "Result"} error? {
+    @display {label: "Delete a Contact Group"}
+    remote function deleteContactGroup(@display {label: "Contact Group Resource Name"} string resourceName) returns 
+                                       @tainted @display {label: "Result"} error? {
         string path = SLASH + resourceName;
         http:Response deleteResponse = <http:Response>check self.googleContactClient->delete(path);
         return handleDeleteResponse(deleteResponse);
     }
+
+    # Modify a contacts in Contact Group.
+    # 
+    # + contactGroupResourceName - Contact Group resource name
+    # + resourceNameToAdd - Contact resource name to add
+    # + resourceNameToRemove - Contact resource name to remove
+    # + return - json on success, else an `error`
+    @display {label: "Modify contacts in a Contact Group"}
+    remote function modifyContactGroup(string contactGroupResourceName, string[] resourceNameToAdd, string[] resourceNameToRemove) returns 
+                                       @tainted json|error {
+        string path = SLASH + contactGroupResourceName + "/members:modify";
+        http:Request request = new;
+        json payload =  {
+                            "resourceNamesToAdd": resourceNameToAdd,
+                            "resourceNamesToRemove": resourceNameToRemove
+                        };
+        request.setJsonPayload(payload);
+        http:Response response = <http:Response>check self.googleContactClient->post(path, request);
+        return handleResponse(response);
+    }    
 }
