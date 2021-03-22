@@ -56,12 +56,48 @@ const string HTTP_RESPONSE_ERROR = "Error occurred while getting the HTTP respon
 const string PAYLOAD_ERROR = "Error occured while extracting errors from payload.";
 const string SEARCH_ERROR = "Search query not matched";
 
+# Define a OtherContacts Fields returned when specified.
+#
+# + OTHER_CONTACT_EMAIL_ADDRESS - OtherContact's email addresses
+# + OTHER_CONTACT_NAME - OtherContact's names
+# + OTHER_CONTACT_PHONE_NUMBER - OtherContact's phoneNumbers
 public enum OtherContactMasks {
     OTHER_CONTACT_EMAIL_ADDRESS = "emailAddresses",
     OTHER_CONTACT_NAME = "names",
     OTHER_CONTACT_PHONE_NUMBER = "phoneNumbers"
 }
 
+# Define a Fields returned when specified.
+#
+# + ADDRESS - Contact's street addresses
+# + AGE_RANGE - Contact's age ranges
+# + BIOGRAPHY - Contact's biographies
+# + BIRTHDAY - Contact's birthdays
+# + CALENDER_URL - Contact's calendar URLs
+# + CLIENT_DATA - Contact's client data
+# + COVER_PHOTO - Contact's cover photos
+# + EMAIL_ADDRESS - Contact's email addresses
+# + EVENT - Contact's events
+# + EXTERNAL_ID - Contact's external IDs
+# + GENDER - Contact's genders
+# + IM_CLIENT - Contact's instant messaging clients
+# + INTEREST - Contact's interests
+# + LOCALE - Contact's locale preferences
+# + LOCATION - Contact's locations
+# + MEMBERSHIP - Contact's group memberships
+# + META_DATA - Metadata about person
+# + MISC_KEYWORD - Contact's miscellaneous keywords
+# + NAME - Contact's names
+# + NICK_NAME - Contact's nicknames
+# + OCCUPATION - Contact's occupations
+# + ORGANIZATION - Contact's organizations
+# + PHONE_NUMBER - Contact's phoneNumbers
+# + PHOTO - Contact's photos
+# + RELATION - Contact's relations
+# + SIP_ADDRESS - Contact's sipAddresses
+# + SKILL - Contact's skills
+# + URL - Person's URLs
+# + USER_DEFINED - User defined data
 public enum ContactMasks {
     ADDRESS = "addresses",
     AGE_RANGE = "ageRanges",
@@ -69,7 +105,7 @@ public enum ContactMasks {
     BIRTHDAY = "birthdays",
     CALENDER_URL = "calendarUrls",
     CLIENT_DATA = "clientData",
-    COVER_PHOTO = "coverPhotos"
+    COVER_PHOTO = "coverPhotos",
     EMAIL_ADDRESS = "emailAddresses",
     EVENT = "events",
     EXTERNAL_ID = "externalIds",
@@ -79,10 +115,10 @@ public enum ContactMasks {
     LOCALE = "locales",
     LOCATION = "locations",
     MEMBERSHIP = "memberships",
-    META_DATE = "metadata",
+    META_DATA = "metadata",
     MISC_KEYWORD = "miscKeywords",
     NAME = "names",
-    NICK_NAMES = "nicknames",
+    NICK_NAME = "nicknames",
     OCCUPATION = "occupations",
     ORGANIZATION = "organizations",
     PHONE_NUMBER = "phoneNumbers",
