@@ -92,7 +92,7 @@ public client class Client {
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
         string pathWithQuery = pathWithReadMasks + QUERY_PATH + query;
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithQuery);
-        var response = check handleResponse(httpResponse);
+        var response = check handleResponseWithNull(httpResponse);
         var searchResponse = check response.cloneWithType(SearchResponse);
         Person[] persons = [];
         int i = persons.length();
