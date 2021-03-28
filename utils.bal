@@ -452,49 +452,6 @@ isolated function handleUploadPhotoResponse(http:Response httpResponse) returns 
     }
 }
 
-function getSyncContactsStream(http:Client googleContactClient, string[] personFields, @tainted ConnectionsStreamResponse 
-response, @tainted Person[] persons, int? count = (), string? syncToken = (), string? pageToken = ()) 
-returns @tainted ConnectionsStreamResponse|error {
-    string[] value = [];
-    map<string> optionals = {};
-    if (count is int) {
-        optionals["maxResults"] = count.toString();
-    }
-    if (pageToken is string) {
-        optionals["pageToken"] = pageToken;
-    }
-    optionals.forEach(function(string val) {
-        value.push(val);
-    });
-    string path = <@untainted> prepareQueryUrlForToken(TOKEN_PATH, optionals.keys(), value);
-    var httpResponse = googleContactClient->get(path);
-    json resp = check checkAndSetErrors(httpResponse);
-    ConnectionsResponse|error res = resp.cloneWithType(ConnectionsResponse);
-    if (res is ConnectionsResponse) {
-        int i = persons.length();
-        foreach Person person in res.connections {
-            persons[i] = person;
-            i = i + 1;
-        }
-        stream<Person> eventStream = (<@untainted>persons).toStream();
-        string? nextPageToken = res?.nextPageToken;
-        if (nextPageToken is string) {
-            var streams = check getSyncContactsStream(googleContactClient, personFields, response, persons, count,
-            syncToken, nextPageToken);          
-        } 
-        else {
-            string? nextSyncToken = res?.nextSyncToken;
-            if (nextSyncToken is string) {    
-                response.nextSyncToken = nextSyncToken;       
-            }        
-        }
-        response.connections = eventStream;          
-        return response;      
-    } else {
-        return error("ERR_EVENT_RESPONSE", res);
-    }
-}
-
 isolated function prepareQueryUrlForToken(string path, string[] queryParamNames, string[] queryParamValues) 
 returns string {
     string url = path;

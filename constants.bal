@@ -30,7 +30,6 @@ const string CONTACT_GROUP_PATH = "contactGroups";
 const string BATCH_CONTACT_GROUP_PATH = ":batchGet?";
 const string LIST_PEOPLE_PATH = "people/me/connections?requestSyncToken=true&";
 const string LIST_CONTACTS = "/people/me/connections?";
-const string TOKEN_PATH = "/people/me/connections?personFields=names,emailAddresses&pageSize=1&requestSyncToken=true";
 const string PERSON_FIELDS = "?personFields=";
 const string CREATE_CONTACT_PATH = "/people:createContact";
 const string QUERY_PATH = "&query=";
