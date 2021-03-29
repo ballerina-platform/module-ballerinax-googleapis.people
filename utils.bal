@@ -227,23 +227,28 @@ function getContactsStream(http:Client googleContactClient, @tainted Person[] pe
                            ContactListOptions? options = ()) returns @tainted stream<Person>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     var httpResponse = googleContactClient->get(path);
-    json resp = check checkAndSetErrors(httpResponse);
-    ConnectionsResponse|error res = resp.cloneWithType(ConnectionsResponse);
-    if (res is ConnectionsResponse) {
-        int i = persons.length();
-        foreach Person person in res.connections {
-            persons[i] = person;
-            i = i + 1;
+    json response = check checkAndSetErrors(httpResponse);
+    map<json> mapResponse = <map<json>> response;
+    if (mapResponse.length() != 0) {
+        ConnectionsResponse|error contactResponse = response.cloneWithType(ConnectionsResponse);
+        if (contactResponse is ConnectionsResponse) {
+            int i = persons.length();
+            foreach Person person in contactResponse.connections {
+                persons[i] = person;
+                i = i + 1;
+            }
+            stream<Person> contactStream = (<@untainted>persons).toStream();
+            string? pageToken = contactResponse?.nextPageToken;
+            if (pageToken is string && options is ContactListOptions) {
+                options.pageToken = pageToken;
+                var streams = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
+            }
+            return contactStream;
+        } else {
+            return error(CONNECTION_RESPONSE_ERROR);
         }
-        stream<Person> contactStream = (<@untainted>persons).toStream();
-        string? pageToken = res?.nextPageToken;
-        if (pageToken is string && options is ContactListOptions) {
-            options.pageToken = pageToken;
-            var streams = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
-        }
-        return contactStream;
     } else {
-        return error(CONNECTION_RESPONSE_ERROR);
+        return error("Contacts is empty");
     }
 }
 
@@ -258,23 +263,28 @@ function getOtherContactsStream(http:Client googleContactClient, @tainted Person
                                 returns @tainted stream<Person>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     var httpResponse = googleContactClient->get(path);
-    json resp = check checkAndSetErrors(httpResponse);
-    OtherContactListResponse|error res = resp.cloneWithType(OtherContactListResponse);
-    if (res is OtherContactListResponse) {
-        int i = persons.length();
-        foreach Person person in res.otherContacts {
-            persons[i] = person;
-            i = i + 1;
+    json response = check checkAndSetErrors(httpResponse);
+    map<json> mapResponse = <map<json>> response;
+    if (mapResponse.length() != 0) {
+        OtherContactListResponse|error otherResponse = response.cloneWithType(OtherContactListResponse);
+        if (otherResponse is OtherContactListResponse) {
+            int i = persons.length();
+            foreach Person person in otherResponse.otherContacts {
+                persons[i] = person;
+                i = i + 1;
+            }
+            stream<Person> contactStream = (<@untainted>persons).toStream();
+            string? pageToken = otherResponse?.nextPageToken;
+            if (pageToken is string && options is ContactListOptions) {
+                options.pageToken = pageToken;
+                var streams = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
+            }
+            return contactStream;
+        } else {
+            return error(OTHERCONTACT_RESPONSE_ERROR);
         }
-        stream<Person> contactStream = (<@untainted>persons).toStream();
-        string? pageToken = res?.nextPageToken;
-        if (pageToken is string && options is ContactListOptions) {
-            options.pageToken = pageToken;
-            var streams = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
-        }
-        return contactStream;
     } else {
-        return error(OTHERCONTACT_RESPONSE_ERROR);
+        return error("Other Contacts is empty");
     }
 }
 
@@ -289,23 +299,28 @@ function getContactGroupStream(http:Client googleContactClient, @tainted Contact
                                 returns @tainted stream<ContactGroup>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     var httpResponse = googleContactClient->get(path);
-    json resp = check checkAndSetErrors(httpResponse);
-    ContactGroupListResponse|error res = resp.cloneWithType(ContactGroupListResponse);
-    if (res is ContactGroupListResponse) {
-        int i = contactgroups.length();
-        foreach ContactGroup person in res.contactGroups {
-            contactgroups[i] = person;
-            i = i + 1;
+    json response = check checkAndSetErrors(httpResponse);
+    map<json> mapResponse = <map<json>> response;
+    if (mapResponse.length() != 0) {
+        ContactGroupListResponse|error contactGroupResponse = response.cloneWithType(ContactGroupListResponse);
+        if (contactGroupResponse is ContactGroupListResponse) {
+            int i = contactgroups.length();
+            foreach ContactGroup person in contactGroupResponse.contactGroups {
+                contactgroups[i] = person;
+                i = i + 1;
+            }
+            stream<ContactGroup> contactStream = (<@untainted>contactgroups).toStream();
+            string? pageToken = contactGroupResponse?.nextPageToken;
+            if (pageToken is string && options is ContactListOptions) {
+                options.pageToken = pageToken;
+                var streams = check getContactGroupStream(googleContactClient, contactgroups, EMPTY_STRING, options);
+            }
+            return contactStream;
+        } else {
+            return error(CONTACTGROUP_RESPONSE_ERROR);
         }
-        stream<ContactGroup> contactStream = (<@untainted>contactgroups).toStream();
-        string? pageToken = res?.nextPageToken;
-        if (pageToken is string && options is ContactListOptions) {
-            options.pageToken = pageToken;
-            var streams = check getContactGroupStream(googleContactClient, contactgroups, EMPTY_STRING, options);
-        }
-        return contactStream;
     } else {
-        return error(OTHERCONTACT_RESPONSE_ERROR);
+        return error("Contact groups is empty");
     }
 }
 
@@ -418,6 +433,25 @@ isolated function handleResponse(http:Response httpResponse) returns @tainted js
     json response = check httpResponse.getJsonPayload();
     if (httpResponse.statusCode is http:STATUS_OK) {
         return response;
+    } else {
+        json err = check response.'error.message;
+        return error(err.toString());
+    }
+}
+
+# Handle http response which can have empty if value not exists.
+# 
+# + httpResponse - Received http response
+# + return - JSON on success else an error
+isolated function handleResponseWithNull(http:Response httpResponse) returns @tainted json|()|error {
+    json response = check httpResponse.getJsonPayload();
+    if (httpResponse.statusCode is http:STATUS_OK) {
+        map<json> mapResponse = <map<json>> response;
+        if (mapResponse.length() != 0) {
+            return response;
+        } else {
+            return error("Search result is empty");
+        }
     } else {
         json err = check response.'error.message;
         return error(err.toString());
