@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/encoding;
+import ballerina/url;
 import ballerina/http;
 import ballerina/io;
 import ballerina/log;
@@ -171,7 +171,7 @@ isolated function prepareResourceString(string pathReceived, string[] resourceNa
 # 
 # + imagePath - Path to image source from root directory
 # + return - Person stream on success, else an error
-function convertImageToBase64String(string imagePath) returns string|error {
+isolated function convertImageToBase64String(string imagePath) returns string|error {
     byte[] bytes = check io:fileReadBytes(imagePath);
     string encodedString = bytes.toBase64();
     return encodedString;
@@ -223,7 +223,7 @@ function getContacts(http:Client googleContactClient, @tainted Person[] persons,
 # + persons - Person array
 # + options - Record that contains options parameters
 # + return - Person stream on success, else an error
-function getContactsStream(http:Client googleContactClient, @tainted Person[] persons, string pathProvided = EMPTY_STRING, 
+isolated function getContactsStream(http:Client googleContactClient, @tainted Person[] persons, string pathProvided = EMPTY_STRING, 
                            ContactListOptions? options = ()) returns @tainted stream<Person>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     var httpResponse = googleContactClient->get(path);
@@ -258,7 +258,7 @@ function getContactsStream(http:Client googleContactClient, @tainted Person[] pe
 # + persons - Person array
 # + options - Record that contains options parameters
 # + return - Person stream on success, else an error
-function getOtherContactsStream(http:Client googleContactClient, @tainted Person[] persons, 
+isolated function getOtherContactsStream(http:Client googleContactClient, @tainted Person[] persons, 
                                 string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
                                 returns @tainted stream<Person>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
@@ -294,7 +294,7 @@ function getOtherContactsStream(http:Client googleContactClient, @tainted Person
 # + contactgroups - Array of contact groups
 # + options - Record that contains options parameters
 # + return - Person stream on success, else an error
-function getContactGroupStream(http:Client googleContactClient, @tainted ContactGroup[] contactgroups, 
+isolated function getContactGroupStream(http:Client googleContactClient, @tainted ContactGroup[] contactgroups, 
                                 string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
                                 returns @tainted stream<ContactGroup>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
@@ -381,7 +381,7 @@ isolated function prepareQueryUrl(string[] paths, string[] queryParamNames, stri
     int i = 0;
     foreach var name in queryParamNames {
         string value = queryParamValues[i];
-        var encoded = encoding:encodeUriComponent(value, "utf-8");
+        var encoded = url:encode(value, "utf-8");
         if (encoded is string) {
             if (first) {
                 url = url + name + EQUAL + encoded;
@@ -390,7 +390,7 @@ isolated function prepareQueryUrl(string[] paths, string[] queryParamNames, stri
                 url = url + AMBERSAND + name + EQUAL + encoded;
             }
         } else {
-            log:printError("Unable to encode value: " + value, err = encoded);
+            log:printError("Unable to encode value: " + value);
             break;
         }
         i = i + 1;
@@ -493,7 +493,7 @@ returns string {
     int i = 0;
     foreach var name in queryParamNames {
         string value = queryParamValues[i];
-        var encoded = encoding:encodeUriComponent(value, "utf-8");
+        var encoded = url:encode(value, "utf-8");
         if (encoded is string) {
             if (first) {
                 url = url + AMBERSAND + name + EQUAL + encoded;
@@ -502,7 +502,7 @@ returns string {
                 url = url + AMBERSAND + name + EQUAL + encoded;
             }
         } else {
-            log:printError("Unable to encode value: " + value, err = encoded);
+            log:printError("Unable to encode value: " + value);
             break;
         }
         i = i + 1;
