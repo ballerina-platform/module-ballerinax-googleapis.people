@@ -38,7 +38,7 @@ The Google People Ballerina Connector allows you to access the Google People API
 
 |                             |            Versions             |
 |:---------------------------:|:-------------------------------:|
-|    Ballerina Language       |       Swan Lake Alpha 3         |
+|    Ballerina Language       |       Swan Lake Alpha 4         |
 |     Google People API       |               V1                |
 
 
@@ -106,11 +106,11 @@ public function main() {
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
     contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    if (createdContact is contacts:Person) {
+        log:printInfo("Person/Contacts Details: " + createdContact.toString());
+        log:printInfo(createdContact.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createdContact.toString());
     }
 }
 ```
@@ -151,23 +151,23 @@ public function main() {
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
     contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
+    if (createdContact is contacts:Person) {
         contactResourceName = <@untainted>createdContact.resourceName;
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+        log:printInfo("Person/Contacts Details: " + createdContact.toString());
+        log:printInfo(createdContact.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createdContact.toString());
     }
 
     // Fetch information about Person/Contact
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
     Person|error getPeople = googleContactClient->getPeople(contactResourceName, personFields, sources);
-    if (response is contacts:Person) {
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    if (getPeople is contacts:Person) {
+        log:printInfo("Person/Contacts Details: " + getPeople.toString());
+        log:printInfo(getPeople.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + getPeople.toString());
     }
 }
 ```
@@ -194,11 +194,11 @@ contacts:Client googleContactClient = check new (googleContactConfig);
 public function main() {
     // Search a Person/Contact with a string
     SearchResponse|error searchPeople = googleContactClient->searchPeople("Test");
-    if (response is contacts:Person) {
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    if (searchPeople is contacts:Person) {
+        log:printInfo("Person/Contacts Details: " + searchPeople.toString());
+        log:printInfo(searchPeople.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + searchPeople.toString());
     }
 }
 ```
@@ -240,17 +240,17 @@ public function main() {
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
     contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
+    if (createdContact is contacts:Person) {
         contactResourceName = <@untainted>createdContact.resourceName;
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+        log:printInfo("Person/Contacts Details: " + createdContact.toString());
+        log:printInfo(createdContact.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createdContact.toString());
     }
 
     var response = googleContactClient->deleteContact(contactResourceName);
     if (response is boolean) {
-        log:print("Deleted");
+        log:printInfo("Deleted");
     } else {
         log:printError("Error: " + response.toString());
     }
@@ -281,11 +281,11 @@ public function main() {
     // Create Contact Group with given name
     string[] readGroupFields = ["name", "clientData", "groupType", "metadata"];
     var createContactGroup = googleContactClient->createContactGroup("TestContactGroup", readGroupFields);
-    if (response is contacts:ContactGroup) {
-        log:print("Contact Group Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    if (createContactGroup is contacts:ContactGroup) {
+        log:printInfo("Contact Group Details: " + createContactGroup.toString());
+        log:printInfo(createContactGroup.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContactGroup.toString());
     }
 }
 ```
@@ -311,7 +311,7 @@ contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
 
-    string contactResourceName = "";
+    string contactGroupResourceName = "";
 
     CreatePerson createContact = {
         "emailAddresses": [],
@@ -326,19 +326,19 @@ public function main() {
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
     contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    if (createContactGroup is contacts:Person) {
+        contactGroupResourceName = <@untainted>createContactGroup.resourceName;
+        log:printInfo("Person/Contacts Details: " + createContactGroup.toString());
+        log:printInfo(createContactGroup.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContactGroup.toString());
     }
 
     // Fetch information about Contact Group  
-    contacts:ContactGroup|error getPeople = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
+    contacts:ContactGroup|error response = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
     if (response is contacts:ContactGroup) {
-        log:print("Contact Group Details: " + response.toString());
-        log:print(response.resourceName.toString());
+        log:printInfo("Contact Group Details: " + response.toString());
+        log:printInfo(response.resourceName.toString());
     } else {
         log:printError("Error: " + response.toString());
     }

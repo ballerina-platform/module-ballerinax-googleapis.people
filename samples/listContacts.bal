@@ -38,7 +38,7 @@ public function main() {
     var listPeopleConnection = googleContactClient->listPeopleConnection(personFields);
     if (listPeopleConnection is stream<Person>) {
         error? e = listPeopleConnection.forEach(isolated function(Person person) {
-            log:print(person.toString());
+            log:printInfo(person.toString());
         });
     } else {
         log:printError(listPeopleConnection.toString());

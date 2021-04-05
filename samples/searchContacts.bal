@@ -34,10 +34,10 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     // Search a Person/Contact with a string
-    SearchResponse|error searchPeople = googleContactClient->searchPeople("Test");
+    SearchResponse|error response = googleContactClient->searchPeople("Test");
     if (response is contacts:Person) {
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+        log:printInfo("Person/Contacts Details: " + response.toString());
+        log:printInfo(response.resourceName.toString());
     } else {
         log:printError("Error: " + response.toString());
     }

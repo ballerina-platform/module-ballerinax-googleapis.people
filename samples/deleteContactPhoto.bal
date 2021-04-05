@@ -48,19 +48,19 @@ public function main() {
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    contacts:Person|error createContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createContact is contacts:Person) {
+        contactResourceName = <@untainted>createContact.resourceName;
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContact.toString());
     }
 
     // Update a contact photo
     var updateContactPhoto = googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
     if (updateContactPhoto is ()) {
-        log:print("Updated Contact Photo");
+        log:printInfo("Updated Contact Photo");
     } else {
         log:printError(updateContactPhoto.toString());
     }
@@ -68,7 +68,7 @@ public function main() {
     // Delete a contact photo
     var deleteContactPhoto = googleContactClient->deleteContactPhoto(contactResourceName);
     if (deleteContactPhoto is ()) {
-        log:print("Delete Contact Photo Deleted");
+        log:printInfo("Delete Contact Photo Deleted");
     } else {
         log:printError(deleteContactPhoto.toString());
     }

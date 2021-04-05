@@ -21,7 +21,7 @@ import ballerina/http;
 # + oauth2Config - OAuth client configuration
 # + secureSocketConfig - HTTP client configuration
 public type GoogleContactsConfiguration record {
-    http:OAuth2RefreshTokenGrantConfig oauth2Config;
+    http:BearerTokenConfig | http:OAuth2RefreshTokenGrantConfig oauth2Config;
     http:ClientSecureSocket secureSocketConfig?;
 };
 

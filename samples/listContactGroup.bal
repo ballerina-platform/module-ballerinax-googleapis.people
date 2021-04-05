@@ -36,7 +36,7 @@ public function main() {
     // List with ContactGroup[] records
     var listContactGroup = googleContactClient->listContactGroup();
     if (listContactGroup is ContactGroup[]) {
-        log:print(listContactGroup.toString());
+        log:printInfo(listContactGroup.toString());
     } else {
         log:printError(listContactGroup.toString());
     }

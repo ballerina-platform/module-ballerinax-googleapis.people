@@ -38,9 +38,8 @@ public function main() {
     string[] readMask = ["names", "emailAddresses", "phoneNumbers"];
     var copyContacts = googleContactClient->copyOtherContactToMyContact(copyMask, readMask, "otherContacts/c8846080985039646639");
     if (copyContacts is Person) {
-        log:print(copyContacts.toString());
-        test:assertTrue(true, msg = "List Other Contacts Failed");
+        log:printInfo(copyContacts.toString());
     } else {
-        test:assertFail(msg = copyContacts.message());
+        log:printError("Error in copying");
     }
 }

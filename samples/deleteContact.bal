@@ -48,19 +48,19 @@ public function main() {
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    contacts:Person|error createContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createContact is contacts:Person) {
+        contactResourceName = <@untainted>createContact.resourceName;
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContact.toString());
     }
 
     // Delete a contact
     var deleteContact = googleContactClient->deleteContact(contactResourceName);
     if (deleteContact is ()) {
-        log:print("Deleted a Contact");
+        log:printInfo("Deleted a Contact");
     } else {
         log:printError(deleteContact.toString());
     }

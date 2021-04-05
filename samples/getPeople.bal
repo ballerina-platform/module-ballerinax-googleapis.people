@@ -33,9 +33,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-
     string contactResourceName = "";
-
     CreatePerson createContact = {
         "emailAddresses": [],
         "names": [{
@@ -48,23 +46,23 @@ public function main() {
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    contacts:Person|error createContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createContact is contacts:Person) {
+        contactResourceName = <@untainted>createContact.resourceName;
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContact.toString());
     }
 
     // Fetch information about Person/Contact
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    Person|error getPeople = googleContactClient->getPeople(contactResourceName, personFields, sources);
-    if (response is contacts:Person) {
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    Person|error getResponse = googleContactClient->getPeople(contactResourceName, personFields, sources);
+    if (getResponse is contacts:Person) {
+        log:printInfo("Person/Contacts Details: " + getResponse.toString());
+        log:printInfo(getResponse.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + getResponse.toString());
     }
 }

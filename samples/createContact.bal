@@ -46,11 +46,11 @@ public function main() {
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    contacts:Person|error createContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createContact is contacts:Person) {
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContact.toString());
     }
 }
