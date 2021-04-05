@@ -36,10 +36,10 @@ public function main() {
     // Create Contact Group with given name
     string[] readGroupFields = ["name", "clientData", "groupType", "metadata"];
     var createContactGroup = googleContactClient->createContactGroup("TestContactGroup", readGroupFields);
-    if (response is contacts:ContactGroup) {
-        log:print("Contact Group Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    if (createContactGroup is contacts:ContactGroup) {
+        log:print("Contact Group Details: " + createContactGroup.toString());
+        log:print(createContactGroup.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContactGroup.toString());
     }
 }

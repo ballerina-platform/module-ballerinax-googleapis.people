@@ -33,36 +33,24 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-
-    string contactResourceName = "";
-
-    CreatePerson createContact = {
-        "emailAddresses": [],
-        "names": [{
-            "displayName": "Test1 Test2",
-            "familyName": "Test",
-            "givenName": "Test",
-            "displayNameLastFirst": "Test2, Test1",
-            "unstructuredName": "Test Test"
-        }]
-    };
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (response is contacts:Person) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:print("Person/Contacts Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    string contactGroupResourceName = "";
+    // Create Contact Group with given name
+    string[] readGroupFields = ["name", "clientData", "groupType", "metadata"];
+    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup", readGroupFields);
+    if (createContactGroup is contacts:ContactGroup) {
+        log:print("Contact Group Details: " + createContactGroup.toString());
+        contactGroupResourceName = createContactGroup.resourceName;
+        log:print(createContactGroup.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + createContactGroup.toString());
     }
 
     // Fetch information about Contact Group  
-    contacts:ContactGroup|error getPeople = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
-    if (response is contacts:ContactGroup) {
-        log:print("Contact Group Details: " + response.toString());
-        log:print(response.resourceName.toString());
+    contacts:ContactGroup|error getResponse = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
+    if (getResponse is contacts:ContactGroup) {
+        log:print("Contact Group Details: " + getResponse.toString());
+        log:print(getResponse.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + getResponse.toString());
     }
 }
