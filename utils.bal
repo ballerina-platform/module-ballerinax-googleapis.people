@@ -170,7 +170,7 @@ isolated function prepareResourceString(string pathReceived, string[] resourceNa
 # Convert image to base64-encoded string.
 # 
 # + imagePath - Path to image source from root directory
-# + return - Person stream on success, else an error
+# + return - PersonResponse stream on success, else an error
 isolated function convertImageToBase64String(string imagePath) returns string|error {
     byte[] bytes = check io:fileReadBytes(imagePath);
     string encodedString = bytes.toBase64();
@@ -180,22 +180,22 @@ isolated function convertImageToBase64String(string imagePath) returns string|er
 # Get persons stream.
 # 
 # + googleContactClient - Contact client
-# + persons - Person array
+# + persons - PersonResponse array
 # + options - Record that contains options parameters
-# + return - Person stream on success, else an error
-function getContacts(http:Client googleContactClient, @tainted Person[] persons, string pathProvided = EMPTY_STRING, 
-                           ContactListOptions? options = ()) returns @tainted stream<Person>|ContactsTriggerResponse|error {
+# + return - PersonResponse stream on success, else an error
+function getContacts(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
+                           ContactListOptions? options = ()) returns @tainted stream<PersonResponse>|ContactsTriggerResponse|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     var httpResponse = googleContactClient->get(path);
     json getResponse = check checkAndSetErrors(httpResponse);
     ConnectionsResponse|ContactsTriggerResponse|error response = getResponse.cloneWithType(ConnectionsResponse);
     if (response is ConnectionsResponse) {
         int i = persons.length();
-        foreach Person person in response.connections {
+        foreach PersonResponse person in response.connections {
             persons[i] = person;
             i = i + 1;
         }
-        stream<Person> contactStream = (<@untainted>persons).toStream();
+        stream<PersonResponse> contactStream = (<@untainted>persons).toStream();
         string? pageToken = response?.nextPageToken;
         if (pageToken is string && options is ContactListOptions) {
             options.pageToken = pageToken;
@@ -220,11 +220,11 @@ function getContacts(http:Client googleContactClient, @tainted Person[] persons,
 # Get persons stream.
 # 
 # + googleContactClient - Contact client
-# + persons - Person array
+# + persons - PersonResponse array
 # + options - Record that contains options parameters
-# + return - Person stream on success, else an error
-isolated function getContactsStream(http:Client googleContactClient, @tainted Person[] persons, string pathProvided = EMPTY_STRING, 
-                           ContactListOptions? options = ()) returns @tainted stream<Person>|error {
+# + return - PersonResponse stream on success, else an error
+isolated function getContactsStream(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
+                           ContactListOptions? options = ()) returns @tainted stream<PersonResponse>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     var httpResponse = googleContactClient->get(path);
     json response = check checkAndSetErrors(httpResponse);
@@ -233,11 +233,11 @@ isolated function getContactsStream(http:Client googleContactClient, @tainted Pe
         ConnectionsResponse|error contactResponse = response.cloneWithType(ConnectionsResponse);
         if (contactResponse is ConnectionsResponse) {
             int i = persons.length();
-            foreach Person person in contactResponse.connections {
+            foreach PersonResponse person in contactResponse.connections {
                 persons[i] = person;
                 i = i + 1;
             }
-            stream<Person> contactStream = (<@untainted>persons).toStream();
+            stream<PersonResponse> contactStream = (<@untainted>persons).toStream();
             string? pageToken = contactResponse?.nextPageToken;
             if (pageToken is string && options is ContactListOptions) {
                 options.pageToken = pageToken;
@@ -255,12 +255,12 @@ isolated function getContactsStream(http:Client googleContactClient, @tainted Pe
 # Get persons stream.
 # 
 # + googleContactClient - Contact client
-# + persons - Person array
+# + persons - PersonResponse array
 # + options - Record that contains options parameters
-# + return - Person stream on success, else an error
-isolated function getOtherContactsStream(http:Client googleContactClient, @tainted Person[] persons, 
+# + return - PersonResponse stream on success, else an error
+isolated function getOtherContactsStream(http:Client googleContactClient, @tainted PersonResponse[] persons, 
                                 string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
-                                returns @tainted stream<Person>|error {
+                                returns @tainted stream<PersonResponse>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     var httpResponse = googleContactClient->get(path);
     json response = check checkAndSetErrors(httpResponse);
@@ -269,11 +269,11 @@ isolated function getOtherContactsStream(http:Client googleContactClient, @taint
         OtherContactListResponse|error otherResponse = response.cloneWithType(OtherContactListResponse);
         if (otherResponse is OtherContactListResponse) {
             int i = persons.length();
-            foreach Person person in otherResponse.otherContacts {
+            foreach PersonResponse person in otherResponse.otherContacts {
                 persons[i] = person;
                 i = i + 1;
             }
-            stream<Person> contactStream = (<@untainted>persons).toStream();
+            stream<PersonResponse> contactStream = (<@untainted>persons).toStream();
             string? pageToken = otherResponse?.nextPageToken;
             if (pageToken is string && options is ContactListOptions) {
                 options.pageToken = pageToken;
@@ -293,7 +293,7 @@ isolated function getOtherContactsStream(http:Client googleContactClient, @taint
 # + googleContactClient - Contact client
 # + contactgroups - Array of contact groups
 # + options - Record that contains options parameters
-# + return - Person stream on success, else an error
+# + return - PersonResponse stream on success, else an error
 isolated function getContactGroupStream(http:Client googleContactClient, @tainted ContactGroup[] contactgroups, 
                                 string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
                                 returns @tainted stream<ContactGroup>|error {
@@ -508,4 +508,112 @@ returns string {
         i = i + 1;
     }
     return url;
+}
+
+isolated function propareUpdate(Person updateContact, Person getContact) returns Person {
+    var names = updateContact?.names;
+    if(names is Name[]){
+        getContact.names = names;
+    }
+    var emailAddresses = updateContact?.emailAddresses;
+    if(emailAddresses is EmailAddress[]){
+        getContact.emailAddresses = emailAddresses;
+    }
+    var biographies = updateContact?.biographies;
+    if(biographies is Biography[]){
+        getContact.biographies = biographies;
+    }
+    var birthdays = updateContact?.birthdays;
+    if(birthdays is Birthday[]){
+        getContact.birthdays = birthdays;
+    }
+    var braggingRights = updateContact?.braggingRights;
+    if(braggingRights is BraggingRights[]){
+        getContact.braggingRights = braggingRights;
+    }
+    var calendarUrls = updateContact?.calendarUrls;
+    if(calendarUrls is CalendarUrl[]){
+        getContact.calendarUrls = calendarUrls;
+    }
+    var clientData = updateContact?.clientData;
+    if(clientData is ClientData[]){
+        getContact.clientData = clientData;
+    }
+    var events = updateContact?.events;
+    if(events is Event[]){
+        getContact.events = events;
+    }
+    var externalIds = updateContact?.externalIds;
+    if(externalIds is ExternalId[]){
+        getContact.externalIds = externalIds;
+    }
+    var fileAses = updateContact?.fileAses;
+    if(fileAses is FileAs[]){
+        getContact.fileAses = fileAses;
+    }
+    var genders = updateContact?.genders;
+    if(genders is Gender[]){
+        getContact.genders = genders;
+    }
+    var imClients = updateContact?.imClients;
+    if(imClients is ImClient[]){
+        getContact.imClients = imClients;
+    }
+    var interests = updateContact?.interests;
+    if(interests is Interest[]){
+        getContact.interests = interests;
+    }
+    var locales = updateContact?.locales;
+    if(locales is Locale[]){
+        getContact.locales = locales;
+    }
+    var locations = updateContact?.locations;
+    if(locations is Location[]){
+        getContact.locations = locations;
+    }
+    var memberships = updateContact?.memberships;
+    if(memberships is Membership[]){
+        getContact.memberships = memberships;
+    }
+    var miscKeywords = updateContact?.miscKeywords;
+    if(miscKeywords is MiscKeyword[]){
+        getContact.miscKeywords = miscKeywords;
+    }
+    var nicknames = updateContact?.nicknames;
+    if(nicknames is Nickname[]){
+        getContact.nicknames = nicknames;
+    }
+    var occupations = updateContact?.occupations;
+    if(occupations is Occupation[]){
+        getContact.occupations = occupations;
+    }
+    var organizations = updateContact?.organizations;
+    if(organizations is Organization[]){
+        getContact.organizations = organizations;
+    }
+    var phoneNumbers = updateContact?.phoneNumbers;
+    if(phoneNumbers is PhoneNumber[]){
+        getContact.phoneNumbers = phoneNumbers;
+    }
+    var relations = updateContact?.relations;
+    if(relations is Relation[]){
+        getContact.relations = relations;
+    }
+    var sipAddresses = updateContact?.sipAddresses;
+    if(sipAddresses is SipAddress[]){
+        getContact.sipAddresses = sipAddresses;
+    }
+    var skills = updateContact?.skills;
+    if(skills is Skill[]){
+        getContact.skills = skills;
+    }
+    var urls = updateContact?.urls;
+    if(urls is Url[]){
+        getContact.urls = urls;
+    }
+    var userDefined = updateContact?.userDefined;
+    if(userDefined is UserDefined[]){
+        getContact.userDefined = userDefined;
+    }
+    return getContact;
 }

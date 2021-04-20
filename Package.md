@@ -92,7 +92,7 @@ contacts:Client googleContactClient = check new (googleContactConfig);
 
 public function main() {
     // Create Person/Contact with given name
-    CreatePerson createContact = {
+    Person createContact = {
         "emailAddresses": [],
         "names": [{
             "displayName": "Test1 Test2",
@@ -104,8 +104,8 @@ public function main() {
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createdContact is contacts:Person) {
+    contacts:PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createdContact is contacts:PersonResponse) {
         log:printInfo("Person/Contacts Details: " + createdContact.toString());
         log:printInfo(createdContact.resourceName.toString());
     } else {
@@ -137,7 +137,7 @@ public function main() {
 
     string contactResourceName = "";
 
-    CreatePerson createContact = {
+    Person createContact = {
         "emailAddresses": [],
         "names": [{
             "displayName": "Test1 Test2",
@@ -161,8 +161,8 @@ public function main() {
     // Fetch information about Person/Contact
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    Person|error getPeople = googleContactClient->getPeople(contactResourceName, personFields, sources);
-    if (getPeople is contacts:Person) {
+    PersonResponse|error getPeople = googleContactClient->getPeople(contactResourceName, personFields, sources);
+    if (getPeople is contacts:PersonResponse) {
         log:printInfo("Person/Contacts Details: " + getPeople.toString());
         log:printInfo(getPeople.resourceName.toString());
     } else {
@@ -193,7 +193,7 @@ contacts:Client googleContactClient = check new (googleContactConfig);
 public function main() {
     // Search a Person/Contact with a string
     SearchResponse|error searchPeople = googleContactClient->searchPeople("Test");
-    if (searchPeople is contacts:Person) {
+    if (searchPeople is contacts:PersonResponse) {
         log:printInfo("Person/Contacts Details: " + searchPeople.toString());
         log:printInfo(searchPeople.resourceName.toString());
     } else {
@@ -226,7 +226,7 @@ public function main() {
 
     string contactResourceName = "";
 
-    CreatePerson createContact = {
+    Person createContact = {
         "emailAddresses": [],
         "names": [{
             "displayName": "Test1 Test2",
@@ -238,8 +238,8 @@ public function main() {
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createdContact is contacts:Person) {
+    contacts:PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createdContact is contacts:PersonResponse) {
         contactResourceName = <@untainted>createdContact.resourceName;
         log:printInfo("Person/Contacts Details: " + createdContact.toString());
         log:printInfo(createdContact.resourceName.toString());
@@ -312,7 +312,7 @@ public function main() {
 
     string contactGroupResourceName = "";
 
-    CreatePerson createContact = {
+    Person createContact = {
         "emailAddresses": [],
         "names": [{
             "displayName": "Test1 Test2",
@@ -324,8 +324,8 @@ public function main() {
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createContactGroup is contacts:Person) {
+    contacts:PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createContactGroup is contacts:PersonResponse) {
         contactGroupResourceName = <@untainted>createContactGroup.resourceName;
         log:printInfo("Person/Contacts Details: " + createContactGroup.toString());
         log:printInfo(createContactGroup.resourceName.toString());

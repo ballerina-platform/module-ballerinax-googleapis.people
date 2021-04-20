@@ -34,20 +34,18 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     string contactResourceName = "";
-    CreatePerson createContact = {
+    Person createContact = {
         "emailAddresses": [],
         "names": [{
-            "displayName": "Test1 Test2",
-            "familyName": "Test",
-            "givenName": "Test",
-            "displayNameLastFirst": "Test2, Test1",
-            "unstructuredName": "Test Test"
+            "familyName": "Hardy",
+            "givenName": "Jason",
+            "unstructuredName": "Jason Hardy"
         }]
     };
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:Person|error createContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createContact is contacts:Person) {
+    contacts:PersonResponse|error createContact = googleContactClient->createContact(createContact, personFields, sources);
+    if (createContact is contacts:PersonResponse) {
         contactResourceName = <@untainted>createContact.resourceName;
         log:printInfo("Person/Contacts Details: " + createContact.toString());
         log:printInfo(createContact.resourceName.toString());
@@ -58,8 +56,8 @@ public function main() {
     // Fetch information about Person/Contact
     string[] personFields = ["names", "phoneNumbers"];
     string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    Person|error getResponse = googleContactClient->getPeople(contactResourceName, personFields, sources);
-    if (getResponse is contacts:Person) {
+    PersonResponse|error getResponse = googleContactClient->getPeople(contactResourceName, personFields, sources);
+    if (getResponse is contacts:PersonResponse) {
         log:printInfo("Person/Contacts Details: " + getResponse.toString());
         log:printInfo(getResponse.resourceName.toString());
     } else {

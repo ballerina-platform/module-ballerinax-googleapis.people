@@ -33,11 +33,11 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-    // List with stream of Person records
+    // List with stream of PersonResponse records
     string[] personFields = ["names", "emailAddresses", "phoneNumbers", "photos"];
     var listPeopleConnection = googleContactClient->listPeopleConnection(personFields);
-    if (listPeopleConnection is stream<Person>) {
-        error? e = listPeopleConnection.forEach(isolated function(Person person) {
+    if (listPeopleConnection is stream<PersonResponse>) {
+        error? e = listPeopleConnection.forEach(isolated function(PersonResponse person) {
             log:printInfo(person.toString());
         });
     } else {

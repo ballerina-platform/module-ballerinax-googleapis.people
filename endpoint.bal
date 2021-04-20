@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/http;
+import ballerina/log;
 
 # Object for Google Contacts configuration.
 #
@@ -43,78 +44,27 @@ public client class Client {
     # Fetch all from "Other Contacts".
     # 
     # + readMasks - Restrict which fields on the person are returned
-    # + return - Stream of `Person` on success else an `error`
+    # + return - Stream of `PersonResponse` on success else an `error`
     @display {label: "List OtherContacts"}
     isolated remote function listOtherContacts(@display {label: "Read Masks"} OtherContactMasks[] readMasks, 
                                       @display {label: "Optional query parameters"} ContactListOptions? options = ()) 
-                                      returns @tainted @display {label: "Stream of Persons"} stream<Person>|error {
+                                      returns @tainted @display {label: "Stream of PersonResponses"} stream<PersonResponse>|error {
         string path = LIST_OTHERCONTACT_PATH;
         http:Request request = new;
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
-        Person[] persons = [];
+        PersonResponse[] persons = [];
         return getOtherContactsStream(self.googleContactClient, persons, pathWithReadMasks, options);
-    }
-
-    # Copies "Other contact" to a new contact in the user's "myContacts".
-    # 
-    # + copyMasks - Restrict which fields on the person are to be copied
-    # + readMasks - Restrict which fields on the person are returned
-    # + resourceName - OtherContacts resource name
-    # + return - `Person` on success else an `error`
-    @display {label: "Copy a OtherContact to MyContact"}
-    isolated remote function copyOtherContactToMyContact(@display {label: "OtherContact Resource Name"} string resourceName,
-                                                @display {label: "Copy Masks"} OtherContactMasks[] copyMasks, 
-                                                @display {label: "Read Masks"} ContactMasks[]? readMasks = ()) 
-                                                returns @tainted @display {label: "Person"} Person|error {
-        string path = SLASH + resourceName + COPY_CONTACT_PATH;
-        http:Request request = new;
-        string copyMask = prepareCopyMaskString(copyMasks);
-        string readMask = prepareReadMaskString(readMasks);
-        json copyPayload = {
-            "copyMask": copyMask,
-            "readMask": readMask
-        };
-        request.setJsonPayload(copyPayload);
-        http:Response httpResponse = <http:Response>check self.googleContactClient->post(path, request);
-        var response = check handleResponse(httpResponse);
-        return check response.cloneWithType(Person);
-    }
-
-    # Search a "Other contacts"(contacts created automatically by emails and google+).
-    # 
-    # + query - String to be searched
-    # + return - `Person[]` on success else an `error`
-    @display {label: "Search in OtherContacts"}
-    isolated remote function searchOtherContacts(@display {label: "Searchable substring"} string query,
-                                        @display {label: "Read Masks"} OtherContactMasks[] readMasks) returns 
-                                        @tainted @display {label: "Array of Person"} Person[]|error {
-        string path = SEARCH_OTHERCONTACT_PATH + QUESTION_MARK;
-        string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
-        string pathWithQuery = pathWithReadMasks + QUERY_PATH + query;
-        http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithQuery);
-        var response = check handleResponseWithNull(httpResponse);
-        var searchResponse = check response.cloneWithType(SearchResponse);
-        Person[] persons = [];
-        int i = persons.length();
-        foreach var result in searchResponse.results {
-            var personResult = result.person;
-            if(personResult is json) {
-                persons[i] = check personResult.cloneWithType(Person);
-                i = i + 1;
-            }
-        }
-        return persons;
     }
 
     # Create a contact.
     # 
     # + createContact - Record of type of `CreatePerson`
     # + personFields - Restrict which fields on the person are returned
-    # + return - `Person` on success else an `error`
+    # + return - `PersonResponse` on success else an `error`
     @display {label: "Create Contact"}
-    isolated remote function createContact(@display {label: "Contact details"} CreatePerson createContact, 
+    isolated remote function createContact(@display {label: "Contact details"} Person createContact, 
                                   @display {label: "Person Fields"} ContactMasks[]? personFields = ()) returns 
-                                  @tainted @display {label: "Person"} Person|error {
+                                  @tainted @display {label: "PersonResponse"} PersonResponse|error {
         string path = CREATE_CONTACT_PATH + QUESTION_MARK;
         json payload = check createContact.cloneWithType(json);
         http:Request request = new;
@@ -122,45 +72,47 @@ public client class Client {
         request.setJsonPayload(payload);
         http:Response httpResponse = <http:Response>check self.googleContactClient->post(pathWithPersonFields, request);
         var response = check handleResponse(httpResponse);
-        return check response.cloneWithType(Person);
+        return check response.cloneWithType(PersonResponse);
     }
 
     # Fetch a contact.
     # 
     # + resourceName - Contact resource name
     # + personFields - Restrict which fields on the person are returned
-    # + return - `Person` on success else an `error`
+    # + return - `PersonResponse` on success else an `error`
     @display {label: "Get a Contact"}
     isolated remote function getContact(@display {label: "Contact Resource Name"} string resourceName, 
                                @display {label: "Person Fields"} ContactMasks[] personFields) returns 
-                               @tainted @display {label: "Person"} Person|error {
+                               @tainted @display {label: "Person"} PersonResponse|error {
         string path = SLASH + resourceName + QUESTION_MARK;
         string pathWithPersonFields = prepareUrlWithPersonFields(path, personFields);
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithPersonFields);
         var response = check handleResponse(httpResponse);
-        return check response.cloneWithType(Person);
+        return check response.cloneWithType(PersonResponse);
     }
 
     # Search a contacts.
     # 
     # + query - String to be searched
-    # + return - `Person[]` on success else an `error`
+    # + return - `PersonResponse[]` on success else an `error`
     @display {label: "Search a Contact"}
     isolated remote function searchPeople(@display {label: "Searchable substring"} string query,
                                  @display {label: "Read Masks"} ContactMasks[] readMasks) returns 
-                                 @tainted @display {label: "Array of Person"} Person[]|error {
+                                 @tainted @display {label: "Array of PersonResponse"} PersonResponse[]|error {
         string path = SLASH + SEARCH_CONTACT_PATH + QUESTION_MARK;
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
         string pathWithQuery = pathWithReadMasks + QUERY_PATH + query;
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithQuery);
-        var response = check handleResponse(httpResponse);
+        var response = check handleResponseWithNull(httpResponse);
+        log:printInfo(response.toString());
         var searchResponse = check response.cloneWithType(SearchResponse);
-        Person[] persons = [];
+        log:printInfo(searchResponse.toString());
+        PersonResponse[] persons = [];
         int i = persons.length();
         foreach var result in searchResponse.results {
             var personResult = result.person;
             if(personResult is json) {
-                persons[i] = check personResult.cloneWithType(Person);
+                persons[i] = check personResult.cloneWithType(PersonResponse);
                 i = i + 1;
             }
         }
@@ -201,23 +153,23 @@ public client class Client {
     # 
     # + resourceNames - String array of contact resource names
     # + personFields - Restrict which fields on the person are returned
-    # + return - `Person[]` on success, else an `error`
+    # + return - `PersonResponse[]` on success, else an `error`
     @display {label: "Batch Get Contacts"}   
     isolated remote function batchGetContacts(@display {label: "Contact Resource Names"} string[] resourceNames, 
                                      @display {label: "Person Fields"} ContactMasks[] personFields) returns 
-                                     @tainted @display {label: "Array of Person"} Person[]|error {
+                                     @tainted @display {label: "Array of PersonResponse"} PersonResponse[]|error {
         string path = SLASH + BATCH_CONTACT_PATH;
         string pathWithResources = prepareResourceString(path, resourceNames);
         string pathWithPersonFields = prepareUrlWithPersonFields(pathWithResources + AMBERSAND, personFields);
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithPersonFields);
         var response = check handleResponse(httpResponse);
         var batchResponse = check response.cloneWithType(BatchGetResponse);
-        Person[] persons = [];
+        PersonResponse[] persons = [];
         int i = persons.length();
         foreach var result in batchResponse.responses {
             var personResult = result.person;
             if(personResult is json) {
-                persons[i] = check personResult.cloneWithType(Person);
+                persons[i] = check personResult.cloneWithType(PersonResponse);
                 i = i + 1;
             }
         }
@@ -232,34 +184,27 @@ public client class Client {
     # + return - `Person` on success else an `error`
     @display {label: "Update a Contact"}  
     isolated remote function updateContact(@display {label: "Contact Resource Name"} string resourceName, 
-                                  @display {label: "Contact details"} CreatePerson createContact, 
+                                  @display {label: "Contact details"} Person updateContact, 
                                   @display {label: "Person Fields to be Updated"} ContactMasks[] updatePersonFields,
                                   @display {label: "Person Fields"} ContactMasks[]? personFields = ()) returns 
-                                  @tainted @display {label: "Person"} Person|error {
+                                  @tainted @display {label: "PersonResponse"} PersonResponse|error {
         string getPath = SLASH + resourceName + QUESTION_MARK;
         string getPathWithPersonFields = prepareUrlWithPersonFields(getPath, personFields);
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(getPathWithPersonFields);
         var getResponse = check handleResponse(httpResponse);
-        var getContact = getResponse.cloneWithType(Person);
-        if (getContact is Person) {
+        var getContact = getResponse.cloneWithType(PersonResponse);
+        if (getContact is PersonResponse) {
             string path = SLASH + resourceName + ":updateContact" + QUESTION_MARK;
             string pathWithUpdatePersonFields = prepareUrlWithUpdatePersonFields(path, updatePersonFields);
             string pathWithFields = pathWithUpdatePersonFields + AMBERSAND;
             http:Request request = new;
             string pathWithPersonFields = prepareUrlWithPersonFields(pathWithFields, personFields);
-            var names = createContact?.names;
-            if(names is Name[]){
-                getContact.names = names;
-            }
-            var emailAddresses = createContact?.emailAddresses;
-            if(emailAddresses is EmailAddress[]){
-                getContact.emailAddresses = emailAddresses;
-            }
+            Person updatedContact = propareUpdate(updateContact, getContact);
             json payload = check getContact.cloneWithType(json);
             request.setJsonPayload(payload);
             http:Response updateResponse = <http:Response>check self.googleContactClient->patch(pathWithPersonFields, request);
             var response = check handleResponse(updateResponse);
-            return check response.cloneWithType(Person);
+            return check response.cloneWithType(PersonResponse);
         } else {
             return error(getContact.toString());
         }
@@ -282,14 +227,14 @@ public client class Client {
     # 
     # + personFields - Restrict which fields on the person are returned
     # + options - Record that contains options
-    # + return - `stream<Person>` on success or else an `error`
+    # + return - `stream<PersonResponse>` on success or else an `error`
     @display {label: "List Contacts"}
     isolated remote function listPeoples(@display {label: "Person Fields"} ContactMasks[] personFields, 
                                 @display {label: "Optional query parameters"} ContactListOptions? options = ()) returns
-                                @tainted @display {label: "Stream of Persons"} stream<Person>|error {
+                                @tainted @display {label: "Stream of PersonResponses"} stream<PersonResponse>|error {
         string path = SLASH + LIST_PEOPLE_PATH;
         string pathWithPersonFields = prepareUrlWithPersonFields(path, personFields);
-        Person[] persons = [];
+        PersonResponse[] persons = [];
         return getContactsStream(self.googleContactClient, persons, pathWithPersonFields, options);
     }
 

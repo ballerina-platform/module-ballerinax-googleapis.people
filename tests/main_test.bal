@@ -33,49 +33,44 @@ GoogleContactsConfiguration googleContactConfig = {oauth2Config: {
 
 Client googleContactClient = check new (googleContactConfig);
 
-string otherContactResourceName = "";
 string contactGroupResourceName = "";
 string contactResourceName = "";
+string beforeSuiteResourceName = "";
 
-@test:Config { enable: false }
+@test:BeforeSuite
+function beforeSuit() {
+    log:printInfo("BeforeSuite");
+    Person createContact = {
+        "emailAddresses": [],
+        "names": [{
+            "familyName": "Hardy",
+            "givenName": "Shane",
+            "unstructuredName": "Shane Hardy"
+        }]
+    };
+    ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields);
+    if (createdContact is PersonResponse) {
+        beforeSuiteResourceName = <@untainted>createdContact.resourceName;
+        log:printInfo(createdContact.toString());
+        test:assertTrue(true, msg = "Create Contact Failed");
+    } else {
+        test:assertFail(msg = createdContact.message());
+    }
+}
+
+@test:Config { enable: true }
 function testListOtherContacts() {
     log:printInfo("Running List Other Contact Test");
     OtherContactMasks[] readMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
     var listContacts = googleContactClient->listOtherContacts(readMasks);
-    if (listContacts is stream<Person>) {
-        error? e = listContacts.forEach(isolated function (Person person) {
+    if (listContacts is stream<PersonResponse>) {
+        error? e = listContacts.forEach(isolated function (PersonResponse person) {
             log:printInfo(person.toString());
         });
         test:assertTrue(true, msg = "List Other Contacts Failed");
     } else {
         test:assertFail(msg = listContacts.message());
-    }
-}
-
-@test:Config { dependsOn: [testListOtherContacts], enable: false }
-function testCopyOtherContactToMyContact() {
-    log:printInfo("Running copy OtherContact To MyContact Test");
-    OtherContactMasks[] copyMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
-    ContactMasks[] readMasks = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    var copyContacts = googleContactClient->copyOtherContactToMyContact(otherContactResourceName, copyMasks, readMasks);
-    if (copyContacts is Person) {
-        log:printInfo(copyContacts.toString());
-        test:assertTrue(true, msg = "List Other Contacts Failed");
-    } else {
-        test:assertFail(msg = copyContacts.message());
-    }
-}
-
-@test:Config { enable: false }
-function testSearchOtherContacts() {
-    log:printInfo("Running Search Other Contacts Test");
-    OtherContactMasks[] readMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
-    Person[]|error searchOtherContacts = googleContactClient->searchOtherContacts("Test", readMasks);
-    if (searchOtherContacts is Person[]?) {
-        log:printInfo(searchOtherContacts.toString());
-        test:assertTrue(true, msg = "Search Contact Failed");
-    } else {
-        test:assertFail(msg = searchOtherContacts.message());
     }
 }
 
@@ -95,19 +90,17 @@ function testCreateContactGroup() {
 @test:Config {dependsOn: [testCreateContactGroup]}
 function testCreateContact() {
     log:printInfo("Running Create Contact Test");
-    CreatePerson createContact = {
+    Person createContact = {
         "emailAddresses": [],
         "names": [{
-            "displayName": "FName LName",
-            "familyName": "LName",
-            "givenName": "FName",
-            "displayNameLastFirst": "LName, FName",
-            "unstructuredName": "FName LName"
+            "familyName": "Hardy",
+            "givenName": "Jason",
+            "unstructuredName": "Jason Hardy"
         }]
     };
     ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    Person|error createdContact = googleContactClient->createContact(createContact, personFields);
-    if (createdContact is Person) {
+    PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields);
+    if (createdContact is PersonResponse) {
         contactResourceName = <@untainted>createdContact.resourceName;
         log:printInfo(createdContact.toString());
         test:assertTrue(true, msg = "Create Contact Failed");
@@ -121,8 +114,8 @@ function testListPeopleConnection() {
     log:printInfo("Running List People Connection Test");
     ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS, PHOTO];
     var listPeopleConnection = googleContactClient->listPeoples(personFields);
-    if (listPeopleConnection is stream<Person>) {
-        error? e = listPeopleConnection.forEach(isolated function(Person person) {
+    if (listPeopleConnection is stream<PersonResponse>) {
+        error? e = listPeopleConnection.forEach(isolated function(PersonResponse person) {
             log:printInfo(person.toString());
         });
         test:assertTrue(true, msg = "List People Connection Failed");
@@ -147,12 +140,26 @@ function testGetContact() {
     log:printInfo("Running Get Contact Test");
     runtime:sleep(10);
     ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    Person|error getPeople = googleContactClient->getContact(contactResourceName, personFields);
-    if (getPeople is Person) {
+    PersonResponse|error getPeople = googleContactClient->getContact(contactResourceName, personFields);
+    if (getPeople is PersonResponse) {
         log:printInfo(getPeople.toString());
         test:assertTrue(true, msg = "Get Contact Failed");
     } else {
         test:assertFail(msg = getPeople.message());
+    }
+}
+
+@test:Config {dependsOn: [testGetContact], enable: false}
+function testSearchPeople() {
+    log:printInfo("Running Search People Test");
+    runtime:sleep(10);
+    ContactMasks[] readMasks = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    PersonResponse[]|error searchPeople = googleContactClient->searchPeople("Sh", readMasks);
+    if (searchPeople is PersonResponse[]) {
+        log:printInfo(searchPeople.toString());
+        test:assertTrue(true, msg = "Search Contact Failed");
+    } else {
+        test:assertFail(msg = searchPeople.message());
     }
 }
 
@@ -163,25 +170,11 @@ function testBatchGetContacts() {
     ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
     string[] contactResourceNames = [contactResourceName];
     var batchGetContacts = googleContactClient->batchGetContacts(contactResourceNames, personFields);
-    if (batchGetContacts is Person[]) {
+    if (batchGetContacts is PersonResponse[]) {
         log:printInfo(batchGetContacts.toString());
         test:assertTrue(true, msg = "Batch Get People Failed");
     } else {
         test:assertFail(msg = batchGetContacts.message());
-    }
-}
-
-@test:Config {dependsOn: [testBatchGetContacts], enable: false }
-function testSearchPeople() {
-    log:printInfo("Running Search People Test");
-    runtime:sleep(10);
-    ContactMasks[] readMasks = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    Person[]|error searchPeople = googleContactClient->searchPeople("F", readMasks);
-    if (searchPeople is Person[]) {
-        log:printInfo(searchPeople.toString());
-        test:assertTrue(true, msg = "Get Contact Failed");
-    } else {
-        test:assertFail(msg = searchPeople.message());
     }
 }
 
@@ -213,21 +206,19 @@ function testDeleteContactPhoto() {
 function testUpdateContact() {
     log:printInfo("Running Update Contact Test");
     runtime:sleep(10);
-    CreatePerson updateContactDetail = {
+    Person updateContactDetail = {
         "emailAddresses": [],
         "names": [{
-            "displayName": "FNameEdited LNameEdited",
-            "familyName": "LName",
-            "givenName": "FName",
-            "displayNameLastFirst": "LName, FName",
-            "unstructuredName": "FName LName"
+            "familyName": "Shawn",
+            "givenName": "Jason",
+            "unstructuredName": "Jason Shawn"
         }]
     };
     ContactMasks[] updatePersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
     ContactMasks[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
     var updateContactResponse = googleContactClient->updateContact(contactResourceName, updateContactDetail, 
                                                                    updatePersonFields, personFields);
-    if (updateContactResponse is Person) {
+    if (updateContactResponse is PersonResponse) {
         log:printInfo(updateContactResponse.toString());        
         test:assertTrue(true, msg = "Update Contact Failed");
     } else {
@@ -308,5 +299,17 @@ function testDeleteContactGroup() {
         test:assertTrue(true, msg = "Delete Contact Group Failed");
     } else {
         test:assertFail(msg = deleteContactGroup.message());
+    }
+}
+
+@test:AfterSuite { }
+function afterSuite() {
+    log:printInfo("AfterSuite");
+    runtime:sleep(10);
+    var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
+    if (deleteContact is ()) {
+        test:assertTrue(true, msg = "Delete Contact Failed");
+    } else {
+        test:assertFail(msg = deleteContact.message());
     }
 }

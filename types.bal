@@ -18,7 +18,7 @@
 #
 # + otherContacts - Other contacts of type Person
 public type OtherContactList record {
-    Person[] otherContacts;
+    PersonResponse[] otherContacts;
 };
 
 # Define a Person.
@@ -26,70 +26,17 @@ public type OtherContactList record {
 # + resourceName - String of the resource name
 # + etag - ETag of the resource
 # + metadata - Metadata about person
-# + addresses - Person's street addresses
 # + ageRanges - Person's age ranges
-# + biographies - Person's biographies
-# + birthdays - Person's birthdays
-# + braggingRights - Person's bragging rights
-# + calendarUrls - Person's calendar URLs
-# + clientData - Person's client data
 # + coverPhotos - Person's cover photos
-# + emailAddresses - Person's email addresses
-# + events - Person's events
-# + externalIds - Person's external IDs
-# + fileAses - Person's file-ases
-# + genders - Person's genders
-# + imClients - Person's instant messaging clients
-# + interests - Person's interests
-# + locales - Person's locale preferences
-# + locations - Person's locations
-# + memberships - Person's group memberships
-# + miscKeywords - Person's miscellaneous keywords
-# + names - Person's names
-# + nicknames - Person's nicknames
-# + occupations - Person's occupations
-# + organizations - Person's organizations
-# + phoneNumbers - Person's phoneNumbers
 # + photos - Person's photos
-# + relations - Person's relations
-# + sipAddresses - Person's sipAddresses
-# + skills - Person's skills
-# + urls - Person's URLs
-# + userDefined - User defined data
-public type Person record {
+public type PersonResponse record {
     string resourceName;
     string etag?;
     PersonMetadata metadata?;
-    Address[] addresses?;
     AgeRangeType[] ageRanges?;
-    Biography[] biographies?;
-    Birthday[] birthdays?;
-    BraggingRights[] braggingRights?;
-    CalendarUrl[] calendarUrls?;
-    ClientData[] clientData?;
     CoverPhoto[] coverPhotos?;
-    EmailAddress[] emailAddresses?;
-    Event[] events?;
-    ExternalId[] externalIds?;
-    FileAs[] fileAses?;
-    Gender[] genders?;
-    ImClient[] imClients?;
-    Interest[] interests?;
-    Locale[] locales?;
-    Location[] locations?;
-    Membership[] memberships?;
-    MiscKeyword[] miscKeywords?;
-    Name[] names?;
-    Nickname[] nicknames?;
-    Occupation[] occupations?;
-    Organization[] organizations?;
-    PhoneNumber[] phoneNumbers?;
     Photo[] photos?;
-    Relation[] relations?;
-    SipAddress[] sipAddresses?;
-    Skill[] skills?;
-    Url[] urls?;
-    UserDefined[] userDefined?;
+    * Person;
 };
 
 # Define a Person's meta data.
@@ -136,7 +83,7 @@ public type PersonMetadata record {
 # + skills - Person's skills
 # + urls - Person's URLs
 # + userDefined - user defined data
-public type CreatePerson record {
+public type Person record {
     Address[] addresses?;
     Biography[] biographies?;
     Birthday[] birthdays?;
@@ -731,20 +678,20 @@ public type SearchResponse record {
 
 # Define a SearchResult.
 #
-# + person - Type of Person
+# + person - Type of PersonResponse
 public type SearchResult record {
-    Person person;
+    PersonResponse person;
 };
 
 # Define a people connection response.
 #
-# + connections - Array of Person of authenticated user
+# + connections - Array of PersonResponse of authenticated user
 # + nextPageToken - Next page token
 # + nextSyncToken - Next sync token
 # + totalPeople - Total contacts
 # + totalItems - Total pages
 public type ConnectionsResponse record {
-    Person[] connections;
+    PersonResponse[] connections;
     string nextPageToken?;
     string nextSyncToken?;
     int totalPeople?;
@@ -759,7 +706,7 @@ public type ConnectionsResponse record {
 # + totalPeople - Total contacts
 # + totalItems - Total pages
 public type SyncConnectionsResponse record {
-    Person[] connections?;
+    PersonResponse[] connections?;
     string nextPageToken?;
     string nextSyncToken;
     int totalPeople?;
@@ -785,7 +732,7 @@ public type ContactsTriggerResponse record {
 # + nextPageToken - Next page token
 # + nextSyncToken - Next sync token
 public type OtherContactListResponse record {
-    Person[] otherContacts;
+    PersonResponse[] otherContacts;
     string nextPageToken?;
     string nextSyncToken?;
 };
@@ -810,18 +757,18 @@ public type BatchGetResponse record {
     json[] responses;
 };
 
-# Define a PersonResponse.
-#
-# + httpStatusCode - Http Status Code
-# + person - Response of type Person
-# + requestedResourceName - Resource name requested
-# + status - Status of the response
-public type PersonResponse record {
-    int httpStatusCode?;
-    Person person?;
-    string requestedResourceName?;
-    json status?;
-};
+// # Define a PersonResponse.
+// #
+// # + httpStatusCode - Http Status Code
+// # + person - Response of type Person
+// # + requestedResourceName - Resource name requested
+// # + status - Status of the response
+// public type PersonResponse record {
+//     int httpStatusCode?;
+//     Person person?;
+//     string requestedResourceName?;
+//     json status?;
+// };
 
 # Define a Stream response of a Connection/Person.
 #
