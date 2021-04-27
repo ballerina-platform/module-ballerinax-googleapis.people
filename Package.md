@@ -1,7 +1,3 @@
-[![Build](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/workflows/CI/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/actions?query=workflow%3ACI)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerinax-googleapis.people.svg)](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/commits/master)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 # Ballerina Google People Connector 
 Connects to Google People using Ballerina.
 
@@ -15,9 +11,7 @@ Connects to Google People using Ballerina.
 
 ## Connector Overview
 
-The Google People Ballerina Connector allows you to access the Google People API Version V1 through Ballerina. The connector can be used to implement some of the most common use cases of Google People. The connector provides the capability to programmatically manage contacts and contact groups, CRUD operations on contacts and contact groups operations through the connector endpoints.
-
-![image](docs/images/people_api_connector.png)
+The Google People Ballerina Connector allows you to access the Google People API Version V1 through Ballerina. The connector can be used to implement some of the most common use cases of Google People. The connector provides the capability to programmatically manage contacts and contact groups, CRUD operations on contacts and contact groups operations through the connector endpoints and listener for the events created in the contacts.
 
 # Prerequisites
 
@@ -33,6 +27,10 @@ The Google People Ballerina Connector allows you to access the Google People API
     * Client Secret
     * Refresh Token
     * Refresh URL
+  * In order to use listener address, resource id and channel id are additionally required. Address URL is url path of the listener. Channel id and resource id will be provided when channel is registered using watch operation.
+    * Address URL
+    * Resource ID
+    * Channel ID
 
 ## Compatibility
 
@@ -68,6 +66,7 @@ clientSecret = "<client_secret>"
 refreshToken = "<refresh_token>"
 refreshUrl = "<refresh_URL>"
 
+```
 ```
 # **Samples**
 
@@ -319,23 +318,3 @@ public function main() {
     }
 }
 ```
-## Contributing to Ballerina
-
-As an open source project, Ballerina welcomes contributions from the community. 
-
-For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
-
-## Code of Conduct
-
-All the contributors are encouraged to read the [Ballerina Code of Conduct](https://ballerina.io/code-of-conduct).
-
-## Useful Links
-
-* Discuss the code changes of the Ballerina project in [ballerina-dev@googlegroups.com](mailto:ballerina-dev@googlegroups.com).
-* Chat live with us via our [Slack channel](https://ballerina.io/community/slack/).
-* Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
-
-
-## How you can contribute
-
-As an open source project, we welcome contributions from the community. Check the [issue tracker](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/issues) for open issues that interest you. We look forward to receiving your contributions.
