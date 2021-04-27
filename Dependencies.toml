@@ -23,4 +23,7 @@ org = "ballerina"
 name = "log"
 version = "1.1.0-alpha7"
 
-
+[[dependency]]
+org = "ballerina"
+name = "os"
+version = "1.1.0-alpha7"
