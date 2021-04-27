@@ -1,0 +1,1 @@
+{"ballerinax/googleapis_people:0.1.0:SyncConnectionsResponse":{"totalItems":"int","nextPageToken":"string","nextSyncToken":"string","totalPeople":"int","connections":"ballerinax/googleapis_people:0.1.0:PersonResponse[]"}}

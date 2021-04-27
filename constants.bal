@@ -61,7 +61,7 @@ const string SEARCH_ERROR = "Search query not matched";
 # + OTHER_CONTACT_EMAIL_ADDRESS - OtherContact's email addresses
 # + OTHER_CONTACT_NAME - OtherContact's names
 # + OTHER_CONTACT_PHONE_NUMBER - OtherContact's phoneNumbers
-public enum OtherContactMasks {
+public enum OtherContactFieldMask {
     OTHER_CONTACT_EMAIL_ADDRESS = "emailAddresses",
     OTHER_CONTACT_NAME = "names",
     OTHER_CONTACT_PHONE_NUMBER = "phoneNumbers"
@@ -98,7 +98,7 @@ public enum OtherContactMasks {
 # + SKILL - Contact's skills
 # + URL - Person's URLs
 # + USER_DEFINED - User defined data
-public enum ContactMasks {
+public enum FieldMask {
     ADDRESS = "addresses",
     AGE_RANGE = "ageRanges",
     BIOGRAPHY = "biographies",

@@ -486,6 +486,20 @@ isolated function handleUploadPhotoResponse(http:Response httpResponse) returns 
     }
 }
 
+# Handle http response for modify contact group response.
+# 
+# + httpResponse - Received http response
+# + return - () on success else an error
+isolated function handleModifyResponse(http:Response httpResponse) returns @tainted error? {
+    if (httpResponse.statusCode is http:STATUS_OK) {
+        return ();
+    } else {
+        json uploadPhotoResponse = check httpResponse.getJsonPayload();
+        json err = check uploadPhotoResponse.'error.message;
+        return error(err.toString());
+    }
+}
+
 isolated function prepareQueryUrlForToken(string path, string[] queryParamNames, string[] queryParamValues) 
 returns string {
     string url = path;
