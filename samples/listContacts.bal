@@ -22,7 +22,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -34,13 +34,13 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     // List with stream of PersonResponse records
-    string[] personFields = ["names", "emailAddresses", "phoneNumbers", "photos"];
-    var listPeopleConnection = googleContactClient->listPeopleConnection(personFields);
-    if (listPeopleConnection is stream<PersonResponse>) {
-        error? e = listPeopleConnection.forEach(isolated function(PersonResponse person) {
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS, PHOTO];
+    var listContacts = googleContactClient->listContacts(personFields);
+    if (listContacts is stream<contacts:PersonResponse>) {
+        error? e = listContacts.forEach(isolated function(contacts:PersonResponse person) {
             log:printInfo(person.toString());
         });
     } else {
-        log:printError(listPeopleConnection.toString());
+        log:printError(listContacts.toString());
     }
 }

@@ -22,7 +22,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -35,8 +35,7 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 public function main() {
     string contactGroupResourceName = "";
     // Create Contact Group with given name
-    string[] readGroupFields = ["name", "clientData", "groupType", "metadata"];
-    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup", readGroupFields);
+    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
     if (createContactGroup is contacts:ContactGroup) {
         log:printInfo("Contact Group Details: " + createContactGroup.toString());
         contactGroupResourceName = createContactGroup.resourceName;
@@ -46,7 +45,7 @@ public function main() {
     }
 
     // Fetch information about Contact Group  
-    contacts:ContactGroup|error getResponse = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
+    contacts:ContactGroup|error getResponse = googleContactClient->getContactGroup(contactGroupResourceName, 10);
     if (getResponse is contacts:ContactGroup) {
         log:printInfo("Contact Group Details: " + getResponse.toString());
         log:printInfo(getResponse.resourceName.toString());

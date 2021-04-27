@@ -150,16 +150,16 @@ function testGetContact() {
 }
 
 @test:Config {dependsOn: [testGetContact], enable: false}
-function testSearchPeople() {
-    log:printInfo("Running Search People Test");
+function testSearchContact() {
+    log:printInfo("Running Search Contact Test");
     runtime:sleep(10);
     FieldMask[] readMasks = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    PersonResponse[]|error searchPeople = googleContactClient->searchPeople("Sh", readMasks);
-    if (searchPeople is PersonResponse[]) {
-        log:printInfo(searchPeople.toString());
+    PersonResponse[]|error searchContact = googleContactClient->searchContacts("Sh", readMasks);
+    if (searchContact is PersonResponse[]) {
+        log:printInfo(searchContact.toString());
         test:assertTrue(true, msg = "Search Contact Failed");
     } else {
-        test:assertFail(msg = searchPeople.message());
+        test:assertFail(msg = searchContact.message());
     }
 }
 

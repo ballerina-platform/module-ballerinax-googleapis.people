@@ -22,7 +22,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -34,7 +34,7 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     string contactResourceName = "";
-    Person createContact = {
+    contacts:Person person = {
         "emailAddresses": [],
         "names": [{
             "familyName": "Hardy",
@@ -42,9 +42,8 @@ public function main() {
             "unstructuredName": "Jason Hardy"
         }]
     };
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:PersonResponse|error createContact = googleContactClient->createContact(createContact, personFields, sources);
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
     if (createContact is contacts:PersonResponse) {
         contactResourceName = <@untainted>createContact.resourceName;
         log:printInfo("Person/Contacts Details: " + createContact.toString());
@@ -54,9 +53,8 @@ public function main() {
     }
 
     // Fetch information about Person/Contact
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    PersonResponse|error getResponse = googleContactClient->getPeople(contactResourceName, personFields, sources);
+    contacts:FieldMask[] getPersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    contacts:PersonResponse|error getResponse = googleContactClient->getPeople(contactResourceName, getPersonFields);
     if (getResponse is contacts:PersonResponse) {
         log:printInfo("Person/Contacts Details: " + getResponse.toString());
         log:printInfo(getResponse.resourceName.toString());

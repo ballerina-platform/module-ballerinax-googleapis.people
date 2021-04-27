@@ -22,7 +22,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -35,7 +35,7 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 public function main() {
     // List with ContactGroup[] records
     var listContactGroup = googleContactClient->listContactGroup();
-    if (listContactGroup is ContactGroup[]) {
+    if (listContactGroup is contacts:ContactGroup[]) {
         log:printInfo(listContactGroup.toString());
     } else {
         log:printError(listContactGroup.toString());

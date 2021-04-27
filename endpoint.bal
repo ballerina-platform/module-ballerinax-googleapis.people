@@ -95,7 +95,7 @@ public client class Client {
     # + query - String to be searched
     # + return - `PersonResponse[]` on success else an `error`
     @display {label: "Search a Contact"}
-    isolated remote function searchPeople(@display {label: "Searchable substring"} string query,
+    isolated remote function searchContacts(@display {label: "Searchable substring"} string query,
                                  @display {label: "Read Masks"} FieldMask[] readMasks) returns 
                                  @tainted @display {label: "PersonResponse Array"} PersonResponse[]|error {
         string path = SLASH + SEARCH_CONTACT_PATH + QUESTION_MARK;

@@ -22,7 +22,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -34,10 +34,10 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     // Search a Person/Contact with a string
-    SearchResponse|error response = googleContactClient->searchPeople("Test");
-    if (response is contacts:PersonResponse) {
+    contacts:FieldMask[] readMasks = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse[]|error response = googleContactClient->searchContacts("Test");
+    if (response is contacts:PersonResponse[]) {
         log:printInfo("Person/Contacts Details: " + response.toString());
-        log:printInfo(response.resourceName.toString());
     } else {
         log:printError("Error: " + response.toString());
     }

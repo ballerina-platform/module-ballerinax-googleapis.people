@@ -22,7 +22,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -35,8 +35,7 @@ contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 public function main() {
     string contactGroupResourceName = "";
     // Create Contact Group with given name
-    string[] readGroupFields = ["name", "clientData", "groupType", "metadata"];
-    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup", readGroupFields);
+    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
     if (createContactGroup is contacts:ContactGroup) {
         log:printInfo("Contact Group Details: " + createContactGroup.toString());
         contactGroupResourceName = createContactGroup.resourceName;
@@ -46,10 +45,11 @@ public function main() {
     }
 
     // Fetch information about Contact Group  
-    contacts:ContactGroup|error getContactGroup = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
+
+    contacts:ContactGroup|error getContactGroup = googleContactClient->getContactGroup(contactGroupResourceName, 10);
     if (getContactGroup is contacts:ContactGroup) {
         log:printInfo("Contact Group Details: " + getContactGroup.toString());
-        contactGroupResourceName = createContactGroup.resourceName;
+        contactGroupResourceName = getContactGroup.resourceName;
         log:printInfo(getContactGroup.resourceName.toString());
     } else {
         log:printError("Error: " + getContactGroup.toString());
@@ -57,7 +57,7 @@ public function main() {
     
     //Update a contact group
     var updateContactGroup = googleContactClient->updateContactGroup(contactGroupResourceName, "TestUpdated");
-    if (updateContactGroup is ContactGroup) {
+    if (updateContactGroup is contacts:ContactGroup) {
         log:printInfo(updateContactGroup.toString());
         contactGroupResourceName = updateContactGroup.resourceName;
         log:printInfo("Updated Contact Group");

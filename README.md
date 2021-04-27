@@ -81,7 +81,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -89,28 +89,25 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = check new (googleContactConfig);
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     // Create Person/Contact with given name
-    Person createContact = {
+    contacts:Person person = {
         "emailAddresses": [],
         "names": [{
-            "displayName": "Test1 Test2",
-            "familyName": "Test",
-            "givenName": "Test",
-            "displayNameLastFirst": "Test2, Test1",
-            "unstructuredName": "Test Test"
+            "familyName": "Hardy",
+            "givenName": "Jason",
+            "unstructuredName": "Jason Hardy"
         }]
     };
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createdContact is contacts:PersonResponse) {
-        log:printInfo("Person/Contacts Details: " + createdContact.toString());
-        log:printInfo(createdContact.resourceName.toString());
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
+    if (createContact is contacts:PersonResponse) {
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + createdContact.toString());
+        log:printError("Error: " + createContact.toString());
     }
 }
 ```
@@ -124,7 +121,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -132,42 +129,36 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = check new (googleContactConfig);
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-
     string contactResourceName = "";
-
-    Person createContact = {
+    contacts:Person person = {
         "emailAddresses": [],
         "names": [{
-            "displayName": "Test1 Test2",
-            "familyName": "Test",
-            "givenName": "Test",
-            "displayNameLastFirst": "Test2, Test1",
-            "unstructuredName": "Test Test"
+            "familyName": "Hardy",
+            "givenName": "Jason",
+            "unstructuredName": "Jason Hardy"
         }]
     };
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createdContact is contacts:PersonResponse) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:printInfo("Person/Contacts Details: " + createdContact.toString());
-        log:printInfo(createdContact.resourceName.toString());
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
+    if (createContact is contacts:PersonResponse) {
+        contactResourceName = <@untainted>createContact.resourceName;
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + createdContact.toString());
+        log:printError("Error: " + createContact.toString());
     }
 
     // Fetch information about Person/Contact
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    PersonResponse|error getPeople = googleContactClient->getPeople(contactResourceName, personFields, sources);
-    if (getPeople is contacts:PersonResponse) {
-        log:printInfo("Person/Contacts Details: " + getPeople.toString());
-        log:printInfo(getPeople.resourceName.toString());
+    contacts:FieldMask[] getPersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    contacts:PersonResponse|error getResponse = googleContactClient->getPeople(contactResourceName, getPersonFields);
+    if (getResponse is contacts:PersonResponse) {
+        log:printInfo("Person/Contacts Details: " + getResponse.toString());
+        log:printInfo(getResponse.resourceName.toString());
     } else {
-        log:printError("Error: " + getPeople.toString());
+        log:printError("Error: " + getResponse.toString());
     }
 }
 ```
@@ -181,7 +172,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -189,16 +180,16 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = check new (googleContactConfig);
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     // Search a Person/Contact with a string
-    SearchResponse|error searchPeople = googleContactClient->searchPeople("Test");
-    if (searchPeople is contacts:PersonResponse) {
-        log:printInfo("Person/Contacts Details: " + searchPeople.toString());
-        log:printInfo(searchPeople.resourceName.toString());
+    contacts:FieldMask[] readMasks = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse[]|error response = googleContactClient->searchContacts("Test");
+    if (response is contacts:PersonResponse[]) {
+        log:printInfo("Person/Contacts Details: " + response.toString());
     } else {
-        log:printError("Error: " + searchPeople.toString());
+        log:printError("Error: " + response.toString());
     }
 }
 ```
@@ -213,7 +204,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -221,38 +212,36 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = check new (googleContactConfig);
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
 
     string contactResourceName = "";
 
-    Person createContact = {
+    contacts:Person person = {
         "emailAddresses": [],
         "names": [{
-            "displayName": "Test1 Test2",
-            "familyName": "Test",
-            "givenName": "Test",
-            "displayNameLastFirst": "Test2, Test1",
-            "unstructuredName": "Test Test"
+            "familyName": "Hardy",
+            "givenName": "Jason",
+            "unstructuredName": "Jason Hardy"
         }]
     };
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createdContact is contacts:PersonResponse) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:printInfo("Person/Contacts Details: " + createdContact.toString());
-        log:printInfo(createdContact.resourceName.toString());
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
+    if (createContact is contacts:PersonResponse) {
+        contactResourceName = <@untainted>createContact.resourceName;
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + createdContact.toString());
+        log:printError("Error: " + createContact.toString());
     }
 
-    var response = googleContactClient->deleteContact(contactResourceName);
-    if (response is boolean) {
-        log:printInfo("Deleted");
+    // Delete a contact
+    var deleteContact = googleContactClient->deleteContact(contactResourceName);
+    if (deleteContact is ()) {
+        log:printInfo("Deleted a Contact");
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError(deleteContact.toString());
     }
 }
 ```
@@ -267,7 +256,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -275,12 +264,11 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = check new (googleContactConfig);
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
     // Create Contact Group with given name
-    string[] readGroupFields = ["name", "clientData", "groupType", "metadata"];
-    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup", readGroupFields);
+    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
     if (createContactGroup is contacts:ContactGroup) {
         log:printInfo("Contact Group Details: " + createContactGroup.toString());
         log:printInfo(createContactGroup.resourceName.toString());
@@ -299,7 +287,7 @@ configurable string clientId = ?;
 configurable string clientSecret = ?;
 
 contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauthClientConfig: {
+    oauth2Config: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,
@@ -307,40 +295,27 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
     }
 };
 
-contacts:Client googleContactClient = check new (googleContactConfig);
+contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-
     string contactGroupResourceName = "";
-
-    Person createContact = {
-        "emailAddresses": [],
-        "names": [{
-            "displayName": "Test1 Test2",
-            "familyName": "Test",
-            "givenName": "Test",
-            "displayNameLastFirst": "Test2, Test1",
-            "unstructuredName": "Test Test"
-        }]
-    };
-    string[] personFields = ["names", "phoneNumbers"];
-    string[] sources = ["READ_SOURCE_TYPE_CONTACT"];
-    contacts:PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields, sources);
-    if (createContactGroup is contacts:PersonResponse) {
-        contactGroupResourceName = <@untainted>createContactGroup.resourceName;
-        log:printInfo("Person/Contacts Details: " + createContactGroup.toString());
+    // Create Contact Group with given name
+    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
+    if (createContactGroup is contacts:ContactGroup) {
+        log:printInfo("Contact Group Details: " + createContactGroup.toString());
+        contactGroupResourceName = createContactGroup.resourceName;
         log:printInfo(createContactGroup.resourceName.toString());
     } else {
         log:printError("Error: " + createContactGroup.toString());
     }
 
     // Fetch information about Contact Group  
-    contacts:ContactGroup|error response = googleContactClient->getContactGroup(contactGroupResourceName, personFields, sources);
-    if (response is contacts:ContactGroup) {
-        log:printInfo("Contact Group Details: " + response.toString());
-        log:printInfo(response.resourceName.toString());
+    contacts:ContactGroup|error getResponse = googleContactClient->getContactGroup(contactGroupResourceName, 10);
+    if (getResponse is contacts:ContactGroup) {
+        log:printInfo("Contact Group Details: " + getResponse.toString());
+        log:printInfo(getResponse.resourceName.toString());
     } else {
-        log:printError("Error: " + response.toString());
+        log:printError("Error: " + getResponse.toString());
     }
 }
 ```
