@@ -43,6 +43,7 @@ public client class Client {
     # Fetch all from "Other Contacts".
     # 
     # + readMasks - Restrict which fields on the person are returned
+    # + options - Record that contains options
     # + return - Stream of `PersonResponse` on success else an `error`
     @display {label: "List OtherContacts"}
     isolated remote function listOtherContacts(@display {label: "Read Masks"} OtherContactFieldMask[] readMasks, 
@@ -93,6 +94,7 @@ public client class Client {
     # Search a contacts.
     # 
     # + query - String to be searched
+    # + readMasks - Restrict which fields on the person are returned
     # + return - `PersonResponse[]` on success else an `error`
     @display {label: "Search a Contact"}
     isolated remote function searchContacts(@display {label: "Searchable substring"} string query,
@@ -129,7 +131,7 @@ public client class Client {
         http:Request request = new;
         string encodedString = check convertImageToBase64String(imagePath);
         json updatePayload = {"photoBytes": encodedString};
-        request.setJsonPayload(updatePayload);
+        request.setJsonPayload(<@untainted>updatePayload);
         http:Response uploadResponse = <http:Response>check self.googleContactClient->patch(path, request);
         return handleUploadPhotoResponse(uploadResponse);
     }
@@ -176,6 +178,7 @@ public client class Client {
     # Update a contact.
     # 
     # + resourceName - Contact resource name
+    # + person - Person
     # + updatePersonFields - Restrict which fields on the person are returned
     # + personFields - Restrict which fields on the person are returned
     # + return - `Person` on success else an `error`
@@ -198,7 +201,7 @@ public client class Client {
             string pathWithPersonFields = prepareUrlWithPersonFields(pathWithFields, personFields);
             Person updatedContact = propareUpdate(person, getContact);
             json payload = check getContact.cloneWithType(json);
-            request.setJsonPayload(payload);
+            request.setJsonPayload(<@untainted>payload);
             http:Response updateResponse = <http:Response>check self.googleContactClient->patch(pathWithPersonFields, request);
             var response = check handleResponse(updateResponse);
             return check response.cloneWithType(PersonResponse);
@@ -326,7 +329,7 @@ public client class Client {
             getContactGroup.name = updateName;
             json payload = check getContactGroup.cloneWithType(json);
             json newpayload = {"contactGroup": payload};
-            request.setJsonPayload(newpayload);
+            request.setJsonPayload(<@untainted>newpayload);
             http:Response httpResponse = <http:Response>check self.googleContactClient->put(path, request);
             var response = check handleResponse(httpResponse);
             return check response.cloneWithType(ContactGroup);

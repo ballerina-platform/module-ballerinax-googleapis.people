@@ -18,8 +18,8 @@ The Google People Ballerina Connector allows you to access the Google People API
 * Java 11 Installed
   Java Development Kit (JDK) with version 11 is required.
 
-* Download the Ballerina [distribution](https://ballerinalang.org/downloads/) SLAlpha4
-  Ballerina Swan Lake Alpha Version 4 is required.
+* Download the Ballerina [distribution](https://ballerinalang.org/downloads/) SLAlpha5
+  Ballerina Swan Lake Alpha Version 5 is required.
 
 * Instantiate the connector by giving authentication details in the HTTP client config. The HTTP client config has built-in support for BasicAuth and OAuth 2.0. Google People uses OAuth 2.0 to authenticate and authorize requests. 
   * The Google People connector can be minimally instantiated in the HTTP client config using client ID, client secret, and refresh token.
@@ -36,7 +36,7 @@ The Google People Ballerina Connector allows you to access the Google People API
 
 |                             |            Versions             |
 |:---------------------------:|:-------------------------------:|
-|    Ballerina Language       |       Swan Lake Alpha 4         |
+|    Ballerina Language       |       Swan Lake Alpha 5         |
 |     Google People API       |               V1                |
 
 
@@ -60,7 +60,7 @@ This file should have following configurations. Add the tokens obtained in the p
 
 #### For client operations
 ```
-[ballerinax.googleapis_people]
+[ballerinax.googleapis.people]
 clientId = "<client_id">
 clientSecret = "<client_secret>"
 refreshToken = "<refresh_token>"
@@ -72,7 +72,7 @@ refreshUrl = "<refresh_URL>"
 
 ### Create a Contact
 ```ballerina
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -112,7 +112,7 @@ public function main() {
 ```
 ### Fetch a Contact
 ```ballerina
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -163,7 +163,7 @@ public function main() {
 ```
 ### Search a Contact using a string value
 ```ballerina
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -195,7 +195,7 @@ public function main() {
 
 ### Delete a Contact
 ```ballerina
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -247,7 +247,7 @@ public function main() {
 
 ### Create a Contact Group
 ```ballerina
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -278,7 +278,7 @@ public function main() {
 ```
 ### Fetch a Contact Group
 ```ballerina
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;

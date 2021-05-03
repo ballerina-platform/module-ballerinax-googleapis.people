@@ -80,7 +80,7 @@ function testCreateContactGroup() {
     var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
     if (createContactGroup is ContactGroup) {
         log:printInfo(createContactGroup.toString());
-        contactGroupResourceName = createContactGroup.resourceName;
+        contactGroupResourceName = <@untainted>createContactGroup.resourceName;
         test:assertTrue(true, msg = "Creating Contact Group Failed");
     } else {
         test:assertFail(msg = createContactGroup.message());
@@ -245,7 +245,7 @@ function testGetContactGroup() {
     var getContactGroup = googleContactClient->getContactGroup(contactGroupResourceName, 10);
     if (getContactGroup is ContactGroup) {
         log:printInfo(getContactGroup.toString());
-        contactGroupResourceName = getContactGroup.resourceName;
+        contactGroupResourceName = <@untainted>getContactGroup.resourceName;
         test:assertTrue(true, msg = "Fetching Contact Group Failed");
     } else {
         test:assertFail(msg = getContactGroup.message());
@@ -284,7 +284,7 @@ function testUpdateContactGroup() {
     var updateContactGroup = googleContactClient->updateContactGroup(contactGroupResourceName, "TestUpdated");
     if (updateContactGroup is ContactGroup) {
         log:printInfo(updateContactGroup.toString());
-        contactGroupResourceName = updateContactGroup.resourceName;
+        contactGroupResourceName = <@untainted>updateContactGroup.resourceName;
         test:assertTrue(true, msg = "Update Contact Group Failed");
     } else {
         test:assertFail(msg = updateContactGroup.message());
