@@ -20,8 +20,9 @@ jobs:
                   CLIENT_ID: ${{ secrets.CLIENT_ID }}
                   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
                   REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+                  WORKING_DIR: ./gpeople
             - name: Ballerina Push
-              uses: ballerina-platform/ballerina-action/@swan-lake-connector-release
+              uses: ballerina-platform/ballerina-action/@master
               with:
                   args:
                       push
