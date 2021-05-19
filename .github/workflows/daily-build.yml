@@ -40,7 +40,7 @@ jobs:
               uses: ballerina-platform/ballerina-action/@nightly
               with:
                   args:
-                      build -c
+                      build -c --skip-tests
               env:
                 JAVA_HOME: /usr/lib/jvm/default-jvm
                 CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -50,8 +50,8 @@ jobs:
             # Publish Github Package
             - name: Publish Github Package
               env:
-                packageUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
-                packagePAT: ${{ secrets.BALLERINA_BOT_TOKEN }}
+                publishUser: ${{ secrets.BALLERINA_BOT_USERNAME }}
+                publishPAT: ${{ secrets.CONNECTOR_PUBLISH_PAT }}
                 JAVA_OPTS: -DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true
               run: |
                 ./gradlew publish
