@@ -182,7 +182,7 @@ function testGetBatchContacts() {
 function testUpdateContactPhoto() {
     log:printInfo("Running Update Contact Photo Test");
     runtime:sleep(10);
-    var updateContactPhoto = googleContactClient->updateContactPhoto(contactResourceName, "gpeople/tests/test.png");
+    var updateContactPhoto = googleContactClient->updateContactPhoto(contactResourceName, "tests/test.png");
     if (updateContactPhoto is ()) {
         test:assertTrue(true, msg = "Update Contact Photo Failed");
     } else {
