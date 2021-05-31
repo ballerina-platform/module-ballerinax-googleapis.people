@@ -28,7 +28,7 @@ public type GoogleContactsConfiguration record {
 # Google Contacts Client.
 #
 # + googleContactClient - The HTTP Client
-@display {label: "Google People API Client", iconPath: "GooglePeopleLogo.png"}
+@display {label: "Google People API", iconPath: "GooglePeopleLogo.png"}
 public client class Client {
     public http:Client googleContactClient;
 
