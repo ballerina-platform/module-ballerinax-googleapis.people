@@ -226,19 +226,7 @@ function testUpdateContact() {
     }
 }
 
-@test:Config {dependsOn: [testCreateContact, testGetContact, testUpdateContact]}
-function testDeleteContact() {
-    log:printInfo("Running Delete Contact Test");
-    runtime:sleep(10);
-    var deleteContact = googleContactClient->deleteContact(contactResourceName);
-    if (deleteContact is ()) {
-        test:assertTrue(true, msg = "Delete Contact Failed");
-    } else {
-        test:assertFail(msg = deleteContact.message());
-    }
-}
-
-@test:Config {dependsOn: [testDeleteContact]}
+@test:Config {dependsOn: [testUpdateContact]}
 function testGetContactGroup() {
     log:printInfo("Running Get Contact Group Test");
     runtime:sleep(10);
@@ -291,25 +279,36 @@ function testUpdateContactGroup() {
     }
 }
 
-@test:Config {dependsOn: [testUpdateContactGroup]}
-function testDeleteContactGroup() {
-    log:printInfo("Running Delete Contact Group Test");
-    var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
-    if (deleteContactGroup is ()) {
-        test:assertTrue(true, msg = "Delete Contact Group Failed");
-    } else {
-        test:assertFail(msg = deleteContactGroup.message());
-    }
-}
-
 @test:AfterSuite { }
 function afterSuite() {
     log:printInfo("AfterSuite");
     runtime:sleep(10);
-    var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
-    if (deleteContact is ()) {
-        test:assertTrue(true, msg = "Delete Contact Failed");
-    } else {
-        test:assertFail(msg = deleteContact.message());
+    if (beforeSuiteResourceName != "") {
+        var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
+        if (deleteContact is error) {
+            log:printError("Delete Contact Failed for resource name=" + beforeSuiteResourceName);
+        } else {
+            log:printInfo("Contact deleted sucessfully");
+        }
+        runtime:sleep(10); 
+    }
+
+    if (contactResourceName != "") {
+        var deleteContact = googleContactClient->deleteContact(contactResourceName);
+        if (deleteContact is error) {
+            log:printError("Delete Contact Failed for resource name=" + contactResourceName);
+        } else {
+            log:printInfo("Contact deleted sucessfully");
+        }
+        runtime:sleep(10);
+    }
+    
+    if (contactGroupResourceName != "") {
+        var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
+        if (deleteContactGroup is error) {
+            log:printError("Delete Contact group Failed for resource name" + contactGroupResourceName);
+        } else {
+            log:printInfo("Contact group deleted sucessfully");
+        }
     }
 }
