@@ -283,24 +283,32 @@ function testUpdateContactGroup() {
 function afterSuite() {
     log:printInfo("AfterSuite");
     runtime:sleep(10);
-    var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
-    if (deleteContact is ()) {
-        log:printInfo("Contact deleted");
-    } else {
-        log:printInfo("Delete Contact Failed");
+    if (beforeSuiteResourceName != "") {
+        var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
+        if (deleteContact is error) {
+            log:printError("Delete Contact Failed for resource name=" + beforeSuiteResourceName);
+        } else {
+            log:printInfo("Contact deleted sucessfully");
+        }
+        runtime:sleep(10); 
     }
-    runtime:sleep(10);
-    deleteContact = googleContactClient->deleteContact(contactResourceName);
-    if (deleteContact is ()) {
-        log:printInfo("Contact deleted");
-    } else {
-        log:printInfo("Delete Contact Failed");
+
+    if (contactResourceName != "") {
+        var deleteContact = googleContactClient->deleteContact(contactResourceName);
+        if (deleteContact is error) {
+            log:printError("Delete Contact Failed for resource name=" + contactResourceName);
+        } else {
+            log:printInfo("Contact deleted sucessfully");
+        }
+        runtime:sleep(10);
     }
-    runtime:sleep(10);
-    var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
-    if (deleteContactGroup is ()) {
-        log:printInfo("Contact group deleted");
-    } else {
-        log:printInfo("Delete Contact group Failed");
+    
+    if (contactGroupResourceName != "") {
+        var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
+        if (deleteContactGroup is error) {
+            log:printError("Delete Contact group Failed for resource name" + contactGroupResourceName);
+        } else {
+            log:printInfo("Contact group deleted sucessfully");
+        }
     }
 }
