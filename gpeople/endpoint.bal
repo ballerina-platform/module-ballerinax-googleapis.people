@@ -16,7 +16,7 @@
 
 import ballerina/http;
 
-# Object for Google Contacts configuration.
+# Google Contacts configuration.
 #
 # + oauth2Config - OAuth client configuration
 # + secureSocketConfig - HTTP client configuration
@@ -27,8 +27,8 @@ public type GoogleContactsConfiguration record {
 
 # Google Contacts Client.
 #
-# + googleContactClient - The HTTP Client
-@display {label: "Google People API Client", iconPath: "GooglePeopleLogo.png"}
+# + googleContactClient - Connector http endpoint
+@display {label: "Google People API", iconPath: "GooglePeopleLogo.png"}
 public client class Client {
     public http:Client googleContactClient;
 
@@ -40,7 +40,7 @@ public client class Client {
         });
     }
 
-    # Fetch all from "Other Contacts".
+    # Fetch all from Other Contacts.
     # 
     # + readMasks - Restrict which fields on the person are returned
     # + options - Record that contains options
@@ -178,7 +178,7 @@ public client class Client {
     # Update a contact.
     # 
     # + resourceName - Contact resource name
-    # + person - Person
+    # + person - Person record
     # + updatePersonFields - Restrict which fields on the person are returned
     # + personFields - Restrict which fields on the person are returned
     # + return - `Person` on success else an `error`
@@ -199,7 +199,7 @@ public client class Client {
             string pathWithFields = pathWithUpdatePersonFields + AMBERSAND;
             http:Request request = new;
             string pathWithPersonFields = prepareUrlWithPersonFields(pathWithFields, personFields);
-            Person updatedContact = propareUpdate(person, getContact);
+            Person updatedContact = prepareUpdate(person, getContact);
             json payload = check getContact.cloneWithType(json);
             request.setJsonPayload(<@untainted>payload);
             http:Response updateResponse = <http:Response>check self.googleContactClient->patch(pathWithPersonFields, request);
@@ -281,7 +281,7 @@ public client class Client {
         return contactGroups;
     }
 
-    # Fetch `ContactGroups` of authenticated user.
+    # Fetch `Contact Groups` of authenticated user.
     # 
     # + return - `ContactGroup[]` on success else an `error`
     @display {label: "List Contact Groups"}
@@ -294,7 +294,7 @@ public client class Client {
         return contactGroupArray;
     }
 
-    # Fetch a `ContactGroup`.
+    # Fetch a `Contact Group`.
     # 
     # + resourceName - Name of the `ContactGroup` to be created
     # + maxMembers - maximum number of members returned in contact group
@@ -310,7 +310,7 @@ public client class Client {
         return response.cloneWithType(ContactGroup);
     }
 
-    # Update a `ContactGroup`.
+    # Update a `Contact Group`.
     # 
     # + resourceName - Name of the `ContactGroup` to be created
     # + updateName - Name to be updated
@@ -338,7 +338,7 @@ public client class Client {
         }
     }
 
-    # Delete a Contact Group.
+    # Delete a 'Contact Group'.
     # 
     # + resourceName - Contact Group resource name
     # + return - () on success, else an `error`
@@ -355,8 +355,8 @@ public client class Client {
     # + contactGroupResourceName - Contact Group resource name
     # + resourceNameToAdd - Contact resource name to add
     # + resourceNameToRemove - Contact resource name to remove
-    # + return - json on success, else an `error`
-    @display {label: "Modify contacts in a Contact Group"}
+    # + return - () on success, else an `error`
+    @display {label: "Modify contacts in Contact Group"}
     isolated remote function modifyContactGroup(string contactGroupResourceName, string[]? resourceNameToAdd = (), string[]? resourceNameToRemove = ()) returns 
                                        @tainted error? {
         string path = SLASH + contactGroupResourceName + "/members:modify";
