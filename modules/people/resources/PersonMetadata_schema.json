@@ -1,0 +1,1 @@
+{"ballerinax/googleapis.people:0.1.1:PersonMetadata":{"previousResourceNames":"string[]","deleted":"boolean","sources":"json[]","linkedPeopleResourceNames":"string[]","objectType":"string"}}
