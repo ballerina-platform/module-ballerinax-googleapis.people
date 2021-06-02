@@ -1,1 +1,0 @@
-{"ballerinax/googleapis.people:0.1.1:Address":{"poBox":"string","country":"string","metadata":"ballerinax/googleapis.people:0.1.1:FieldMetaData","formattedType":"string","streetAddress":"string","city":"string","countryCode":"string","postalCode":"string","formattedValue":"string","type":"string","extendedAddress":"string","region":"string"}}

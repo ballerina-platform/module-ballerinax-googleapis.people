@@ -1,1 +1,0 @@
-{"ballerinax/googleapis.people:0.1.1:ContactListOptions":{"syncToken":"string?","requestSyncToken":"boolean?","pageToken":"string?"}}
