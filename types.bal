@@ -56,7 +56,7 @@ public type PersonMetadata record {
 
 # Define a Create Person Payload.
 #
-# + addresses - Person's street addresses
+# + addresses - Person's addresses
 # + biographies - Person's biographies
 # + birthdays - Person's birthdays
 # + braggingRights - Person's bragging rights
@@ -84,32 +84,59 @@ public type PersonMetadata record {
 # + urls - Person's URLs
 # + userDefined - user defined data
 public type Person record {
+    @display {label: "Address"}
     Address[] addresses?;
+    @display {label: "Biography"}
     Biography[] biographies?;
+    @display {label: "Birthday"}
     Birthday[] birthdays?;
+    @display {label: "Bragging rights"}
     BraggingRights[] braggingRights?;
+    @display {label: "Calendar url"}
     CalendarUrl[] calendarUrls?;
+    @display {label: "Client data"}
     ClientData[] clientData?;
+    @display {label: "Email address"}
     EmailAddress[] emailAddresses?;
+    @display {label: "Event"}
     Event[] events?;
+    @display {label: "External entity identifier"}
     ExternalId[] externalIds?;
+    @display {label: "Name for sort"}
     FileAs[] fileAses?;
+    @display {label: "Gender"}
     Gender[] genders?;
+    @display {label: "Instant messaging client"}
     ImClient[] imClients?;
+    @display {label: "Interest"}
     Interest[] interests?;
+    @display {label: "Locale preference"}
     Locale[] locales?;
+    @display {label: "Location"}
     Location[] locations?;
+    @display {label: "Membership in group"}
     Membership[] memberships?;
+    @display {label: "Miscellaneous keyword"}
     MiscKeyword[] miscKeywords?;
+    @display {label: "Name"}
     Name[] names?;
+    @display {label: "Nickname"}
     Nickname[] nicknames?;
+    @display {label: "Organization"}
     Occupation[] occupations?;
+    @display {label: "Organization"}
     Organization[] organizations?;
+    @display {label: "Phone number"}
     PhoneNumber[] phoneNumbers?;
+    @display {label: "Relation"}
     Relation[] relations?;
+    @display {label: "SIP address"}
     SipAddress[] sipAddresses?;
+    @display {label: "Skill of person"}
     Skill[] skills?;
+    @display {label: "Associated URL"}
     Url[] urls?;
+    @display {label: "Arbitrary user data"}
     UserDefined[] userDefined?;
 };
 

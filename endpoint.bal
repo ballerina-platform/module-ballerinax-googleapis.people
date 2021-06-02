@@ -63,7 +63,7 @@ public client class Client {
     # + return - `PersonResponse` on success else an `error`
     @display {label: "Create Contact"}
     isolated remote function createContact(@display {label: "Contact details"} Person person, 
-                                  @display {label: "Person Fields"} FieldMask[]? personFields = ()) returns 
+                                  @display {label: "Person Fields"} FieldMask[] personFields) returns 
                                   @tainted @display {label: "PersonResponse"} PersonResponse|error {
         string path = CREATE_CONTACT_PATH + QUESTION_MARK;
         json payload = check person.cloneWithType(json);
