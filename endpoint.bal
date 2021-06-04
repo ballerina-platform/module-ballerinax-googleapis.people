@@ -44,11 +44,11 @@ public client class Client {
     # 
     # + readMasks - Restrict which fields on the person are returned
     # + options - Record that contains options
-    # + return - Stream of `PersonResponse` on success else an `error`
+    # + return - Stream of `PersonResponse` will have information specified by `Read Masks` on success else an `error`
     @display {label: "List OtherContacts"}
     isolated remote function listOtherContacts(@display {label: "Read Masks"} OtherContactFieldMask[] readMasks, 
                                       @display {label: "List Options"} ContactListOptions? options = ()) returns 
-                                      @tainted @display {label: "Stream of PersonResponses"} stream<PersonResponse>|error {
+                                      @tainted @display {label: "Stream of PersonResponse"} stream<PersonResponse>|error {
         string path = LIST_OTHERCONTACT_PATH;
         http:Request request = new;
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
@@ -60,7 +60,7 @@ public client class Client {
     # 
     # + person - Record of type of `CreatePerson`
     # + personFields - Restrict which fields on the person are returned
-    # + return - `PersonResponse` on success else an `error`
+    # + return - `PersonResponse` will have information specified by `Person Fields` on success else an `error`
     @display {label: "Create Contact"}
     isolated remote function createContact(@display {label: "Contact Details"} Person person, 
                                            @display {label: "Person Fields"} FieldMask[] personFields) returns 
@@ -79,7 +79,7 @@ public client class Client {
     # 
     # + resourceName - Contact resource name
     # + personFields - Restrict which fields on the person are returned
-    # + return - `PersonResponse` on success else an `error`
+    # + return - `PersonResponse` will have information specified by `Person Fields` on success else an `error`
     @display {label: "Get Contact"}
     isolated remote function getContact(@display {label: "Contact Resource Name"} string resourceName, 
                                @display {label: "Person Fields"} FieldMask[] personFields) returns 
@@ -95,7 +95,7 @@ public client class Client {
     # 
     # + query - String to be searched
     # + readMasks - Restrict which fields on the person are returned
-    # + return - `PersonResponse[]` on success else an `error`
+    # + return - `PersonResponse[]` will have information specified by `Person Fields` on success else an `error`
     @display {label: "Search Contact"}
     isolated remote function searchContacts(@display {label: "Searchable Substring"} string query,
                                             @display {label: "Read Masks"} FieldMask[] readMasks) returns 
@@ -122,7 +122,7 @@ public client class Client {
     # 
     # + resourceName - Contact resource name
     # + imagePath - Path to image from root directory
-    # + return - () on success, else an 'error'
+    # + return - Nil on success, else an 'error'
     @display {label: "Update Contact Photo"}
     isolated remote function updateContactPhoto(@display {label: "Contact Resource Name"} string resourceName,
                                                 @display {label: "Image Path"} string imagePath) returns 
@@ -139,7 +139,7 @@ public client class Client {
     # Delete a contact photo.
     # 
     # + resourceName - Contact resource name
-    # + return - () on success, else an 'error'
+    # + return - Nil on success, else an 'error'
     @display {label: "Delete Contact Photo"}
     isolated remote function deleteContactPhoto(@display {label: "Contact Resource Name"} string resourceName) returns 
                                                 @tainted error? {
@@ -152,7 +152,7 @@ public client class Client {
     # 
     # + resourceNames - String array of contact resource names
     # + personFields - Restrict which fields on the person are returned
-    # + return - `PersonResponse[]` on success, else an `error`
+    # + return - `PersonResponse[]` will have information specified by `Person Fields` on success, else an `error`
     @display {label: "Get Batch Contacts"}   
     isolated remote function getBatchContacts(@display {label: "Contact Resource Names"} string[] resourceNames, 
                                               @display {label: "Person Fields"} FieldMask[] personFields) returns 
@@ -178,11 +178,11 @@ public client class Client {
     # Update a contact.
     # 
     # + resourceName - Contact resource name
-    # + person - Person
+    # + person - Person/Contact details
     # + updatePersonFields - Restrict which fields on the person are returned
     # + personFields - Restrict which fields on the person are returned
-    # + return - `Person` on success else an `error`
-    @display {label: "Update a Contact"}  
+    # + return - `PersonResponse` will have information specified by `Person Fields` on success else an `error`
+    @display {label: "Update Contact"}  
     isolated remote function updateContact(@display {label: "Contact Resource Name"} string resourceName, 
                                            @display {label: "Contact Details"} Person person, 
                                            @display {label: "Person Fields To Update"} FieldMask[] updatePersonFields,
@@ -213,8 +213,8 @@ public client class Client {
     # Delete a Contact.
     # 
     # + resourceName - Contact resource name
-    # + return - () on success, else an `error`
-    @display {label: "Delete a Contact"}
+    # + return - Nil on success, else an `error`
+    @display {label: "Delete Contact"}
     isolated remote function deleteContact(@display {label: "Person Resource Name"} string resourceName) returns 
                                            @tainted error? {
         string path = SLASH + resourceName + COLON + DELETE_CONTACT_PATH;
@@ -227,7 +227,7 @@ public client class Client {
     # 
     # + personFields - Restrict which fields on the person are returned
     # + options - Record that contains options
-    # + return - `stream<PersonResponse>` on success or else an `error`
+    # + return - `stream<PersonResponse>` will have information specified by `Person Fields` on success or else an `error`
     @display {label: "List Contacts"}
     isolated remote function listContacts(@display {label: "Person Fields"} FieldMask[] personFields, 
                                           @display {label: "List options"} ContactListOptions? options = ()) returns
@@ -318,7 +318,7 @@ public client class Client {
     # + return - `ContactGroup` on success else an `error`
     @display {label: "Update Contact Group"}
     isolated remote function updateContactGroup(@display {label: "Contact Group Resource Name"} string resourceName,
-                                                @display {label: "Name To Update"} string updateName) returns                          
+                                                @display {label: "New Name"} string updateName) returns                          
                                                 @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + resourceName;
         http:Request request = new;
@@ -342,7 +342,7 @@ public client class Client {
     # Delete a Contact Group.
     # 
     # + resourceName - Contact Group resource name
-    # + return - () on success, else an `error`
+    # + return - Nil on success, else an `error`
     @display {label: "Delete Contact Group"}
     isolated remote function deleteContactGroup(@display {label: "Contact Group Resource Name"} string resourceName) returns 
                                        @tainted error? {
@@ -356,11 +356,11 @@ public client class Client {
     # + contactGroupResourceName - Contact Group resource name
     # + resourceNameToAdd - Contact resource name to add
     # + resourceNameToRemove - Contact resource name to remove
-    # + return - () on success, else an `error`
+    # + return - Nil on success, else an `error`
     @display {label: "Modify Contacts In Contact Group"}
     isolated remote function modifyContactGroup(@display {label: "Contact Group Resource Name"} string contactGroupResourceName, 
-                                                @display {label: "Contact Resource Names To Add"} string[]? resourceNameToAdd = (), 
-                                                @display {label: "Contact Resource Names To Remove"} string[]? resourceNameToRemove = ()) returns 
+                                                @display {label: "Add (Resource Names)"} string[]? resourceNameToAdd = (), 
+                                                @display {label: "Remove (Resource Names)"} string[]? resourceNameToRemove = ()) returns 
                                                 @tainted error? {
         string path = SLASH + contactGroupResourceName + "/members:modify";
         http:Request request = new;
