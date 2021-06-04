@@ -44,11 +44,11 @@ public client class Client {
     # 
     # + readMasks - Restrict which fields on the person are returned
     # + options - Record that contains options
-    # + return - Stream of `PersonResponse` on success else an `error`
+    # + return - Stream of `PersonResponse` will have information specified by `Read Masks` on success else an `error`
     @display {label: "List OtherContacts"}
     isolated remote function listOtherContacts(@display {label: "Read Masks"} OtherContactFieldMask[] readMasks, 
-                                      @display {label: "List options (Page token and sync token)"} ContactListOptions? options = ()) 
-                                      returns @tainted @display {label: "PersonResponses list"} stream<PersonResponse>|error {
+                                      @display {label: "List Options"} ContactListOptions? options = ()) returns 
+                                      @tainted @display {label: "Stream of PersonResponse"} stream<PersonResponse>|error {
         string path = LIST_OTHERCONTACT_PATH;
         http:Request request = new;
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
@@ -60,11 +60,11 @@ public client class Client {
     # 
     # + person - Record of type of `CreatePerson`
     # + personFields - Restrict which fields on the person are returned
-    # + return - `PersonResponse` on success else an `error`
+    # + return - `PersonResponse` will have information specified by `Person Fields` on success else an `error`
     @display {label: "Create Contact"}
-    isolated remote function createContact(@display {label: "Contact details"} Person person, 
-                                  @display {label: "Person Fields"} FieldMask[]? personFields = ()) returns 
-                                  @tainted @display {label: "PersonResponse"} PersonResponse|error {
+    isolated remote function createContact(@display {label: "Contact Details"} Person person, 
+                                           @display {label: "Person Fields"} FieldMask[] personFields) returns 
+                                           @tainted @display {label: "PersonResponse"} PersonResponse|error {
         string path = CREATE_CONTACT_PATH + QUESTION_MARK;
         json payload = check person.cloneWithType(json);
         http:Request request = new;
@@ -79,8 +79,8 @@ public client class Client {
     # 
     # + resourceName - Contact resource name
     # + personFields - Restrict which fields on the person are returned
-    # + return - `PersonResponse` on success else an `error`
-    @display {label: "Get a Contact"}
+    # + return - `PersonResponse` will have information specified by `Person Fields` on success else an `error`
+    @display {label: "Get Contact"}
     isolated remote function getContact(@display {label: "Contact Resource Name"} string resourceName, 
                                @display {label: "Person Fields"} FieldMask[] personFields) returns 
                                @tainted @display {label: "PersonResponse"} PersonResponse|error {
@@ -95,11 +95,11 @@ public client class Client {
     # 
     # + query - String to be searched
     # + readMasks - Restrict which fields on the person are returned
-    # + return - `PersonResponse[]` on success else an `error`
-    @display {label: "Search a Contact"}
-    isolated remote function searchContacts(@display {label: "Searchable substring"} string query,
-                                 @display {label: "Read Masks"} FieldMask[] readMasks) returns 
-                                 @tainted @display {label: "PersonResponse Array"} PersonResponse[]|error {
+    # + return - `PersonResponse[]` will have information specified by `Person Fields` on success else an `error`
+    @display {label: "Search Contact"}
+    isolated remote function searchContacts(@display {label: "Searchable Substring"} string query,
+                                            @display {label: "Read Masks"} FieldMask[] readMasks) returns 
+                                            @tainted @display {label: "PersonResponses Array"} PersonResponse[]|error {
         string path = SLASH + SEARCH_CONTACT_PATH + QUESTION_MARK;
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
         string pathWithQuery = pathWithReadMasks + QUERY_PATH + query;
@@ -122,11 +122,11 @@ public client class Client {
     # 
     # + resourceName - Contact resource name
     # + imagePath - Path to image from root directory
-    # + return - () on success, else an 'error'
-    @display {label: "Update a Contact Photo"}
+    # + return - Nil on success, else an 'error'
+    @display {label: "Update Contact Photo"}
     isolated remote function updateContactPhoto(@display {label: "Contact Resource Name"} string resourceName,
-                                       @display {label: "Image Path"} string imagePath) returns 
-                                       @tainted error? {
+                                                @display {label: "Image Path"} string imagePath) returns 
+                                                @tainted error? {
         string path = SLASH + resourceName + COLON + UPDATE_PHOTO_PATH;
         http:Request request = new;
         string encodedString = check convertImageToBase64String(imagePath);
@@ -139,10 +139,10 @@ public client class Client {
     # Delete a contact photo.
     # 
     # + resourceName - Contact resource name
-    # + return - () on success, else an 'error'
-    @display {label: "Delete a Contact Photo"}
+    # + return - Nil on success, else an 'error'
+    @display {label: "Delete Contact Photo"}
     isolated remote function deleteContactPhoto(@display {label: "Contact Resource Name"} string resourceName) returns 
-                                       @tainted error? {
+                                                @tainted error? {
         string path = SLASH + resourceName + COLON + DELETE_PHOTO_PATH;
         http:Response deleteResponse = <http:Response>check self.googleContactClient->delete(path);
         return handleDeleteResponse(deleteResponse);
@@ -152,11 +152,11 @@ public client class Client {
     # 
     # + resourceNames - String array of contact resource names
     # + personFields - Restrict which fields on the person are returned
-    # + return - `PersonResponse[]` on success, else an `error`
+    # + return - `PersonResponse[]` will have information specified by `Person Fields` on success, else an `error`
     @display {label: "Get Batch Contacts"}   
     isolated remote function getBatchContacts(@display {label: "Contact Resource Names"} string[] resourceNames, 
-                                     @display {label: "Person Fields"} FieldMask[] personFields) returns 
-                                     @tainted @display {label: "PersonResponse Array"} PersonResponse[]|error {
+                                              @display {label: "Person Fields"} FieldMask[] personFields) returns 
+                                              @tainted @display {label: "PersonResponse Array"} PersonResponse[]|error {
         string path = SLASH + BATCH_CONTACT_PATH;
         string pathWithResources = prepareResourceString(path, resourceNames);
         string pathWithPersonFields = prepareUrlWithPersonFields(pathWithResources + AMBERSAND, personFields);
@@ -178,16 +178,16 @@ public client class Client {
     # Update a contact.
     # 
     # + resourceName - Contact resource name
-    # + person - Person
+    # + person - Person/Contact details
     # + updatePersonFields - Restrict which fields on the person are returned
     # + personFields - Restrict which fields on the person are returned
-    # + return - `Person` on success else an `error`
-    @display {label: "Update a Contact"}  
+    # + return - `PersonResponse` will have information specified by `Person Fields` on success else an `error`
+    @display {label: "Update Contact"}  
     isolated remote function updateContact(@display {label: "Contact Resource Name"} string resourceName, 
-                                  @display {label: "Contact details"} Person person, 
-                                  @display {label: "Person Fields to be updated"} FieldMask[] updatePersonFields,
-                                  @display {label: "Person Fields to be returned"} FieldMask[]? personFields = ()) returns 
-                                  @tainted @display {label: "PersonResponse"} PersonResponse|error {
+                                           @display {label: "Contact Details"} Person person, 
+                                           @display {label: "Person Fields To Update"} FieldMask[] updatePersonFields,
+                                           @display {label: "Person Fields To Return"} FieldMask[]? personFields = ()) returns 
+                                           @tainted @display {label: "PersonResponse"} PersonResponse|error {
         string getPath = SLASH + resourceName + QUESTION_MARK;
         string getPathWithPersonFields = prepareUrlWithPersonFields(getPath, personFields);
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(getPathWithPersonFields);
@@ -199,7 +199,7 @@ public client class Client {
             string pathWithFields = pathWithUpdatePersonFields + AMBERSAND;
             http:Request request = new;
             string pathWithPersonFields = prepareUrlWithPersonFields(pathWithFields, personFields);
-            Person updatedContact = propareUpdate(person, getContact);
+            Person updatedContact = prepareUpdate(person, getContact);
             json payload = check getContact.cloneWithType(json);
             request.setJsonPayload(<@untainted>payload);
             http:Response updateResponse = <http:Response>check self.googleContactClient->patch(pathWithPersonFields, request);
@@ -213,10 +213,10 @@ public client class Client {
     # Delete a Contact.
     # 
     # + resourceName - Contact resource name
-    # + return - () on success, else an `error`
-    @display {label: "Delete a Contact"}
+    # + return - Nil on success, else an `error`
+    @display {label: "Delete Contact"}
     isolated remote function deleteContact(@display {label: "Person Resource Name"} string resourceName) returns 
-                                  @tainted error? {
+                                           @tainted error? {
         string path = SLASH + resourceName + COLON + DELETE_CONTACT_PATH;
         http:Response deleteResponse = <http:Response>check self.googleContactClient->delete(path);
         return handleDeleteResponse(deleteResponse);
@@ -227,11 +227,11 @@ public client class Client {
     # 
     # + personFields - Restrict which fields on the person are returned
     # + options - Record that contains options
-    # + return - `stream<PersonResponse>` on success or else an `error`
+    # + return - `stream<PersonResponse>` will have information specified by `Person Fields` on success or else an `error`
     @display {label: "List Contacts"}
     isolated remote function listContacts(@display {label: "Person Fields"} FieldMask[] personFields, 
-                                @display {label: "List options (Page token and sync token)"} ContactListOptions? options = ()) returns
-                                @tainted @display {label: "Stream of PersonResponses"} stream<PersonResponse>|error {
+                                          @display {label: "List options"} ContactListOptions? options = ()) returns
+                                          @tainted @display {label: "Stream of PersonResponses"} stream<PersonResponse>|error {
         string path = SLASH + LIST_PEOPLE_PATH;
         string pathWithPersonFields = prepareUrlWithPersonFields(path, personFields);
         PersonResponse[] persons = [];
@@ -244,7 +244,7 @@ public client class Client {
     # + return - `ContactGroup` on success else an `error`
     @display {label: "Create a Contact Group"}
     isolated remote function createContactGroup(@display {label: "Contact Group Resource Name"} string contactGroupName) returns 
-                                       @tainted @display {label: "Contact Group"} ContactGroup|error {
+                                                @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + CONTACT_GROUP_PATH;
         http:Request request = new;
         json createContactJsonPayload = {
@@ -263,7 +263,7 @@ public client class Client {
     # + return - `ContactGroup[]` on success else an `error`
     @display {label: "Get Batch Contact Groups"}   
     isolated remote function getBatchContactGroup(@display {label: "Resource Names"} string[] resourceNames) returns 
-                                         @tainted @display {label: "Contact Group Array"} ContactGroup[]|error {
+                                                  @tainted @display {label: "Contact Group Array"} ContactGroup[]|error {
         string path = SLASH + CONTACT_GROUP_PATH + BATCH_CONTACT_GROUP_PATH;
         string pathWithResources = prepareResourceString(path, resourceNames);
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(pathWithResources);
@@ -285,7 +285,8 @@ public client class Client {
     # 
     # + return - `ContactGroup[]` on success else an `error`
     @display {label: "List Contact Groups"}
-    isolated remote function listContactGroup() returns @tainted @display {label: "Contact Group Array"} ContactGroup[]|error {
+    isolated remote function listContactGroup() returns 
+                                                @tainted @display {label: "Contact Group Array"} ContactGroup[]|error {
         string path = SLASH + CONTACT_GROUP_PATH;
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(path);
         var response = check handleResponse(httpResponse);
@@ -299,10 +300,10 @@ public client class Client {
     # + resourceName - Name of the `ContactGroup` to be created
     # + maxMembers - maximum number of members returned in contact group
     # + return - `ContactGroup` on success else an `error`
-    @display {label: "Get a Contact Group"}
+    @display {label: "Get Contact Group"}
     isolated remote function getContactGroup(@display {label: "Contact Group Resource Name"} string resourceName,
-                                    @display {label: "Maximum members"} int maxMembers) returns 
-                                    @tainted @display {label: "Contact Group"} ContactGroup|error {
+                                            @display {label: "Maximum Members"} int maxMembers) returns 
+                                            @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + resourceName;
         string pathWithParameter = prepareUrlWithStringParameter(path, maxMembers.toString());
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(path);
@@ -315,10 +316,10 @@ public client class Client {
     # + resourceName - Name of the `ContactGroup` to be created
     # + updateName - Name to be updated
     # + return - `ContactGroup` on success else an `error`
-    @display {label: "Update a Contact Group"}
+    @display {label: "Update Contact Group"}
     isolated remote function updateContactGroup(@display {label: "Contact Group Resource Name"} string resourceName,
-                                       @display {label: "Name to be Updated"} string updateName) returns                          
-                                       @tainted @display {label: "Contact Group"} ContactGroup|error {
+                                                @display {label: "New Name"} string updateName) returns                          
+                                                @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + resourceName;
         http:Request request = new;
         string getpath = SLASH + resourceName;
@@ -341,8 +342,8 @@ public client class Client {
     # Delete a Contact Group.
     # 
     # + resourceName - Contact Group resource name
-    # + return - () on success, else an `error`
-    @display {label: "Delete a Contact Group"}
+    # + return - Nil on success, else an `error`
+    @display {label: "Delete Contact Group"}
     isolated remote function deleteContactGroup(@display {label: "Contact Group Resource Name"} string resourceName) returns 
                                        @tainted error? {
         string path = SLASH + resourceName;
@@ -355,10 +356,12 @@ public client class Client {
     # + contactGroupResourceName - Contact Group resource name
     # + resourceNameToAdd - Contact resource name to add
     # + resourceNameToRemove - Contact resource name to remove
-    # + return - json on success, else an `error`
-    @display {label: "Modify contacts in a Contact Group"}
-    isolated remote function modifyContactGroup(string contactGroupResourceName, string[]? resourceNameToAdd = (), string[]? resourceNameToRemove = ()) returns 
-                                       @tainted error? {
+    # + return - Nil on success, else an `error`
+    @display {label: "Modify Contacts In Contact Group"}
+    isolated remote function modifyContactGroup(@display {label: "Contact Group Resource Name"} string contactGroupResourceName, 
+                                                @display {label: "Add (Resource Names)"} string[]? resourceNameToAdd = (), 
+                                                @display {label: "Remove (Resource Names)"} string[]? resourceNameToRemove = ()) returns 
+                                                @tainted error? {
         string path = SLASH + contactGroupResourceName + "/members:modify";
         http:Request request = new;
         json payload =  {

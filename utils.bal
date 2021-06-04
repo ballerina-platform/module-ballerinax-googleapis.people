@@ -530,7 +530,7 @@ returns string {
     return url;
 }
 
-isolated function propareUpdate(Person updateContact, Person getContact) returns Person {
+isolated function prepareUpdate(Person updateContact, Person getContact) returns Person {
     var names = updateContact?.names;
     if(names is Name[]){
         getContact.names = names;
