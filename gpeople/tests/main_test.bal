@@ -14,9 +14,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/lang.'float;
 import ballerina/lang.runtime;
 import ballerina/log;
 import ballerina/os;
+import ballerina/random;
 import ballerina/test;
 
 configurable string clientId = os:getEnv("CLIENT_ID");
@@ -77,7 +79,8 @@ function testListOtherContacts() {
 @test:Config {}
 function testCreateContactGroup() {
     log:printInfo("Running Create Contact Group Test");
-    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
+    string contactGroupName = genRandName();
+    var createContactGroup = googleContactClient->createContactGroup(contactGroupName);
     if (createContactGroup is ContactGroup) {
         log:printInfo(createContactGroup.toString());
         contactGroupResourceName = <@untainted>createContactGroup.resourceName;
@@ -311,4 +314,11 @@ function afterSuite() {
             log:printInfo("Contact group deleted sucessfully");
         }
     }
+}
+
+isolated function genRandName() returns string {
+    float ranNumFloat = random:createDecimal()*10000000.0;
+    anydata ranNumInt = <int> float:round(ranNumFloat);
+    string contactGroupName = "TestContactGroup" + ranNumInt.toString();
+    return contactGroupName;
 }
