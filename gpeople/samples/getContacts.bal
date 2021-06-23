@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -33,7 +33,7 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-    // Create Person/Contact with given name
+    string contactResourceName = "";
     contacts:Person person = {
         "emailAddresses": [],
         "names": [{
@@ -45,9 +45,20 @@ public function main() {
     contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
     contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
     if (createContact is contacts:PersonResponse) {
+        contactResourceName = <@untainted>createContact.resourceName;
         log:printInfo("Person/Contacts Details: " + createContact.toString());
         log:printInfo(createContact.resourceName.toString());
     } else {
         log:printError("Error: " + createContact.toString());
+    }
+
+    // Fetch information about Person/Contact
+    contacts:FieldMask[] getPersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    contacts:PersonResponse|error getResponse = googleContactClient->getPeople(contactResourceName, getPersonFields);
+    if (getResponse is contacts:PersonResponse) {
+        log:printInfo("Person/Contacts Details: " + getResponse.toString());
+        log:printInfo(getResponse.resourceName.toString());
+    } else {
+        log:printError("Error: " + getResponse.toString());
     }
 }

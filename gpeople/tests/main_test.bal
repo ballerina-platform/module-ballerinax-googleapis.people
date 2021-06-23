@@ -14,9 +14,11 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/lang.'float;
 import ballerina/lang.runtime;
 import ballerina/log;
 import ballerina/os;
+import ballerina/random;
 import ballerina/test;
 
 configurable string clientId = os:getEnv("CLIENT_ID");
@@ -77,10 +79,11 @@ function testListOtherContacts() {
 @test:Config {}
 function testCreateContactGroup() {
     log:printInfo("Running Create Contact Group Test");
-    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
+    string contactGroupName = genRandName();
+    var createContactGroup = googleContactClient->createContactGroup(contactGroupName);
     if (createContactGroup is ContactGroup) {
         log:printInfo(createContactGroup.toString());
-        contactGroupResourceName = createContactGroup.resourceName;
+        contactGroupResourceName = <@untainted>createContactGroup.resourceName;
         test:assertTrue(true, msg = "Creating Contact Group Failed");
     } else {
         test:assertFail(msg = createContactGroup.message());
@@ -226,26 +229,14 @@ function testUpdateContact() {
     }
 }
 
-@test:Config {dependsOn: [testCreateContact, testGetContact, testUpdateContact]}
-function testDeleteContact() {
-    log:printInfo("Running Delete Contact Test");
-    runtime:sleep(10);
-    var deleteContact = googleContactClient->deleteContact(contactResourceName);
-    if (deleteContact is ()) {
-        test:assertTrue(true, msg = "Delete Contact Failed");
-    } else {
-        test:assertFail(msg = deleteContact.message());
-    }
-}
-
-@test:Config {dependsOn: [testDeleteContact]}
+@test:Config {dependsOn: [testUpdateContact]}
 function testGetContactGroup() {
     log:printInfo("Running Get Contact Group Test");
     runtime:sleep(10);
     var getContactGroup = googleContactClient->getContactGroup(contactGroupResourceName, 10);
     if (getContactGroup is ContactGroup) {
         log:printInfo(getContactGroup.toString());
-        contactGroupResourceName = getContactGroup.resourceName;
+        contactGroupResourceName = <@untainted>getContactGroup.resourceName;
         test:assertTrue(true, msg = "Fetching Contact Group Failed");
     } else {
         test:assertFail(msg = getContactGroup.message());
@@ -284,21 +275,10 @@ function testUpdateContactGroup() {
     var updateContactGroup = googleContactClient->updateContactGroup(contactGroupResourceName, "TestUpdated");
     if (updateContactGroup is ContactGroup) {
         log:printInfo(updateContactGroup.toString());
-        contactGroupResourceName = updateContactGroup.resourceName;
+        contactGroupResourceName = <@untainted>updateContactGroup.resourceName;
         test:assertTrue(true, msg = "Update Contact Group Failed");
     } else {
         test:assertFail(msg = updateContactGroup.message());
-    }
-}
-
-@test:Config {dependsOn: [testUpdateContactGroup]}
-function testDeleteContactGroup() {
-    log:printInfo("Running Delete Contact Group Test");
-    var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
-    if (deleteContactGroup is ()) {
-        test:assertTrue(true, msg = "Delete Contact Group Failed");
-    } else {
-        test:assertFail(msg = deleteContactGroup.message());
     }
 }
 
@@ -306,10 +286,39 @@ function testDeleteContactGroup() {
 function afterSuite() {
     log:printInfo("AfterSuite");
     runtime:sleep(10);
-    var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
-    if (deleteContact is ()) {
-        test:assertTrue(true, msg = "Delete Contact Failed");
-    } else {
-        test:assertFail(msg = deleteContact.message());
+    if (beforeSuiteResourceName != "") {
+        var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
+        if (deleteContact is error) {
+            log:printError("Delete Contact Failed for resource name=" + beforeSuiteResourceName);
+        } else {
+            log:printInfo("Contact deleted sucessfully");
+        }
+        runtime:sleep(10); 
     }
+
+    if (contactResourceName != "") {
+        var deleteContact = googleContactClient->deleteContact(contactResourceName);
+        if (deleteContact is error) {
+            log:printError("Delete Contact Failed for resource name=" + contactResourceName);
+        } else {
+            log:printInfo("Contact deleted sucessfully");
+        }
+        runtime:sleep(10);
+    }
+    
+    if (contactGroupResourceName != "") {
+        var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
+        if (deleteContactGroup is error) {
+            log:printError("Delete Contact group Failed for resource name" + contactGroupResourceName);
+        } else {
+            log:printInfo("Contact group deleted sucessfully");
+        }
+    }
+}
+
+isolated function genRandName() returns string {
+    float ranNumFloat = random:createDecimal()*10000000.0;
+    anydata ranNumInt = <int> float:round(ranNumFloat);
+    string contactGroupName = "TestContactGroup" + ranNumInt.toString();
+    return contactGroupName;
 }

@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -33,11 +33,14 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-    // List with ContactGroup[] records
-    var listContactGroup = googleContactClient->listContactGroup();
-    if (listContactGroup is contacts:ContactGroup[]) {
-        log:printInfo(listContactGroup.toString());
+    // List with stream of PersonResponse records
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS, PHOTO];
+    var listContacts = googleContactClient->listContacts(personFields);
+    if (listContacts is stream<contacts:PersonResponse>) {
+        error? e = listContacts.forEach(isolated function(contacts:PersonResponse person) {
+            log:printInfo(person.toString());
+        });
     } else {
-        log:printError(listContactGroup.toString());
+        log:printError(listContacts.toString());
     }
 }

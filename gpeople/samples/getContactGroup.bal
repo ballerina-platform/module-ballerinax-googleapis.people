@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -45,23 +45,11 @@ public function main() {
     }
 
     // Fetch information about Contact Group  
-
-    contacts:ContactGroup|error getContactGroup = googleContactClient->getContactGroup(contactGroupResourceName, 10);
-    if (getContactGroup is contacts:ContactGroup) {
-        log:printInfo("Contact Group Details: " + getContactGroup.toString());
-        contactGroupResourceName = getContactGroup.resourceName;
-        log:printInfo(getContactGroup.resourceName.toString());
+    contacts:ContactGroup|error getResponse = googleContactClient->getContactGroup(contactGroupResourceName, 10);
+    if (getResponse is contacts:ContactGroup) {
+        log:printInfo("Contact Group Details: " + getResponse.toString());
+        log:printInfo(getResponse.resourceName.toString());
     } else {
-        log:printError("Error: " + getContactGroup.toString());
-    }
-    
-    //Update a contact group
-    var updateContactGroup = googleContactClient->updateContactGroup(contactGroupResourceName, "TestUpdated");
-    if (updateContactGroup is contacts:ContactGroup) {
-        log:printInfo(updateContactGroup.toString());
-        contactGroupResourceName = updateContactGroup.resourceName;
-        log:printInfo("Updated Contact Group");
-    } else {
-        log:printError(msg = updateContactGroup.toString());
+        log:printError("Error: " + getResponse.toString());
     }
 }

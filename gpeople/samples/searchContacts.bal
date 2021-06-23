@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -33,32 +33,12 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-
-    string contactResourceName = "";
-
-    contacts:Person person = {
-        "emailAddresses": [],
-        "names": [{
-            "familyName": "Hardy",
-            "givenName": "Jason",
-            "unstructuredName": "Jason Hardy"
-        }]
-    };
-    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
-    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
-    if (createContact is contacts:PersonResponse) {
-        contactResourceName = <@untainted>createContact.resourceName;
-        log:printInfo("Person/Contacts Details: " + createContact.toString());
-        log:printInfo(createContact.resourceName.toString());
+    // Search a Person/Contact with a string
+    contacts:FieldMask[] readMasks = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse[]|error response = googleContactClient->searchContacts("Test");
+    if (response is contacts:PersonResponse[]) {
+        log:printInfo("Person/Contacts Details: " + response.toString());
     } else {
-        log:printError("Error: " + createContact.toString());
-    }
-
-    // Delete a contact
-    var deleteContact = googleContactClient->deleteContact(contactResourceName);
-    if (deleteContact is ()) {
-        log:printInfo("Deleted a Contact");
-    } else {
-        log:printError(deleteContact.toString());
+        log:printError("Error: " + response.toString());
     }
 }

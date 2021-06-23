@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerinax/googleapis_people as contacts;
+import ballerinax/googleapis.people as contacts;
 import ballerina/log;
 
 configurable string refreshToken = ?;
@@ -33,22 +33,30 @@ contacts:GoogleContactsConfiguration googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() {
-    string contactGroupResourceName = "";
-    // Create Contact Group with given name
-    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
-    if (createContactGroup is contacts:ContactGroup) {
-        log:printInfo("Contact Group Details: " + createContactGroup.toString());
-        contactGroupResourceName = createContactGroup.resourceName;
-        log:printInfo(createContactGroup.resourceName.toString());
+    string contactResourceName = "";
+    contacts:Person person = {
+        "emailAddresses": [],
+        "names": [{
+            "familyName": "Hardy",
+            "givenName": "Jason",
+            "unstructuredName": "Jason Hardy"
+        }]
+    };
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
+    if (createContact is contacts:PersonResponse) {
+        contactResourceName = <@untainted>createContact.resourceName;
+        log:printInfo("Person/Contacts Details: " + createContact.toString());
+        log:printInfo(createContact.resourceName.toString());
     } else {
-        log:printError("Error: " + createContactGroup.toString());
+        log:printError("Error: " + createContact.toString());
     }
 
-    // Delete a Contact Group
-    var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
-    if (deleteContactGroup is ()) {
-        log:printInfo("Deleted a Contact Group");
+    // Update a contact photo
+    var updateContactPhoto = googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
+    if (updateContactPhoto is ()) {
+        log:printInfo("Updated Contact Photo");
     } else {
-        log:printError(deleteContactGroup.toString());
+        log:printError(updateContactPhoto.toString());
     }
 }
