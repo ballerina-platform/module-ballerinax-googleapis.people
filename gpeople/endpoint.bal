@@ -16,22 +16,31 @@
 
 import ballerina/http;
 
-# Object for Google Contacts configuration.
+# Object for Google People API configuration.
 #
 # + oauth2Config - OAuth client configuration
 # + secureSocketConfig - HTTP client configuration
 public type GoogleContactsConfiguration record {
-    http:BearerTokenConfig | http:OAuth2RefreshTokenGrantConfig oauth2Config;
+    http:BearerTokenConfig|http:OAuth2RefreshTokenGrantConfig oauth2Config;
     http:ClientSecureSocket secureSocketConfig?;
 };
 
-# Google Contacts Client.
+# Ballerina Google People API connector provides the capability to access Google People API.
+# This connector lets you to read and manage the authenticated user's contacts and contact groups.
 #
-# + googleContactClient - The HTTP Client
+# + googleContactClient - Connector HTTP endpoint
 @display {label: "Google People API", iconPath: "GooglePeopleLogo.png"}
-public client class Client {
-    public http:Client googleContactClient;
+public isolated client class Client {
+    final http:Client googleContactClient;
 
+    # Initializes the connector. During initialization you can pass either http:BearerTokenConfig
+    # if you have a bearer token or http:OAuth2RefreshTokenGrantConfig if you have Oauth tokens.
+    # Create a [Google account](https://accounts.google.com/signup/v2/webcreateaccount?utm_source=ga-ob-search&utm_medium=google-account&flowName=GlifWebSignIn&flowEntry=SignUp) and 
+    # obtain tokens following [this guide](https://developers.google.com/identity/protocols/oauth2). 
+    # Configure the OAuth2 tokens to have the [required permissions](https://developers.google.com/sheets/api/guides/authorizing).
+    #
+    # + googleContactConfig - Configuration for the connector
+    # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized
     public isolated function init(GoogleContactsConfiguration googleContactConfig) returns error? {
         http:ClientSecureSocket? socketConfig = googleContactConfig?.secureSocketConfig;
         self.googleContactClient = check new (BASE_URL, {
