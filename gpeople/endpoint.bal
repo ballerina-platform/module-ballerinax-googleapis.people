@@ -16,7 +16,7 @@
 
 import ballerina/http;
 
-# Object for Google Contacts configuration.
+# Object for Google People API configuration.
 #
 # + oauth2Config - OAuth client configuration
 # + secureSocketConfig - HTTP client configuration
@@ -25,13 +25,16 @@ public type GoogleContactsConfiguration record {
     http:ClientSecureSocket secureSocketConfig?;
 };
 
-# Google Contacts Client.
+# Google People API Client.
 #
 # + googleContactClient - The HTTP Client
 @display {label: "Google People API", iconPath: "GooglePeopleLogo.png"}
 public client class Client {
     public http:Client googleContactClient;
 
+    # Initializes the Google People API connector client.
+    #
+    # + googleContactConfig - Configurations required to initialize the `Client` endpoint
     public isolated function init(GoogleContactsConfiguration googleContactConfig) returns error? {
         http:ClientSecureSocket? socketConfig = googleContactConfig?.secureSocketConfig;
         self.googleContactClient = check new (BASE_URL, {
