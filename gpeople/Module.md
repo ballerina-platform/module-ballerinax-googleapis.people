@@ -54,31 +54,4 @@ people:Client googleContactClient = check new (googleContactConfig);
     ```
 2. Use `bal run` command to compile and run the Ballerina program. 
 
-## Quick reference
-The following code snippets shows how the connector operations can be used in different scenarios after initializing the client.
-* Create a contact
-    ``` ballerina
-    people:Person person = {
-        emailAddresses: [],
-        names: [{
-            familyName: "Hardy",
-            givenName: "Jason",
-            unstructuredName: "Jason Hardy"
-        }]
-    };
-    people:FieldMask[] personFields = [people:NAME, people:PHONE_NUMBER, people:EMAIL_ADDRESS];
-    people:PersonResponse createContact = check googleContactClient->createContact(person, personFields);
-    ```
-
-* Get contact by resource name
-    ```ballerina
-    people:FieldMask[] getPersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    people:PersonResponse getResponse = check googleContactClient->getPeople(<Contact_Resource_Name>, getPersonFields);
-    ```
-
-* Create a contact group
-    ```ballerina
-    people:ContactGroup createContactGroup = check googleContactClient->createContactGroup("TestContactGroup");
-    ```
-
 **[You can find more samples here](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/tree/main/gpeople/samples)**
