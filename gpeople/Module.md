@@ -1,27 +1,25 @@
 ## Overview
-Ballerina connector for Google People API is connecting the Google People API via Ballerina language easily. It provides capability to perform operations related to contacts and contact groups in Google Contacts.
+Ballerina connector for Google People API connects the Google People API via Ballerina language with ease. It provides capability to perform operations related to contacts and contact groups in Google Contacts.
 
-This module supports [Google People API](https://developers.google.com/people) V1.0 version.
+This module supports [Google People API](https://developers.google.com/people/api/rest) v1.0.
 
 ## Prerequisites
 Before using this connector in your Ballerina application, complete the following:
-* Create [Google Account](https://accounts.google.com/signup/v2/webcreateaccount?hl=en&flowName=GlifWebSignIn&flowEntry=SignUp)
-* Obtaining tokens
-        
-    Follow [this link](https://developers.google.com/identity/protocols/oauth2) and obtain the client ID, client secret and refresh token.
+* Create a [Google account](https://accounts.google.com/signup/v2/webcreateaccount?hl=en&flowName=GlifWebSignIn&flowEntry=SignUp)
+* Obtain tokens - Follow [this link](https://developers.google.com/identity/protocols/oauth2)
 
 ## Quickstart
 
 To use the Google People API connector in your Ballerina application, update the .bal file as follows:
 
 ### Step 1: Import connector
-First, import the ballerinax/googleapis.people module into the Ballerina project.
+Import the ballerinax/googleapis.people module into the Ballerina project.
 ```ballerina
 import ballerinax/googleapis.people as people;
 ```
 ### Step 2: Create a new connector instance
 
-You can now enter the credentials in the Google People API client configuration and create Google People API client by passing the configuration:
+Enter the credentials in the Google People API client configuration, and create the Google People API client by passing the configuration.
 
 ```ballerina
 people:GoogleContactsConfiguration googleContactConfig = {
@@ -38,7 +36,7 @@ people:Client googleContactClient = check new (googleContactConfig);
 
 ### Step 3: Invoke connector operation
 
-1. You can create a contact as follows with `createContact` method by passing a `Person` record and `FieldMask[]` as parameters. Successful creation returns the created contact as a `PersonResponse` and the error cases returns an `error` object.
+1. Create a contact via the `createContact` method by passing a `Person` record and `FieldMask[]` as parameters.
 
     ```ballerina
     people:Person person = {
