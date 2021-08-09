@@ -185,7 +185,7 @@ isolated function convertImageToBase64String(string imagePath) returns @tainted 
 # + pathProvided -Provided path
 # + options - Record that contains options parameters
 # + return - PersonResponse stream on success, else an error
-function getContacts(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
+isolated function getContacts(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
                            ContactListOptions? options = ()) returns @tainted stream<PersonResponse>|ContactsTriggerResponse|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
     http:Response|error httpResponse = googleContactClient->get(path);
