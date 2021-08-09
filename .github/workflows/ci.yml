@@ -4,13 +4,11 @@ on: [push]
 
 jobs:
     build:
-
         runs-on: ubuntu-latest
-
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@nightly
+              uses: ballerina-platform/ballerina-action@slbeta2
               with:
                   args:
                       build -c
@@ -19,4 +17,3 @@ jobs:
                   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
                   REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
                   WORKING_DIR: ./gpeople
-
