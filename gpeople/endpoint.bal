@@ -18,18 +18,44 @@ import ballerina/http;
 
 # Object for Google People API configuration.
 #
-# + oauth2Config - OAuth client configuration
-# + secureSocketConfig - HTTP client configuration
-public type GoogleContactsConfiguration record {
-    http:BearerTokenConfig|http:OAuth2RefreshTokenGrantConfig oauth2Config;
-    http:ClientSecureSocket secureSocketConfig?;
-};
+public type ConnectionConfig record {|
+    # Configurations related to client authentication
+    http:BearerTokenConfig|http:OAuth2RefreshTokenGrantConfig auth;
+    # The HTTP version understood by the client
+    string httpVersion = "1.1";
+    # Configurations related to HTTP/1.x protocol
+    http:ClientHttp1Settings http1Settings = {};
+    # Configurations related to HTTP/2 protocol
+    http:ClientHttp2Settings http2Settings = {};
+    # The maximum time to wait (in seconds) for a response before closing the connection
+    decimal timeout = 60;
+    # The choice of setting `forwarded`/`x-forwarded` header
+    string forwarded = "disable";
+    # Configurations associated with Redirection
+    http:FollowRedirects? followRedirects = ();
+    # Configurations associated with request pooling
+    http:PoolConfiguration? poolConfig = ();
+    # HTTP caching related configurations
+    http:CacheConfig cache = {};
+    # Specifies the way of handling compression (`accept-encoding`) header
+    http:Compression compression = http:COMPRESSION_AUTO;
+    # Configurations associated with the behaviour of the Circuit Breaker
+    http:CircuitBreakerConfig? circuitBreaker = ();
+    # Configurations associated with retrying
+    http:RetryConfig? retryConfig = ();
+    # Configurations associated with cookies
+    http:CookieConfig? cookieConfig = ();
+    # Configurations associated with inbound response size limits
+    http:ResponseLimitConfigs responseLimits = {};
+    #SSL/TLS-related options
+    http:ClientSecureSocket? secureSocket = ();
+|};
 
 # Ballerina Google People API connector provides the capability to access Google People API.
 # This connector lets you to read and manage the authenticated user's contacts and contact groups.
 #
 # + googleContactClient - Connector HTTP endpoint
-@display {label: "Google People API", iconPath: "GooglePeopleLogo.png"}
+@display {label: "Google People API", iconPath: "resources/googleapis.people.svg"}
 public isolated client class Client {
     final http:Client googleContactClient;
 
@@ -41,12 +67,8 @@ public isolated client class Client {
     #
     # + googleContactConfig - Configuration for the connector
     # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized
-    public isolated function init(GoogleContactsConfiguration googleContactConfig) returns error? {
-        http:ClientSecureSocket? socketConfig = googleContactConfig?.secureSocketConfig;
-        self.googleContactClient = check new (BASE_URL, {
-            auth: googleContactConfig.oauth2Config,
-            secureSocket: socketConfig
-        });
+    public isolated function init(ConnectionConfig googleContactConfig) returns error? {
+        self.googleContactClient = check new (BASE_URL, googleContactConfig);
     }
 
     # Fetch all from "Other Contacts".

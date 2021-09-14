@@ -4,7 +4,7 @@ name= "googleapis.people"
 version= "0.1.2-SNAPSHOT"
 license= ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["google", "people", "contact"]
+keywords = ["sales & crm/contact management", "cost/free", "vendor/google"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-googleapis.people"
 
 [build-options]

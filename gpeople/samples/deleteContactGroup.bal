@@ -21,8 +21,8 @@ configurable string refreshToken = ?;
 configurable string clientId = ?;
 configurable string clientSecret = ?;
 
-contacts:GoogleContactsConfiguration googleContactConfig = {
-    oauth2Config: {
+contacts:ConnectionConfig googleContactConfig = {
+    auth: {
         clientId: clientId,
         clientSecret: clientSecret,
         refreshUrl: contacts:REFRESH_URL,

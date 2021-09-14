@@ -22,8 +22,8 @@ import ballerinax/googleapis.people as people;
 Enter the credentials in the Google People API client configuration, and create the Google People API client by passing the configuration.
 
 ```ballerina
-people:GoogleContactsConfiguration googleContactConfig = {
-    oauth2Config: {
+people:ConnectionConfig googleContactConfig = {
+    auth: {
         clientId: "<CLIENT_ID>",
         clientSecret: <CLIENT_SECRET>,
         refreshUrl: people:REFRESH_URL,
