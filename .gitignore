@@ -1,5 +1,5 @@
 # resources folder
-/resources
+/resources/*.json
 
 # idea files
 *.idea
@@ -12,3 +12,5 @@
 
 # Ignore Gradle build output directory
 build
+
+*.DS_Store

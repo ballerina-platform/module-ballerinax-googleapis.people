@@ -26,12 +26,14 @@ configurable string clientSecret = os:getEnv("CLIENT_SECRET");
 configurable string refreshToken = os:getEnv("REFRESH_TOKEN");
 
 //Create an endpoint to use Google People API Connector
-GoogleContactsConfiguration googleContactConfig = {oauth2Config: {
-    clientId: clientId,
-    clientSecret: clientSecret,
-    refreshUrl: REFRESH_URL,
-    refreshToken: refreshToken
-}};
+ConnectionConfig googleContactConfig = {
+    auth: {
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshUrl: REFRESH_URL,
+        refreshToken: refreshToken
+    }
+};
 
 Client googleContactClient = check new (googleContactConfig);
 
