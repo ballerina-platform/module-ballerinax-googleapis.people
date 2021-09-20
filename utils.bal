@@ -188,7 +188,7 @@ isolated function convertImageToBase64String(string imagePath) returns @tainted 
 function getContacts(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
                            ContactListOptions? options = ()) returns @tainted stream<PersonResponse>|ContactsTriggerResponse|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
-    var httpResponse = googleContactClient->get(path);
+    http:Response httpResponse = check googleContactClient->get(path);
     json getResponse = check checkAndSetErrors(httpResponse);
     ConnectionsResponse|ContactsTriggerResponse|error response = getResponse.cloneWithType(ConnectionsResponse);
     if (response is ConnectionsResponse) {
@@ -229,7 +229,7 @@ function getContacts(http:Client googleContactClient, @tainted PersonResponse[] 
 isolated function getContactsStream(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
                            ContactListOptions? options = ()) returns @tainted stream<PersonResponse>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
-    var httpResponse = googleContactClient->get(path);
+    http:Response httpResponse = check googleContactClient->get(path);
     json response = check checkAndSetErrors(httpResponse);
     map<json> mapResponse = <map<json>> response;
     if (mapResponse.length() != 0) {
@@ -266,7 +266,7 @@ isolated function getOtherContactsStream(http:Client googleContactClient, @taint
                                 string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
                                 returns @tainted stream<PersonResponse>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
-    var httpResponse = googleContactClient->get(path);
+    http:Response httpResponse = check googleContactClient->get(path);
     json response = check checkAndSetErrors(httpResponse);
     map<json> mapResponse = <map<json>> response;
     if (mapResponse.length() != 0) {
@@ -303,7 +303,7 @@ isolated function getContactGroupStream(http:Client googleContactClient, @tainte
                                 string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
                                 returns @tainted stream<ContactGroup>|error {
     string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
-    var httpResponse = googleContactClient->get(path);
+    http:Response httpResponse = check googleContactClient->get(path);
     json response = check checkAndSetErrors(httpResponse);
     map<json> mapResponse = <map<json>> response;
     if (mapResponse.length() != 0) {
