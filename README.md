@@ -24,7 +24,7 @@ The Google People Ballerina Connector allows you to access the Google People API
 * Java 11 Installed
   Java Development Kit (JDK) with version 11 is required.
 
-* Download the Ballerina [distribution](https://ballerinalang.org/downloads/) SLAlpha5
+* Download the Ballerina [distribution](https://ballerinalang.org/downloads/) SLBeta3
   Ballerina Swan Lake Alpha Version 5 is required.
 
 * Instantiate the connector by giving authentication details in the HTTP client config. The HTTP client config has built-in support for BasicAuth and OAuth 2.0. Google People uses OAuth 2.0 to authenticate and authorize requests. 
@@ -38,7 +38,7 @@ The Google People Ballerina Connector allows you to access the Google People API
 
 |                             |            Versions             |
 |:---------------------------:|:-------------------------------:|
-|    Ballerina Language       |       Swan Lake Alpha 5         |
+|    Ballerina Language       |       Swan Lake Beta 3          |
 |     Google People API       |               V1                |
 
 
