@@ -24,11 +24,11 @@ Execute the following commands to build from the source:
 
 * To build the package:
     ```    
-    bal build -c ./gpeople
+    bal pack --with-tests ./gpeople
     ```
 * To build the package without tests:
     ```
-    bal build -c --skip-tests ./gpeople
+    bal pack ./gpeople
     ```
 ## Contributing to Ballerina
 As an open source project, Ballerina welcomes contributions from the community. 
