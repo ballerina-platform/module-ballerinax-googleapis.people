@@ -55,7 +55,7 @@ public type ConnectionConfig record {|
 # This connector lets you to read and manage the authenticated user's contacts and contact groups.
 #
 # + googleContactClient - Connector HTTP endpoint
-@display {label: "Google People API", iconPath: "resources/googleapis.people.svg"}
+@display {label: "Google People API", iconPath: "icon.png"}
 public isolated client class Client {
     final http:Client googleContactClient;
 
