@@ -69,7 +69,7 @@ function testListOtherContacts() {
     OtherContactFieldMask[] readMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
     var listContacts = googleContactClient->listOtherContacts(readMasks);
     if (listContacts is stream<PersonResponse>) {
-        error? e = listContacts.forEach(isolated function (PersonResponse person) {
+        _ = listContacts.forEach(isolated function (PersonResponse person) {
             log:printInfo(person.toString());
         });
         test:assertTrue(true, msg = "List Other Contacts Failed");
@@ -120,7 +120,7 @@ function testListContacts() {
     FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS, PHOTO];
     var listContacts = googleContactClient->listContacts(personFields);
     if (listContacts is stream<PersonResponse>) {
-        error? e = listContacts.forEach(isolated function(PersonResponse person) {
+        _ = listContacts.forEach(isolated function(PersonResponse person) {
             log:printInfo(person.toString());
         });
         test:assertTrue(true, msg = "List People Connection Failed");
