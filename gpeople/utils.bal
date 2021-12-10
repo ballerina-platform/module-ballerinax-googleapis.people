@@ -201,7 +201,7 @@ isolated function getContacts(http:Client googleContactClient, @tainted PersonRe
         string? pageToken = response?.nextPageToken;
         if (pageToken is string && options is ContactListOptions) {
             options.pageToken = pageToken;
-            var streams = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
+            _ = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
         }
         return contactStream;
     } else {
@@ -210,7 +210,7 @@ isolated function getContacts(http:Client googleContactClient, @tainted PersonRe
         string? syncToken = triggerResponse?.nextSyncToken;
         if (syncToken is string && options is ContactListOptions) {
             options.syncToken = syncToken;
-            var getContacts = check getContacts(googleContactClient, persons, EMPTY_STRING, options);
+            _ = check getContacts(googleContactClient, persons, EMPTY_STRING, options);
         }
         return triggerResponse;
         } else {
@@ -244,7 +244,7 @@ isolated function getContactsStream(http:Client googleContactClient, @tainted Pe
             string? pageToken = contactResponse?.nextPageToken;
             if (pageToken is string && options is ContactListOptions) {
                 options.pageToken = pageToken;
-                var streams = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
+                _ = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
             }
             return contactStream;
         } else {
@@ -281,7 +281,7 @@ isolated function getOtherContactsStream(http:Client googleContactClient, @taint
             string? pageToken = otherResponse?.nextPageToken;
             if (pageToken is string && options is ContactListOptions) {
                 options.pageToken = pageToken;
-                var streams = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
+                _ = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
             }
             return contactStream;
         } else {
@@ -318,7 +318,7 @@ isolated function getContactGroupStream(http:Client googleContactClient, @tainte
             string? pageToken = contactGroupResponse?.nextPageToken;
             if (pageToken is string && options is ContactListOptions) {
                 options.pageToken = pageToken;
-                var streams = check getContactGroupStream(googleContactClient, contactgroups, EMPTY_STRING, options);
+                _ = check getContactGroupStream(googleContactClient, contactgroups, EMPTY_STRING, options);
             }
             return contactStream;
         } else {

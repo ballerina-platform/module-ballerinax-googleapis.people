@@ -82,7 +82,6 @@ public isolated client class Client {
                                                returns @tainted @display {label: "Stream of PersonResponse"} 
                                                stream<PersonResponse>|error {
         string path = LIST_OTHERCONTACT_PATH;
-        http:Request request = new;
         string pathWithReadMasks = prepareUrlWithReadMasks(path, readMasks);
         PersonResponse[] persons = [];
         return getOtherContactsStream(self.googleContactClient, persons, pathWithReadMasks, options);
@@ -231,7 +230,7 @@ public isolated client class Client {
             string pathWithFields = pathWithUpdatePersonFields + AMBERSAND;
             http:Request request = new;
             string pathWithPersonFields = prepareUrlWithPersonFields(pathWithFields, personFields);
-            Person updatedContact = prepareUpdate(person, getContact);
+            _ = prepareUpdate(person, getContact);
             json payload = check getContact.cloneWithType(json);
             request.setJsonPayload(<@untainted>payload);
             http:Response updateResponse = <http:Response>check self.googleContactClient->patch(pathWithPersonFields, request);
@@ -338,7 +337,7 @@ public isolated client class Client {
                                              @display {label: "Maximum Members"} int maxMembers) returns 
                                              @tainted @display {label: "Contact Group"} ContactGroup|error {
         string path = SLASH + resourceName;
-        string pathWithParameter = prepareUrlWithStringParameter(path, maxMembers.toString());
+        _ = prepareUrlWithStringParameter(path, maxMembers.toString());
         http:Response httpResponse = <http:Response>check self.googleContactClient->get(path);
         var response = check handleResponse(httpResponse);
         return response.cloneWithType(ContactGroup);
