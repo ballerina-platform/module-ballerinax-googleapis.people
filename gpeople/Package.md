@@ -8,7 +8,7 @@ This package provides the capability to access the Google People API service.
 ### Compatibility
 |                     | Version                   |
 |---------------------|---------------------------|
-| Ballerina Language  | Ballerina Swan Lake Beta3 |
+| Ballerina Language  | Ballerina Swan Lake Beta6 |
 | Google People API   | V1                        |
 
 ## Report issues
