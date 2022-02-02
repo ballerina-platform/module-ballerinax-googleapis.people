@@ -6,10 +6,10 @@ The `ballerinax/googleapis.people` is a [Ballerina](https://ballerina.io/) conne
 This package provides the capability to access the Google People API service.
 
 ### Compatibility
-|                     | Version                   |
-|---------------------|---------------------------|
-| Ballerina Language  | Ballerina Swan Lake Beta6 |
-| Google People API   | V1                        |
+|                     | Version              |
+|---------------------|----------------------|
+| Ballerina Language  | Swan Lake 2201.0.0   |
+| Google People API   | V1                   |
 
 ## Report issues
 To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina Extended Library repository](https://github.com/ballerina-platform/ballerina-extended-library)
