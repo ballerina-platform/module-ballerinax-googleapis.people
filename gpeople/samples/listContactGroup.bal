@@ -32,12 +32,8 @@ contacts:ConnectionConfig googleContactConfig = {
 
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
-public function main() {
+public function main() returns error? {
     // List with ContactGroup[] records
-    var listContactGroup = googleContactClient->listContactGroup();
-    if (listContactGroup is contacts:ContactGroup[]) {
-        log:printInfo(listContactGroup.toString());
-    } else {
-        log:printError(listContactGroup.toString());
-    }
+    contacts:ContactGroup[] listContactGroup = check googleContactClient->listContactGroup();
+    log:printInfo(listContactGroup.toString());
 }

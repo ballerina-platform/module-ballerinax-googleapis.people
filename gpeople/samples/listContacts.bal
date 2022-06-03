@@ -32,15 +32,11 @@ contacts:ConnectionConfig googleContactConfig = {
 
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
-public function main() {
+public function main() returns error? {
     // List with stream of PersonResponse records
-    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS, PHOTO];
-    var listContacts = googleContactClient->listContacts(personFields);
-    if (listContacts is stream<contacts:PersonResponse>) {
-        error? e = listContacts.forEach(isolated function(contacts:PersonResponse person) {
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS, contacts:PHOTO];
+    stream<contacts:PersonResponse> listContacts = check googleContactClient->listContacts(personFields);
+    _ = listContacts.forEach(isolated function(contacts:PersonResponse person) {
             log:printInfo(person.toString());
         });
-    } else {
-        log:printError(listContacts.toString());
-    }
 }

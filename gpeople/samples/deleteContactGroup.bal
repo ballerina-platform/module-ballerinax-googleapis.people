@@ -32,23 +32,14 @@ contacts:ConnectionConfig googleContactConfig = {
 
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
-public function main() {
+public function main() returns error? {
     string contactGroupResourceName = "";
     // Create Contact Group with given name
-    var createContactGroup = googleContactClient->createContactGroup("TestContactGroup");
-    if (createContactGroup is contacts:ContactGroup) {
-        log:printInfo("Contact Group Details: " + createContactGroup.toString());
-        contactGroupResourceName = createContactGroup.resourceName;
-        log:printInfo(createContactGroup.resourceName.toString());
-    } else {
-        log:printError("Error: " + createContactGroup.toString());
-    }
+    contacts:ContactGroup createContactGroup = check googleContactClient->createContactGroup("TestContactGroup");
+    log:printInfo("Contact Group Details: " + createContactGroup.toString());
+    contactGroupResourceName = createContactGroup.resourceName;
 
     // Delete a Contact Group
-    var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
-    if (deleteContactGroup is ()) {
-        log:printInfo("Deleted a Contact Group");
-    } else {
-        log:printError(deleteContactGroup.toString());
-    }
+    check googleContactClient->deleteContactGroup(contactGroupResourceName);
+    log:printInfo("Deleted contact group");
 }
