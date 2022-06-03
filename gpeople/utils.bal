@@ -86,72 +86,6 @@ isolated function prepareUrlWithReadMasks(string url, string[]? readMasks = ()) 
     return path;
 }
 
-# Prepare URL with optional sources.
-# 
-# + url - Url to be appended
-# + sources - An string array of sources to be restricted
-# + return - The prepared URL string
-isolated function prepareUrlWithOptionalSources(string url, string[]? sources) returns string {
-    string path = url;
-    if (sources is string[]) {
-        path = url + "&sources=";
-        int count = 0;
-        while (count < (sources.length() - 1)) {
-            path = path + sources[count] + COMMA;
-            count = count + 1;
-        }
-        path = path + sources[count];
-    }
-    return path;
-}
-
-# Prepare URL with copy masks.
-# 
-# + copyMasks - An string array of fields to be copied
-# + return - The prepared URL string
-isolated function prepareCopyMaskString(string[] copyMasks) returns string {
-    string path = EMPTY_STRING;
-    int count = 0;
-    while (count < (copyMasks.length() - 1)) {
-        path = path + copyMasks[count] + COMMA;
-        count = count + 1;
-    }
-    path = path + copyMasks[count];
-    return path;
-}
-
-# Prepare URL with read masks.
-# 
-# + readMasks - String array of fields to be fetched
-# + return - The prepared URL string
-isolated function prepareReadMaskString(string[]? readMasks) returns string {
-    string path = EMPTY_STRING;
-    int count = 0;
-    if(readMasks is string[]){
-        while (count < (readMasks.length() - 1)) {
-            path = path + readMasks[count] + COMMA;
-            count = count + 1;
-        }
-        path = path + readMasks[count];
-    }
-    return path;
-}
-
-# Prepare URL with read group fields.
-# 
-# + readGroupFields - String array of fields to be fetched
-# + return - The prepared URL string
-isolated function prepareReadGroupFieldsString(string[] readGroupFields) returns string {
-    string path = EMPTY_STRING;
-    int count = 0;
-    while (count < (readGroupFields.length() - 1)) {
-        path = path + readGroupFields[count] + COMMA;
-        count = count + 1;
-    }
-    path = path + readGroupFields[count];
-    return path;
-}
-
 # Prepare URL with for batch operations.
 # 
 # + pathReceived - Recieved path
@@ -172,7 +106,7 @@ isolated function prepareResourceString(string pathReceived, string[] resourceNa
 # 
 # + imagePath - Path to image source from root directory
 # + return - PersonResponse stream on success, else an error
-isolated function convertImageToBase64String(string imagePath) returns @tainted string|error {
+isolated function convertImageToBase64String(string imagePath) returns string|error {
     byte[] bytes = check io:fileReadBytes(imagePath);
     string encodedString = bytes.toBase64();
     return encodedString;
@@ -185,50 +119,9 @@ isolated function convertImageToBase64String(string imagePath) returns @tainted 
 # + pathProvided -Provided path
 # + options - Record that contains options parameters
 # + return - PersonResponse stream on success, else an error
-isolated function getContacts(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
-                           ContactListOptions? options = ()) returns @tainted stream<PersonResponse>|ContactsTriggerResponse|error {
-    string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
-    http:Response|error httpResponse = googleContactClient->get(path);
-    json getResponse = check checkAndSetErrors(httpResponse);
-    ConnectionsResponse|ContactsTriggerResponse|error response = getResponse.cloneWithType(ConnectionsResponse);
-    if (response is ConnectionsResponse) {
-        int i = persons.length();
-        foreach PersonResponse person in response.connections {
-            persons[i] = person;
-            i = i + 1;
-        }
-        stream<PersonResponse> contactStream = (<@untainted>persons).toStream();
-        string? pageToken = response?.nextPageToken;
-        if (pageToken is string && options is ContactListOptions) {
-            options.pageToken = pageToken;
-            _ = check getContactsStream(googleContactClient, persons, EMPTY_STRING, options);
-        }
-        return contactStream;
-    } else {
-        ContactsTriggerResponse | error triggerResponse = getResponse.cloneWithType(ContactsTriggerResponse);
-        if (triggerResponse is ContactsTriggerResponse) {
-        string? syncToken = triggerResponse?.nextSyncToken;
-        if (syncToken is string && options is ContactListOptions) {
-            options.syncToken = syncToken;
-            _ = check getContacts(googleContactClient, persons, EMPTY_STRING, options);
-        }
-        return triggerResponse;
-        } else {
-            return error(CONNECTION_RESPONSE_ERROR);
-        }
-    }
-}
-
-# Get persons stream.
-# 
-# + googleContactClient - Contact client
-# + persons - PersonResponse array
-# + pathProvided -Provided path
-# + options - Record that contains options parameters
-# + return - PersonResponse stream on success, else an error
-isolated function getContactsStream(http:Client googleContactClient, @tainted PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
-                           ContactListOptions? options = ()) returns @tainted stream<PersonResponse>|error {
-    string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
+isolated function getContactsStream(http:Client googleContactClient, PersonResponse[] persons, string pathProvided = EMPTY_STRING, 
+                           ContactListOptions? options = ()) returns stream<PersonResponse>|error {
+    string path = prepareUrlWithContactOptions(pathProvided, options);
     http:Response|error httpResponse = googleContactClient->get(path);
     json response = check checkAndSetErrors(httpResponse);
     map<json> mapResponse = <map<json>> response;
@@ -240,7 +133,7 @@ isolated function getContactsStream(http:Client googleContactClient, @tainted Pe
                 persons[i] = person;
                 i = i + 1;
             }
-            stream<PersonResponse> contactStream = (<@untainted>persons).toStream();
+            stream<PersonResponse> contactStream = (persons).toStream();
             string? pageToken = contactResponse?.nextPageToken;
             if (pageToken is string && options is ContactListOptions) {
                 options.pageToken = pageToken;
@@ -262,10 +155,10 @@ isolated function getContactsStream(http:Client googleContactClient, @tainted Pe
 # + pathProvided -Provided path
 # + options - Record that contains options parameters
 # + return - PersonResponse stream on success, else an error
-isolated function getOtherContactsStream(http:Client googleContactClient, @tainted PersonResponse[] persons, 
+isolated function getOtherContactsStream(http:Client googleContactClient, PersonResponse[] persons, 
                                 string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
-                                returns @tainted stream<PersonResponse>|error {
-    string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
+                                returns stream<PersonResponse>|error {
+    string path = prepareUrlWithContactOptions(pathProvided, options);
     http:Response|error httpResponse = googleContactClient->get(path);
     json response = check checkAndSetErrors(httpResponse);
     map<json> mapResponse = <map<json>> response;
@@ -277,7 +170,7 @@ isolated function getOtherContactsStream(http:Client googleContactClient, @taint
                 persons[i] = person;
                 i = i + 1;
             }
-            stream<PersonResponse> contactStream = (<@untainted>persons).toStream();
+            stream<PersonResponse> contactStream = (persons).toStream();
             string? pageToken = otherResponse?.nextPageToken;
             if (pageToken is string && options is ContactListOptions) {
                 options.pageToken = pageToken;
@@ -289,43 +182,6 @@ isolated function getOtherContactsStream(http:Client googleContactClient, @taint
         }
     } else {
         return error("Other Contacts is empty");
-    }
-}
-
-# Get persons stream.
-# 
-# + googleContactClient - Contact client
-# + contactgroups - Array of contact groups
-# + pathProvided -Provided path
-# + options - Record that contains options parameters
-# + return - PersonResponse stream on success, else an error
-isolated function getContactGroupStream(http:Client googleContactClient, @tainted ContactGroup[] contactgroups, 
-                                string pathProvided = EMPTY_STRING, ContactListOptions? options = ()) 
-                                returns @tainted stream<ContactGroup>|error {
-    string path = <@untainted>prepareUrlWithContactOptions(pathProvided, options);
-    http:Response|error httpResponse = googleContactClient->get(path);
-    json response = check checkAndSetErrors(httpResponse);
-    map<json> mapResponse = <map<json>> response;
-    if (mapResponse.length() != 0) {
-        ContactGroupListResponse|error contactGroupResponse = response.cloneWithType(ContactGroupListResponse);
-        if (contactGroupResponse is ContactGroupListResponse) {
-            int i = contactgroups.length();
-            foreach ContactGroup person in contactGroupResponse.contactGroups {
-                contactgroups[i] = person;
-                i = i + 1;
-            }
-            stream<ContactGroup> contactStream = (<@untainted>contactgroups).toStream();
-            string? pageToken = contactGroupResponse?.nextPageToken;
-            if (pageToken is string && options is ContactListOptions) {
-                options.pageToken = pageToken;
-                _ = check getContactGroupStream(googleContactClient, contactgroups, EMPTY_STRING, options);
-            }
-            return contactStream;
-        } else {
-            return error(CONTACTGROUP_RESPONSE_ERROR);
-        }
-    } else {
-        return error("Contact groups is empty");
     }
 }
 
@@ -371,7 +227,7 @@ isolated function prepareUrl(string[] paths) returns string {
             url = url + path;
         }
     }
-    return <@untainted>url;
+    return url;
 }
 
 # Prepare URL with encoded query.
@@ -408,7 +264,7 @@ isolated function prepareQueryUrl(string[] paths, string[] queryParamNames, stri
 # 
 # + httpResponse - HTTP respone or http payload or error
 # + return - JSON result on success else an error
-isolated function checkAndSetErrors(http:Response|http:PayloadType|error httpResponse) returns @tainted json|error {
+isolated function checkAndSetErrors(http:Response|http:PayloadType|error httpResponse) returns json|error {
     if (httpResponse is http:Response) {
         if (httpResponse.statusCode == http:STATUS_OK) {
             json|error jsonResponse = httpResponse.getJsonPayload();
@@ -435,7 +291,7 @@ isolated function checkAndSetErrors(http:Response|http:PayloadType|error httpRes
 # 
 # + httpResponse - Received http response
 # + return - JSON on success else an error
-isolated function handleResponse(http:Response httpResponse) returns @tainted json|error {
+isolated function handleResponse(http:Response httpResponse) returns json|error {
     json response = check httpResponse.getJsonPayload();
     if (httpResponse.statusCode is http:STATUS_OK) {
         return response;
@@ -449,7 +305,7 @@ isolated function handleResponse(http:Response httpResponse) returns @tainted js
 # 
 # + httpResponse - Received http response
 # + return - JSON on success else an error
-isolated function handleResponseWithNull(http:Response httpResponse) returns @tainted json|()|error {
+isolated function handleResponseWithNull(http:Response httpResponse) returns json|()|error {
     json response = check httpResponse.getJsonPayload();
     if (httpResponse.statusCode is http:STATUS_OK) {
         map<json> mapResponse = <map<json>> response;
@@ -468,7 +324,7 @@ isolated function handleResponseWithNull(http:Response httpResponse) returns @ta
 # 
 # + httpResponse - Received http response
 # + return - () on success else an error
-isolated function handleDeleteResponse(http:Response httpResponse) returns @tainted error? {
+isolated function handleDeleteResponse(http:Response httpResponse) returns error? {
     if (httpResponse.statusCode is http:STATUS_OK) {
         return ();
     } else {
@@ -482,7 +338,7 @@ isolated function handleDeleteResponse(http:Response httpResponse) returns @tain
 # 
 # + httpResponse - Received http response
 # + return - () on success else an error
-isolated function handleUploadPhotoResponse(http:Response httpResponse) returns @tainted error? {
+isolated function handleUploadPhotoResponse(http:Response httpResponse) returns error? {
     if (httpResponse.statusCode is http:STATUS_OK) {
         return ();
     } else {
@@ -496,7 +352,7 @@ isolated function handleUploadPhotoResponse(http:Response httpResponse) returns 
 # 
 # + httpResponse - Received http response
 # + return - () on success else an error
-isolated function handleModifyResponse(http:Response httpResponse) returns @tainted error? {
+isolated function handleModifyResponse(http:Response httpResponse) returns error? {
     if (httpResponse.statusCode is http:STATUS_OK) {
         return ();
     } else {
@@ -504,30 +360,6 @@ isolated function handleModifyResponse(http:Response httpResponse) returns @tain
         json err = check uploadPhotoResponse.'error.message;
         return error(err.toString());
     }
-}
-
-isolated function prepareQueryUrlForToken(string path, string[] queryParamNames, string[] queryParamValues) 
-returns string {
-    string url = path;
-    boolean first = true;
-    int i = 0;
-    foreach var name in queryParamNames {
-        string value = queryParamValues[i];
-        var encoded = url:encode(value, "utf-8");
-        if (encoded is string) {
-            if (first) {
-                url = url + AMBERSAND + name + EQUAL + encoded;
-                first = false;
-            } else {
-                url = url + AMBERSAND + name + EQUAL + encoded;
-            }
-        } else {
-            log:printError("Unable to encode value: " + value);
-            break;
-        }
-        i = i + 1;
-    }
-    return url;
 }
 
 isolated function prepareUpdate(Person updateContact, Person getContact) returns Person {

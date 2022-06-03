@@ -32,7 +32,7 @@ contacts:ConnectionConfig googleContactConfig = {
 
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
-public function main() {
+public function main() returns error? {
     // Create Person/Contact with given name
     contacts:Person person = {
         "emailAddresses": [],
@@ -43,11 +43,6 @@ public function main() {
         }]
     };
     contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
-    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
-    if (createContact is contacts:PersonResponse) {
-        log:printInfo("Person/Contacts Details: " + createContact.toString());
-        log:printInfo(createContact.resourceName.toString());
-    } else {
-        log:printError("Error: " + createContact.toString());
-    }
+    contacts:PersonResponse createContact = check googleContactClient->createContact(person, personFields);
+    log:printInfo("Contact Details: " + createContact.toString());
 }

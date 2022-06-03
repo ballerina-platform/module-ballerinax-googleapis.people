@@ -42,7 +42,7 @@ string contactResourceName = "";
 string beforeSuiteResourceName = "";
 
 @test:BeforeSuite
-function beforeSuit() {
+function beforeSuit() returns error? {
     log:printInfo("BeforeSuite");
     Person createContact = {
         "emailAddresses": [],
@@ -53,47 +53,32 @@ function beforeSuit() {
         }]
     };
     FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields);
-    if (createdContact is PersonResponse) {
-        beforeSuiteResourceName = <@untainted>createdContact.resourceName;
-        log:printInfo(createdContact.toString());
-        test:assertTrue(true, msg = "Create Contact Failed");
-    } else {
-        test:assertFail(msg = createdContact.message());
-    }
+    PersonResponse createdContact = check googleContactClient->createContact(createContact, personFields);
+    beforeSuiteResourceName = createdContact.resourceName;
+    log:printInfo(createdContact.toString());
 }
 
 @test:Config { enable: true }
-function testListOtherContacts() {
+function testListOtherContacts() returns error? {
     log:printInfo("Running List Other Contact Test");
     OtherContactFieldMask[] readMasks = [OTHER_CONTACT_NAME, OTHER_CONTACT_PHONE_NUMBER, OTHER_CONTACT_EMAIL_ADDRESS];
-    var listContacts = googleContactClient->listOtherContacts(readMasks);
-    if (listContacts is stream<PersonResponse>) {
-        _ = listContacts.forEach(isolated function (PersonResponse person) {
+    stream<PersonResponse> listContacts = check googleContactClient->listOtherContacts(readMasks);
+    _ = listContacts.forEach(isolated function (PersonResponse person) {
             log:printInfo(person.toString());
         });
-        test:assertTrue(true, msg = "List Other Contacts Failed");
-    } else {
-        test:assertFail(msg = listContacts.message());
-    }
 }
 
 @test:Config {}
-function testCreateContactGroup() {
+function testCreateContactGroup() returns error? {
     log:printInfo("Running Create Contact Group Test");
     string contactGroupName = genRandName();
-    var createContactGroup = googleContactClient->createContactGroup(contactGroupName);
-    if (createContactGroup is ContactGroup) {
-        log:printInfo(createContactGroup.toString());
-        contactGroupResourceName = <@untainted>createContactGroup.resourceName;
-        test:assertTrue(true, msg = "Creating Contact Group Failed");
-    } else {
-        test:assertFail(msg = createContactGroup.message());
-    }
+    ContactGroup createContactGroup = check googleContactClient->createContactGroup(contactGroupName);
+    log:printInfo(createContactGroup.toString());
+    contactGroupResourceName = createContactGroup.resourceName;
 }
 
 @test:Config {dependsOn: [testCreateContactGroup]}
-function testCreateContact() {
+function testCreateContact() returns error? {
     log:printInfo("Running Create Contact Test");
     Person createContact = {
         "emailAddresses": [],
@@ -104,111 +89,71 @@ function testCreateContact() {
         }]
     };
     FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    PersonResponse|error createdContact = googleContactClient->createContact(createContact, personFields);
-    if (createdContact is PersonResponse) {
-        contactResourceName = <@untainted>createdContact.resourceName;
-        log:printInfo(createdContact.toString());
-        test:assertTrue(true, msg = "Create Contact Failed");
-    } else {
-        test:assertFail(msg = createdContact.message());
-    }
+    PersonResponse createdContact = check googleContactClient->createContact(createContact, personFields);
+    contactResourceName = createdContact.resourceName;
+    log:printInfo(createdContact.toString());
 }
 
 @test:Config {dependsOn: [testCreateContact]}
-function testListContacts() {
+function testListContacts() returns error? {
     log:printInfo("Running List People Connection Test");
     FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS, PHOTO];
-    var listContacts = googleContactClient->listContacts(personFields);
-    if (listContacts is stream<PersonResponse>) {
-        _ = listContacts.forEach(isolated function(PersonResponse person) {
+    stream<PersonResponse> listContacts = check googleContactClient->listContacts(personFields);
+    _ = listContacts.forEach(isolated function(PersonResponse person) {
             log:printInfo(person.toString());
         });
-        test:assertTrue(true, msg = "List People Connection Failed");
-    } else {
-        test:assertFail(msg = listContacts.message());
-    }
 }
 
 @test:Config {dependsOn: [testListContacts]}
-function testModifyContactGroup() {
+function testModifyContactGroup() returns error? {
     log:printInfo("Running Modify contacts in Contact Group Test");
-    var response = googleContactClient->modifyContactGroup(contactGroupResourceName, [contactResourceName], []);
-    if (response is ()) {
-        test:assertTrue(true, msg = "Modify contacts in Contact Group Failed");
-    } else {
-        test:assertFail(msg = response.message());
-    }
+    check googleContactClient->modifyContactGroup(contactGroupResourceName, [contactResourceName], []);
 }
 
 @test:Config {dependsOn: [testModifyContactGroup]}
-function testGetContact() {
+function testGetContact() returns error? {
     log:printInfo("Running Get Contact Test");
     runtime:sleep(10);
     FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    PersonResponse|error getPeople = googleContactClient->getContact(contactResourceName, personFields);
-    if (getPeople is PersonResponse) {
-        log:printInfo(getPeople.toString());
-        test:assertTrue(true, msg = "Get Contact Failed");
-    } else {
-        test:assertFail(msg = getPeople.message());
-    }
+    PersonResponse getPeople =check googleContactClient->getContact(contactResourceName, personFields);
+    log:printInfo(getPeople.toString());
 }
 
 @test:Config {dependsOn: [testGetContact], enable: false}
-function testSearchContact() {
+function testSearchContact() returns error? {
     log:printInfo("Running Search Contact Test");
     runtime:sleep(10);
     FieldMask[] readMasks = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    PersonResponse[]|error searchContact = googleContactClient->searchContacts("Sh", readMasks);
-    if (searchContact is PersonResponse[]) {
-        log:printInfo(searchContact.toString());
-        test:assertTrue(true, msg = "Search Contact Failed");
-    } else {
-        test:assertFail(msg = searchContact.message());
-    }
+    PersonResponse[] searchContact = check googleContactClient->searchContacts("Sh", readMasks);
+    log:printInfo(searchContact.toString());
 }
 
 @test:Config {dependsOn: [testGetContact]}
-function testGetBatchContacts() {
+function testGetBatchContacts() returns error? {
     log:printInfo("Running Get Batch Contact Test");
     runtime:sleep(10);
     FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
     string[] contactResourceNames = [contactResourceName];
-    var getBatchContacts = googleContactClient->getBatchContacts(contactResourceNames, personFields);
-    if (getBatchContacts is PersonResponse[]) {
-        log:printInfo(getBatchContacts.toString());
-        test:assertTrue(true, msg = "Get Batch Contacts Failed");
-    } else {
-        test:assertFail(msg = getBatchContacts.message());
-    }
+    PersonResponse[] getBatchContacts = check googleContactClient->getBatchContacts(contactResourceNames, personFields);
+    log:printInfo(getBatchContacts.toString());
 }
 
 @test:Config {dependsOn: [testGetBatchContacts]}
-function testUpdateContactPhoto() {
+function testUpdateContactPhoto() returns error? {
     log:printInfo("Running Update Contact Photo Test");
     runtime:sleep(10);
-    var updateContactPhoto = googleContactClient->updateContactPhoto(contactResourceName, "tests/test.png");
-    if (updateContactPhoto is ()) {
-        test:assertTrue(true, msg = "Update Contact Photo Failed");
-    } else {
-        test:assertFail(msg = updateContactPhoto.message());
-    }
+    check googleContactClient->updateContactPhoto(contactResourceName, "tests/test.png");
 }
 
 @test:Config {dependsOn: [testUpdateContactPhoto]}
-function testDeleteContactPhoto() {
+function testDeleteContactPhoto() returns error? {
     log:printInfo("Running Delete Contact Photo Test");
     runtime:sleep(10);
-    var deleteContactPhoto = googleContactClient->deleteContactPhoto(contactResourceName);
-    if (deleteContactPhoto is ()) {
-        test:assertTrue(true, msg = "Delete Contact Photo Failed");
-    } else {
-        test:assertFail(msg = deleteContactPhoto.message());
-    }
+    check googleContactClient->deleteContactPhoto(contactResourceName);
 }
 
 @test:Config {dependsOn: [testDeleteContactPhoto]}
-function testUpdateContact() {
+function testUpdateContact() returns error? {
     log:printInfo("Running Update Contact Test");
     runtime:sleep(10);
     Person updateContactDetail = {
@@ -219,79 +164,54 @@ function testUpdateContact() {
             "unstructuredName": "Jason Shawn"
         }]
     };
-        FieldMask[] updatePersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-     FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    var updateContactResponse = googleContactClient->updateContact(contactResourceName, updateContactDetail, 
-                                                                       updatePersonFields, personFields);
-    if (updateContactResponse is PersonResponse) {
-        log:printInfo(updateContactResponse.toString());        
-        test:assertTrue(true, msg = "Update Contact Failed");
-    } else {
-        test:assertFail(msg = updateContactResponse.message());
-    }
+    FieldMask[] updatePersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    FieldMask[] personFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
+    PersonResponse updateContactResponse = check googleContactClient->updateContact(contactResourceName, 
+            updateContactDetail, updatePersonFields, personFields);
+    log:printInfo(updateContactResponse.toString()); 
 }
 
 @test:Config {dependsOn: [testUpdateContact]}
-function testGetContactGroup() {
+function testGetContactGroup() returns error? {
     log:printInfo("Running Get Contact Group Test");
     runtime:sleep(10);
-    var getContactGroup = googleContactClient->getContactGroup(contactGroupResourceName, 10);
-    if (getContactGroup is ContactGroup) {
-        log:printInfo(getContactGroup.toString());
-        contactGroupResourceName = <@untainted>getContactGroup.resourceName;
-        test:assertTrue(true, msg = "Fetching Contact Group Failed");
-    } else {
-        test:assertFail(msg = getContactGroup.message());
-    }
+    ContactGroup getContactGroup = check googleContactClient->getContactGroup(contactGroupResourceName, 10);
+    log:printInfo(getContactGroup.toString());
+    contactGroupResourceName = getContactGroup.resourceName;
 }
 
 @test:Config {dependsOn: [testGetContactGroup]}
-function testbatchGetContactGroup() {
+function testbatchGetContactGroup() returns error? {
     log:printInfo("Running Get Batch Contact Group Test");
     runtime:sleep(10);
     string[] resourceNames = [contactGroupResourceName];
-    var getBatchContactGroup = googleContactClient->getBatchContactGroup(resourceNames);
-    if (getBatchContactGroup is ContactGroup[]) {
-        log:printInfo(getBatchContactGroup.toString());
-        test:assertTrue(true, msg = "Get Batch Contact Group Failed");
-    } else {
-        test:assertFail(msg = getBatchContactGroup.message());
-    }
+    ContactGroup[] getBatchContactGroup = check googleContactClient->getBatchContactGroup(resourceNames);
+    log:printInfo(getBatchContactGroup.toString());
 }
 
 @test:Config {dependsOn: [testbatchGetContactGroup]}
-function testListContactGroup() {
+function testListContactGroup() returns error? {
     log:printInfo("Running List Contact Group Test");
-    var listContactGroup = googleContactClient->listContactGroup();
-    if (listContactGroup is ContactGroup[]) {
-        log:printInfo(listContactGroup.toString());
-        test:assertTrue(true, msg = "List Contact Group Failed");
-    } else {
-        test:assertFail(msg = listContactGroup.message());
-    }
+    ContactGroup[] listContactGroup = check googleContactClient->listContactGroup();
+    log:printInfo(listContactGroup.toString());
 }
 
 @test:Config {dependsOn: [testListContactGroup]}
-function testUpdateContactGroup() {
+function testUpdateContactGroup() returns error? {
     log:printInfo("Running Update Contact Group Test");
-    var updateContactGroup = googleContactClient->updateContactGroup(contactGroupResourceName, "TestUpdated");
-    if (updateContactGroup is ContactGroup) {
-        log:printInfo(updateContactGroup.toString());
-        contactGroupResourceName = <@untainted>updateContactGroup.resourceName;
-        test:assertTrue(true, msg = "Update Contact Group Failed");
-    } else {
-        test:assertFail(msg = updateContactGroup.message());
-    }
+    ContactGroup updateContactGroup = check googleContactClient->updateContactGroup(contactGroupResourceName, "TestUpdated");
+    log:printInfo(updateContactGroup.toString());
+    contactGroupResourceName = updateContactGroup.resourceName;
 }
 
 @test:AfterSuite { }
-function afterSuite() {
+function afterSuite() returns error? {
     log:printInfo("AfterSuite");
     runtime:sleep(10);
     if (beforeSuiteResourceName != "") {
-        var deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
+        error? deleteContact = googleContactClient->deleteContact(beforeSuiteResourceName);
         if (deleteContact is error) {
-            log:printError("Delete Contact Failed for resource name=" + beforeSuiteResourceName);
+            log:printError("Delete Contact Failed for resource name: " + beforeSuiteResourceName);
         } else {
             log:printInfo("Contact deleted sucessfully");
         }
@@ -299,9 +219,9 @@ function afterSuite() {
     }
 
     if (contactResourceName != "") {
-        var deleteContact = googleContactClient->deleteContact(contactResourceName);
+        error? deleteContact = googleContactClient->deleteContact(contactResourceName);
         if (deleteContact is error) {
-            log:printError("Delete Contact Failed for resource name=" + contactResourceName);
+            log:printError("Delete Contact Failed for resource name: " + contactResourceName);
         } else {
             log:printInfo("Contact deleted sucessfully");
         }
@@ -309,7 +229,7 @@ function afterSuite() {
     }
     
     if (contactGroupResourceName != "") {
-        var deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
+        error? deleteContactGroup = googleContactClient->deleteContactGroup(contactGroupResourceName);
         if (deleteContactGroup is error) {
             log:printError("Delete Contact group Failed for resource name" + contactGroupResourceName);
         } else {

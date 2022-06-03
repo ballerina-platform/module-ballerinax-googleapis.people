@@ -32,13 +32,9 @@ contacts:ConnectionConfig googleContactConfig = {
 
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
-public function main() {
+public function main() returns error? {
     // Search a Person/Contact with a string
     contacts:FieldMask[] readMasks = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
-    contacts:PersonResponse[]|error response = googleContactClient->searchContacts("Test");
-    if (response is contacts:PersonResponse[]) {
-        log:printInfo("Person/Contacts Details: " + response.toString());
-    } else {
-        log:printError("Error: " + response.toString());
-    }
+    contacts:PersonResponse[] response = check googleContactClient->searchContacts("Test", readMasks);
+    log:printInfo("Contacts: " + response.toString());
 }

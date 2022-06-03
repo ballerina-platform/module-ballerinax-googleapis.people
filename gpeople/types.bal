@@ -14,13 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Define a OtherContactList.
-#
-# + otherContacts - Other contacts of type Person
-public type OtherContactList record {
-    PersonResponse[] otherContacts;
-};
-
 # Define a Person.
 #
 # + resourceName - String of resource name
@@ -715,17 +708,6 @@ public type MetaDataSource record {
     string id?;
 };
 
-# Define an ContactGroupResponse.
-#
-# + requestedResourceName - Resource requested
-# + status - Status of resource
-# + contactGroup - Detail of contactGroup
-public type ContactGroupResponse record {
-    string requestedResourceName;
-    json status;
-    json contactGroup;
-};
-
 # Define an ContactGroup.
 #
 # + resourceName - Resource name
@@ -838,13 +820,6 @@ public type SearchResponse record {
     json[] results;
 };
 
-# Define a SearchResult.
-#
-# + person - Type of PersonResponse
-public type SearchResult record {
-    PersonResponse person;
-};
-
 # Define a people connection response.
 #
 # + connections - Array of PersonResponse of authenticated user
@@ -860,34 +835,6 @@ public type ConnectionsResponse record {
     int totalItems?;
 };
 
-# Define a sync people connection response.
-#
-# + connections - Array of person of authenticated user
-# + nextPageToken - Next page token
-# + nextSyncToken - Next sync token
-# + totalPeople - Total contacts
-# + totalItems - Total pages
-public type SyncConnectionsResponse record {
-    PersonResponse[] connections?;
-    string nextPageToken?;
-    string nextSyncToken;
-    int totalPeople?;
-    int totalItems?;
-};
-
-# Define a people connection trigger response.
-#
-# + nextPageToken - Next page token
-# + nextSyncToken - Next sync token
-# + totalPeople - Total contacts
-# + totalItems - Total pages
-public type ContactsTriggerResponse record {
-    string nextPageToken?;
-    string nextSyncToken;
-    int totalPeople?;
-    int totalItems?;
-};
-
 # Define a OtherContact List Response.
 #
 # + otherContacts - Array of Person of in Other contacts
@@ -899,37 +846,11 @@ public type OtherContactListResponse record {
     string nextSyncToken?;
 };
 
-# Define a OtherContact List Response.
-#
-# + contactGroups - Array of contact groups
-# + totalItems - Total contact groups
-# + nextPageToken - Next page token
-# + nextSyncToken - Next sync token
-public type ContactGroupListResponse record {
-    ContactGroup[] contactGroups;
-    string totalItems?;
-    string nextPageToken?;
-    string nextSyncToken?;
-};
-
 # Define a BatchGetResponse.
 #
 # + responses - Array of PersonResponse
 public type BatchGetResponse record {
     json[] responses;
-};
-
-# Define a Stream response of a Connection/Person.
-#
-# + nextSyncToken - Next sync token
-# + totalPeople - Total contacts
-# + totalItems - Total pages
-# + connections - Stream of type Person
-public type ConnectionsStreamResponse record {
-    string nextSyncToken?;
-    int totalPeople?;
-    int totalItems?;
-    stream<Person> connections?;
 };
 
 # Define a Stream response of a Connection/Person.

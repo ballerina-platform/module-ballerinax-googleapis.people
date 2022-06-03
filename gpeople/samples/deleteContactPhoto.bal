@@ -32,7 +32,7 @@ contacts:ConnectionConfig googleContactConfig = {
 
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
-public function main() {
+public function main() returns error? {
 
     string contactResourceName = "";
 
@@ -45,28 +45,15 @@ public function main() {
         }]
     };
     contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
-    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
-    if (createContact is contacts:PersonResponse) {
-        contactResourceName = <@untainted>createContact.resourceName;
-        log:printInfo("Person/Contacts Details: " + createContact.toString());
-        log:printInfo(createContact.resourceName.toString());
-    } else {
-        log:printError("Error: " + createContact.toString());
-    }
+    contacts:PersonResponse createContact = check googleContactClient->createContact(person, personFields);
+    contactResourceName = createContact.resourceName;
+    log:printInfo("Contacts Details: " + createContact.toString());
 
     // Update a contact photo
-    var updateContactPhoto = googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
-    if (updateContactPhoto is ()) {
-        log:printInfo("Updated Contact Photo");
-    } else {
-        log:printError(updateContactPhoto.toString());
-    }
+    check googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
+    log:printInfo("Updated contact photo");
 
     // Delete a contact photo
-    var deleteContactPhoto = googleContactClient->deleteContactPhoto(contactResourceName);
-    if (deleteContactPhoto is ()) {
-        log:printInfo("Delete Contact Photo Deleted");
-    } else {
-        log:printError(deleteContactPhoto.toString());
-    }
+    check googleContactClient->deleteContactPhoto(contactResourceName);
+    log:printInfo("Deleted contact photo");
 }

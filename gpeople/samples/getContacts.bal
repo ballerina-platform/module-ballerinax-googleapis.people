@@ -32,7 +32,7 @@ contacts:ConnectionConfig googleContactConfig = {
 
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
-public function main() {
+public function main() returns error? {
     string contactResourceName = "";
     contacts:Person person = {
         "emailAddresses": [],
@@ -43,22 +43,12 @@ public function main() {
         }]
     };
     contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
-    contacts:PersonResponse|error createContact = googleContactClient->createContact(person, personFields);
-    if (createContact is contacts:PersonResponse) {
-        contactResourceName = <@untainted>createContact.resourceName;
-        log:printInfo("Person/Contacts Details: " + createContact.toString());
-        log:printInfo(createContact.resourceName.toString());
-    } else {
-        log:printError("Error: " + createContact.toString());
-    }
+    contacts:PersonResponse createContact = check googleContactClient->createContact(person, personFields);
+    contactResourceName = createContact.resourceName;
+    log:printInfo("Contacts Details: " + createContact.toString());
 
     // Fetch information about Person/Contact
-    contacts:FieldMask[] getPersonFields = [NAME, PHONE_NUMBER, EMAIL_ADDRESS];
-    contacts:PersonResponse|error getResponse = googleContactClient->getPeople(contactResourceName, getPersonFields);
-    if (getResponse is contacts:PersonResponse) {
-        log:printInfo("Person/Contacts Details: " + getResponse.toString());
-        log:printInfo(getResponse.resourceName.toString());
-    } else {
-        log:printError("Error: " + getResponse.toString());
-    }
+    contacts:FieldMask[] getPersonFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse getResponse = check googleContactClient->getContact(contactResourceName, getPersonFields);
+    log:printInfo("Contacts Details: " + getResponse.toString());
 }
