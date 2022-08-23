@@ -264,7 +264,7 @@ isolated function prepareQueryUrl(string[] paths, string[] queryParamNames, stri
 # 
 # + httpResponse - HTTP respone or http payload or error
 # + return - JSON result on success else an error
-isolated function checkAndSetErrors(http:Response|http:PayloadType|error httpResponse) returns json|error {
+isolated function checkAndSetErrors(http:Response|error httpResponse) returns json|error {
     if (httpResponse is http:Response) {
         if (httpResponse.statusCode == http:STATUS_OK) {
             json|error jsonResponse = httpResponse.getJsonPayload();
