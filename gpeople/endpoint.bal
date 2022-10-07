@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/http;
+import ballerinax/'client.config;
 
 # Ballerina Google People API connector provides the capability to access Google People API.
 # This connector lets you to read and manage the authenticated user's contacts and contact groups.
@@ -33,23 +34,7 @@ public isolated client class Client {
     # + config - Configuration for the connector
     # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized
     public isolated function init(ConnectionConfig config) returns error? {
-        http:ClientConfiguration httpClientConfig = {
-            auth: let var authConfig = config.auth in (authConfig is BearerTokenConfig ? authConfig : {...authConfig}),
-            httpVersion: config.httpVersion,
-            http1Settings: {...config.http1Settings},
-            http2Settings: config.http2Settings,
-            timeout: config.timeout,
-            forwarded: config.forwarded,
-            poolConfig: config.poolConfig,
-            cache: config.cache,
-            compression: config.compression,
-            circuitBreaker: config.circuitBreaker,
-            retryConfig: config.retryConfig,
-            responseLimits: config.responseLimits,
-            secureSocket: config.secureSocket,
-            proxy: config.proxy,
-            validation: config.validation
-        };
+        http:ClientConfiguration httpClientConfig = check config:constructHTTPClientConfig(config);
         self.googleContactClient = check new (BASE_URL, httpClientConfig);
     }
 
