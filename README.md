@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/workflows/CI/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/actions?query=workflow%3ACI)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerinax-googleapis.people.svg)](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/commits/master)
+[![GraalVM Check](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/actions/workflows/build-with-bal-test-native.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-googleapis.people/actions/workflows/build-with-bal-test-native.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 [Google People API](https://developers.google.com/people) is a contact and contact group management service developed by Google.
