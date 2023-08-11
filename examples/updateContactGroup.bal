@@ -33,10 +33,23 @@ contacts:ConnectionConfig googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() returns error? {
-    // List with stream of PersonResponse records
-    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS, contacts:PHOTO];
-    stream<contacts:PersonResponse> listContacts = check googleContactClient->listContacts(personFields);
-    _ = listContacts.forEach(isolated function(contacts:PersonResponse person) {
-            log:printInfo(person.toString());
-        });
+    string contactGroupResourceName = "";
+    // Create Contact Group with given name
+    contacts:ContactGroup createContactGroup = check googleContactClient->createContactGroup("TestContactGroup");
+    log:printInfo("Contact Group Details: " + createContactGroup.toString());
+    contactGroupResourceName = createContactGroup.resourceName;
+    log:printInfo(createContactGroup.resourceName.toString());
+
+    // Fetch information about Contact Group  
+    contacts:ContactGroup getContactGroup = check googleContactClient->getContactGroup(contactGroupResourceName, 10);
+    log:printInfo("Contact Group Details: " + getContactGroup.toString());
+    contactGroupResourceName = getContactGroup.resourceName;
+    log:printInfo(getContactGroup.resourceName.toString());
+
+    //Update a contact group
+    contacts:ContactGroup updateContactGroup = check googleContactClient->updateContactGroup(contactGroupResourceName,
+            "TestUpdated");
+    log:printInfo(updateContactGroup.toString());
+    contactGroupResourceName = updateContactGroup.resourceName;
+    log:printInfo("Updated Contact Group");
 }

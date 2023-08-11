@@ -33,22 +33,10 @@ contacts:ConnectionConfig googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() returns error? {
-    string contactResourceName = "";
-    contacts:Person person = {
-        "emailAddresses": [],
-        "names": [{
-            "familyName": "Hardy",
-            "givenName": "Jason",
-            "unstructuredName": "Jason Hardy"
-        }]
-    };
-    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
-    contacts:PersonResponse createContact = check googleContactClient->createContact(person, personFields);
-    contactResourceName = createContact.resourceName;
-    log:printInfo("Contact Details: " + createContact.toString());
-    log:printInfo(createContact.resourceName.toString());
-
-    // Update a contact photo
-    check googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
-    log:printInfo("Updated Contact Photo");
+    // List with stream of PersonResponse records
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS, contacts:PHOTO];
+    stream<contacts:PersonResponse> listContacts = check googleContactClient->listContacts(personFields);
+    _ = listContacts.forEach(isolated function(contacts:PersonResponse person) {
+        log:printInfo(person.toString());
+    });
 }
