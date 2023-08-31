@@ -37,6 +37,6 @@ public function main() returns error? {
     contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS, contacts:PHOTO];
     stream<contacts:PersonResponse> listContacts = check googleContactClient->listContacts(personFields);
     _ = listContacts.forEach(isolated function(contacts:PersonResponse person) {
-        log:printInfo(person.toString());
-    });
+            log:printInfo(person.toString());
+        });
 }
