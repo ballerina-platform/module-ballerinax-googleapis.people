@@ -36,11 +36,13 @@ public function main() returns error? {
     string contactResourceName = "";
     contacts:Person person = {
         "emailAddresses": [],
-        "names": [{
-            "familyName": "Hardy",
-            "givenName": "Jason",
-            "unstructuredName": "Jason Hardy"
-        }]
+        "names": [
+            {
+                "familyName": "Hardy",
+                "givenName": "Jason",
+                "unstructuredName": "Jason Hardy"
+            }
+        ]
     };
     contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
     contacts:PersonResponse createContact = check googleContactClient->createContact(person, personFields);

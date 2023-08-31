@@ -38,22 +38,19 @@ public function main() returns error? {
 
     contacts:Person person = {
         "emailAddresses": [],
-        "names": [{
-            "familyName": "Hardy",
-            "givenName": "Jason",
-            "unstructuredName": "Jason Hardy"
-        }]
+        "names": [
+            {
+                "familyName": "Hardy",
+                "givenName": "Jason",
+                "unstructuredName": "Jason Hardy"
+            }
+        ]
     };
     contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
     contacts:PersonResponse createContact = check googleContactClient->createContact(person, personFields);
     contactResourceName = createContact.resourceName;
-    log:printInfo("Contacts Details: " + createContact.toString());
+    log:printInfo("Contact Details: " + createContact.toString());
 
-    // Update a contact photo
-    check googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
-    log:printInfo("Updated contact photo");
-
-    // Delete a contact photo
-    check googleContactClient->deleteContactPhoto(contactResourceName);
-    log:printInfo("Deleted contact photo");
+    // Delete a contact
+    check googleContactClient->deleteContact(contactResourceName);
 }

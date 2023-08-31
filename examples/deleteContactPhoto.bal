@@ -33,23 +33,29 @@ contacts:ConnectionConfig googleContactConfig = {
 contacts:Client googleContactClient = checkpanic new (googleContactConfig);
 
 public function main() returns error? {
-    string contactGroupResourceName = "";
-    // Create Contact Group with given name
-    contacts:ContactGroup createContactGroup = check googleContactClient->createContactGroup("TestContactGroup");
-    log:printInfo("Contact Group Details: " + createContactGroup.toString());
-    contactGroupResourceName = createContactGroup.resourceName;
-    log:printInfo(createContactGroup.resourceName.toString());
 
-    // Fetch information about Contact Group  
-    contacts:ContactGroup getContactGroup = check googleContactClient->getContactGroup(contactGroupResourceName, 10);
-    log:printInfo("Contact Group Details: " + getContactGroup.toString());
-    contactGroupResourceName = getContactGroup.resourceName;
-    log:printInfo(getContactGroup.resourceName.toString());
-    
-    //Update a contact group
-    contacts:ContactGroup updateContactGroup = check googleContactClient->updateContactGroup(contactGroupResourceName, 
-            "TestUpdated");
-    log:printInfo(updateContactGroup.toString());
-    contactGroupResourceName = updateContactGroup.resourceName;
-    log:printInfo("Updated Contact Group");
+    string contactResourceName = "";
+
+    contacts:Person person = {
+        "emailAddresses": [],
+        "names": [
+            {
+                "familyName": "Hardy",
+                "givenName": "Jason",
+                "unstructuredName": "Jason Hardy"
+            }
+        ]
+    };
+    contacts:FieldMask[] personFields = [contacts:NAME, contacts:PHONE_NUMBER, contacts:EMAIL_ADDRESS];
+    contacts:PersonResponse createContact = check googleContactClient->createContact(person, personFields);
+    contactResourceName = createContact.resourceName;
+    log:printInfo("Contacts Details: " + createContact.toString());
+
+    // Update a contact photo
+    check googleContactClient->updateContactPhoto(contactResourceName, "tests/image.png");
+    log:printInfo("Updated contact photo");
+
+    // Delete a contact photo
+    check googleContactClient->deleteContactPhoto(contactResourceName);
+    log:printInfo("Deleted contact photo");
 }
