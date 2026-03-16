@@ -5,7 +5,7 @@ name= "googleapis.people"
 version= "2.3.0"
 license= ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Sales & CRM/Contact Management", "Cost/Free", "Vendor/Google"]
+keywords = ["Sales & CRM/Contact Management", "Cost/Free", "Vendor/Google", "Area/CRM & Sales", "Type/Connector"]
 icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-googleapis.people"
 
