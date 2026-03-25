@@ -1,15 +1,15 @@
-Connects to [Google People API](https://developers.google.com/people/api/rest) from Ballerina.
+## Overview
 
-## Package overview
-The `ballerinax/googleapis.people` is a [Ballerina](https://ballerina.io/) connector for Google People API.
+The [Google People API](https://developers.google.com/people) provides access to information about the authenticated user's contacts and connections. It allows developers to manage contact information and retrieve profile details from Google's user data.
 
-This package provides the capability to access the Google People API service.
+The Google People connector offers APIs to connect and interact with the Google People API service, enabling seamless contact and connection management.
 
-### Compatibility
-|                     | Version              |
-|---------------------|----------------------|
-| Ballerina Language  | Swan Lake 2201.3.0   |
-| Google People API   | V1                   |
+### Key Features
+
+- Manage contacts and contact groups programmatically
+- Support for Google People API v1
+- Retrieve profile information for authenticated users
+- Efficient searching and filtering of contact data
 
 ## Report issues
 To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina Extended Library repository](https://github.com/ballerina-platform/ballerina-extended-library)

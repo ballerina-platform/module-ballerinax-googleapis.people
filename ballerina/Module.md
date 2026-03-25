@@ -1,7 +1,15 @@
 ## Overview
-Ballerina connector for Google People API connects the Google People API via Ballerina language with ease. It provides capability to perform operations related to contacts and contact groups in Google Contacts.
+The connector for Google People API connects the Google People API  with ease. It provides capability to perform operations related to contacts and contact groups in Google Contacts.
 
 This module supports [Google People API](https://developers.google.com/people/api/rest) v1.0.
+
+
+### Key Features
+
+- Access and manage Google Contacts data
+- Read and update contact information
+- Search and list contact groups
+- Support for other contacts and directory profiles
 
 ## Prerequisites
 Before using this connector in your Ballerina application, complete the following:
