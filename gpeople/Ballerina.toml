@@ -2,10 +2,10 @@
 distribution = "2201.4.1"
 org= "ballerinax"
 name= "googleapis.people"
-version= "2.4.0"
+version= "2.4.1"
 license= ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Sales & CRM/Contact Management", "Cost/Free", "Vendor/Google"]
+keywords = ["Sales & CRM/Contact Management", "Cost/Free", "Vendor/Google", "Area/CRM & Sales", "Type/Connector", "Name/Google People"]
 icon = "icon.png"
 repository = "https://github.com/ballerina-platform/module-ballerinax-googleapis.people"
 
